@@ -1,0 +1,276 @@
+/* Cyberpunk Mode Styles */
+
+/* Base Cyberpunk Cell Class */
+/* Cyberpunk Mode Styles */
+
+/* Base Cyberpunk Cell Class */
+.cyberpunk-cell {
+    /* Fixed Cyan Color for Cyberpunk Mode */
+    --cp-primary: #00f2ea;
+    --cp-secondary: #a855f7;
+    --cp-bg: #0d0d0d;
+
+    /* Glitch Clip Paths (Diagonal Slices) */
+    --clip-one: polygon(0 0, 100% 0, 100% 10%, 0 20%);
+    --clip-two: polygon(0 15%, 100% 5%, 100% 25%, 0 35%);
+    --clip-three: polygon(0 40%, 100% 30%, 100% 45%, 0 55%);
+    --clip-four: polygon(0 50%, 100% 40%, 100% 55%, 0 65%);
+    --clip-five: polygon(0 65%, 100% 55%, 100% 70%, 0 80%);
+    --clip-six: polygon(0 80%, 100% 70%, 100% 85%, 0 95%);
+    --clip-seven: polygon(0 90%, 100% 80%, 100% 100%, 0 100%);
+
+    filter: drop-shadow(0 0 5px rgba(0, 242, 234, 0.3));
+    transition: all 0.3s ease;
+}
+
+/* Glowing Border Animation */
+.cyberpunk-cell-glow {
+    animation: blinkShadowsFilter 8s ease-in infinite;
+}
+
+@keyframes blinkShadowsFilter {
+    0% {
+        filter: drop-shadow(0 0 2px rgba(0, 242, 234, 0.3)) drop-shadow(0 0 5px #9e30a9);
+    }
+
+    25% {
+        filter: drop-shadow(0 0 5px rgba(0, 242, 234, 0.8)) drop-shadow(0 0 8px #9e30a9);
+    }
+
+    50% {
+        filter: drop-shadow(0 0 8px rgba(0, 242, 234, 0.8)) drop-shadow(0 0 5px rgba(159, 48, 169, 0.3));
+    }
+
+    75% {
+        filter: drop-shadow(0 0 4px rgba(0, 242, 234, 0.8)) drop-shadow(0 0 4px rgba(159, 48, 169, 0.3));
+    }
+
+    100% {
+        filter: drop-shadow(0 0 2px rgba(0, 242, 234, 0.3)) drop-shadow(0 0 5px #9e30a9);
+    }
+}
+
+/* Glitch Effect on Hover (Full Cell) */
+/* Cyberpunk Mode Styles */
+
+/* Base Cyberpunk Cell Class */
+/* Cyberpunk Mode Styles */
+
+/* Base Cyberpunk Cell Class */
+.cyberpunk-cell {
+    /* Fixed Cyan Color for Cyberpunk Mode */
+    --cp-primary: #00f2ea;
+    --cp-secondary: #a855f7;
+    --cp-bg: #0d0d0d;
+
+    /* Glitch Clip Paths (Diagonal Slices) */
+    --clip-one: polygon(0 0, 100% 0, 100% 10%, 0 20%);
+    --clip-two: polygon(0 15%, 100% 5%, 100% 25%, 0 35%);
+    --clip-three: polygon(0 40%, 100% 30%, 100% 45%, 0 55%);
+    --clip-four: polygon(0 50%, 100% 40%, 100% 55%, 0 65%);
+    --clip-five: polygon(0 65%, 100% 55%, 100% 70%, 0 80%);
+    --clip-six: polygon(0 80%, 100% 70%, 100% 85%, 0 95%);
+    --clip-seven: polygon(0 90%, 100% 80%, 100% 100%, 0 100%);
+
+    filter: drop-shadow(0 0 5px rgba(0, 242, 234, 0.3));
+    transition: all 0.3s ease;
+}
+
+/* Glowing Border Animation */
+.cyberpunk-cell-glow {
+    animation: blinkShadowsFilter 8s ease-in infinite;
+}
+
+@keyframes blinkShadowsFilter {
+    0% {
+        filter: drop-shadow(0 0 2px rgba(0, 242, 234, 0.3)) drop-shadow(0 0 5px #9e30a9);
+    }
+
+    25% {
+        filter: drop-shadow(0 0 5px rgba(0, 242, 234, 0.8)) drop-shadow(0 0 8px #9e30a9);
+    }
+
+    50% {
+        filter: drop-shadow(0 0 8px rgba(0, 242, 234, 0.8)) drop-shadow(0 0 5px rgba(159, 48, 169, 0.3));
+    }
+
+    75% {
+        filter: drop-shadow(0 0 4px rgba(0, 242, 234, 0.8)) drop-shadow(0 0 4px rgba(159, 48, 169, 0.3));
+    }
+
+    100% {
+        filter: drop-shadow(0 0 2px rgba(0, 242, 234, 0.3)) drop-shadow(0 0 5px #9e30a9);
+    }
+}
+
+/* Glitch Effect on Hover (Full Cell) */
+
+/* Hide main content on hover */
+.group:hover .cyberpunk-content-main {
+    opacity: 0;
+}
+
+/* Show and animate glitch layers on hover */
+.group:hover .cyberpunk-glitch-layer-1 {
+    opacity: 1;
+    animation: glitch-anim-1 2.5s infinite linear alternate-reverse;
+}
+
+.group:hover .cyberpunk-glitch-layer-2 {
+    opacity: 1;
+    animation: glitch-anim-2 3s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-anim-1 {
+    0% {
+        clip-path: var(--clip-one);
+        transform: translate(0);
+    }
+
+    2% {
+        clip-path: var(--clip-two);
+        transform: translate(-5px, 5px);
+    }
+
+    4% {
+        clip-path: var(--clip-one);
+        transform: translate(0);
+    }
+
+    6% {
+        clip-path: var(--clip-three);
+        transform: translate(5px, -5px);
+    }
+
+    8% {
+        clip-path: var(--clip-one);
+        transform: translate(0);
+    }
+
+    9% {
+        clip-path: var(--clip-four);
+        transform: translate(-5px, 5px);
+    }
+
+    10% {
+        clip-path: var(--clip-one);
+        transform: translate(0);
+    }
+
+    13% {
+        clip-path: var(--clip-five);
+        transform: translate(5px, -5px);
+    }
+
+    15% {
+        clip-path: var(--clip-one);
+        transform: translate(0);
+    }
+
+    50% {
+        clip-path: var(--clip-six);
+        transform: translate(-5px, 5px);
+    }
+
+    55% {
+        clip-path: var(--clip-seven);
+        transform: translate(0);
+    }
+
+    60% {
+        clip-path: var(--clip-two);
+        transform: translate(5px, -5px);
+    }
+
+    65% {
+        clip-path: var(--clip-one);
+        transform: translate(0);
+    }
+
+    80% {
+        clip-path: var(--clip-three);
+        transform: translate(-5px, 5px);
+    }
+
+    85% {
+        clip-path: var(--clip-one);
+        transform: translate(0);
+    }
+
+    100% {
+        clip-path: var(--clip-one);
+        transform: translate(0);
+    }
+}
+
+@keyframes glitch-anim-2 {
+    0% {
+        clip-path: var(--clip-seven);
+        transform: translate(0);
+    }
+
+    1% {
+        clip-path: var(--clip-six);
+        transform: translate(5px, -5px);
+    }
+
+    3% {
+        clip-path: var(--clip-seven);
+        transform: translate(0);
+    }
+
+    5% {
+        clip-path: var(--clip-five);
+        transform: translate(-5px, 5px);
+    }
+
+    7% {
+        clip-path: var(--clip-seven);
+        transform: translate(0);
+    }
+
+    11% {
+        clip-path: var(--clip-four);
+        transform: translate(5px, -5px);
+    }
+
+    13% {
+        clip-path: var(--clip-seven);
+        transform: translate(0);
+    }
+
+    40% {
+        clip-path: var(--clip-three);
+        transform: translate(-5px, 5px);
+    }
+
+    45% {
+        clip-path: var(--clip-two);
+        transform: translate(0);
+    }
+
+    50% {
+        clip-path: var(--clip-one);
+        transform: translate(5px, -5px);
+    }
+
+    55% {
+        clip-path: var(--clip-seven);
+        transform: translate(0);
+    }
+
+    90% {
+        clip-path: var(--clip-six);
+        transform: translate(-5px, 5px);
+    }
+
+    95% {
+        clip-path: var(--clip-seven);
+        transform: translate(0);
+    }
+
+    100% {
+        clip-path: var(--clip-seven);
+        transform: translate(0);
+    }
+}
