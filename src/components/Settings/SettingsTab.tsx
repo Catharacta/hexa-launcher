@@ -108,12 +108,14 @@ export const AppearanceTab: React.FC<SettingsTabProps> = ({ isActive }) => {
     );
 };
 
+import { KeybindingSettings } from './KeybindingSettings';
+
 export const KeybindingTab: React.FC<SettingsTabProps> = ({ isActive }) => {
     if (!isActive) return null;
     return (
         <div className="p-4">
             <h2 className="text-xl font-bold mb-4 text-white">Keybindings</h2>
-            <p className="text-gray-300">Keyboard shortcut configuration will go here.</p>
+            <KeybindingSettings />
         </div>
     );
 };

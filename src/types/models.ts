@@ -47,6 +47,29 @@ export interface AppearanceSettings {
     opacity: number; // 0.0 - 1.0
     themeColor: string; // Hex color or preset name
     style: 'default' | 'cyberpunk';
+    searchScope: 'current' | 'global'; // Search within current group or all groups
+    searchMode: 'partial' | 'fuzzy' | 'regex'; // Search algorithm
+}
+
+export interface KeyBindings {
+    globalToggle: string;  // e.g., "Alt+Space"
+    hexNav: {
+        northEast: string;  // Default: "W"
+        east: string;       // Default: "S"
+        southEast: string;  // Default: "X"
+        southWest: string;  // Default: "Z"
+        west: string;       // Default: "A"
+        northWest: string;  // Default: "Q"
+    };
+    actions: {
+        createShortcutFile: string;   // "Ctrl+N"
+        createShortcutFolder: string; // "Ctrl+Shift+N"
+        createGroup: string;          // "Ctrl+G"
+        renameCell: string;           // "F2"
+        deleteCell: string;           // "Delete"
+    };
+    directionalCreateModifier: string; // "Shift", "Ctrl", "Alt"
+    search: string; // "Ctrl+F"
 }
 
 export interface Settings {
@@ -57,4 +80,6 @@ export interface Settings {
     appearance: AppearanceSettings;
     hotkeys: Record<string, string>;
     iconCacheIndex: Record<string, string>;
+    keyBindings?: KeyBindings; // Optional for backward compatibility
+    searchHistory?: string[]; // Recent search queries (max 10)
 }

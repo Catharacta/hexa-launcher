@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { HexGrid } from './components/HexGrid';
 import { SettingsModal } from './components/Settings/SettingsModal';
 import { TreeModal } from './components/TreeModal';

@@ -74,3 +74,11 @@ export const hideWindow = async (): Promise<void> => {
         console.error('Failed to hide window:', error);
     }
 };
+
+export const updateGlobalShortcut = async (shortcut: string): Promise<void> => {
+    try {
+        await invoke('update_global_shortcut', { shortcut });
+    } catch (error) {
+        console.error('Failed to update global shortcut:', error);
+    }
+};

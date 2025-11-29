@@ -19,6 +19,8 @@ interface HexagonProps {
     isDragTarget?: boolean;
     isSelected?: boolean;
     isGhost?: boolean;
+    isSearchMatch?: boolean;
+    isSearchActive?: boolean;
 }
 
 export const Hexagon: React.FC<HexagonProps> = ({
@@ -33,7 +35,9 @@ export const Hexagon: React.FC<HexagonProps> = ({
     isDragging,
     isDragTarget,
     isSelected,
-    isGhost
+    isGhost: _isGhost,
+    isSearchMatch,
+    isSearchActive
 }) => {
     // Calculate hexagon points
     // Pointy-topped hexagon
@@ -85,8 +89,12 @@ export const Hexagon: React.FC<HexagonProps> = ({
                     layerClass === 'cyberpunk-glitch-layer-1' && "fill-purple-900 stroke-purple-500",
                     layerClass === 'cyberpunk-glitch-layer-2' && "fill-cyan-900 stroke-cyan-500",
                     isDragTarget && "stroke-[4px] stroke-white filter drop-shadow(0 0 8px rgba(255,255,255,0.8))",
-                    isSelected && "stroke-[3px] stroke-blue-500 filter drop-shadow(0 0 5px rgba(59,130,246,0.6))"
+                    isSelected && "fill-gray-700 stroke-[4px] stroke-blue-500 filter drop-shadow(0 0 8px rgba(59,130,246,0.8))",
+                    isSearchMatch && "stroke-[4px] stroke-yellow-400 filter drop-shadow(0 0 10px rgba(250,204,21,0.8))"
                 )}
+                style={{
+                    opacity: isSearchActive && !isSearchMatch ? 0.3 : 1
+                }}
             />
 
             {/* Content (Icon/Text) */}

@@ -1,5 +1,7 @@
 use std::fs;
+use std::str::FromStr;
 use tauri::Manager;
+use tauri_plugin_global_shortcut::{GlobalShortcutExt, Shortcut, ShortcutState};
 
 #[tauri::command]
 fn save_settings(app_handle: tauri::AppHandle, settings: String) -> Result<(), String> {
@@ -60,11 +62,6 @@ fn launch_app(
     }
 
     // Fallback to using the 'opener' plugin or shell open
-    // Since we have tauri-plugin-opener, we can use it via the shell API or just use the `open` crate if added.
-    // But here we can use `tauri_plugin_opener`'s functionality if exposed, or just `open::that`.
-    // Let's use `open` crate if available, or `shell` scope.
-    // For now, let's try `tauri_plugin_opener`'s `open` if we can access it, or just use `std::process::Command` with `explorer` on Windows.
-
     #[cfg(target_os = "windows")]
     {
         let mut cmd = std::process::Command::new("explorer");
@@ -274,6 +271,19 @@ unsafe fn icon_to_png(hicon: HICON) -> Result<Vec<u8>, String> {
 fn hide_window(window: tauri::Window) -> Result<(), String> {
     window.hide().map_err(|e| e.to_string())
 }
+
+#[tauri::command]
+fn update_global_shortcut(app_handle: tauri::AppHandle, shortcut: String) -> Result<(), String> {
+    println!("Updating global shortcut to: {}", shortcut);
+    let _ = app_handle.global_shortcut().unregister_all();
+    let shortcut_obj = Shortcut::from_str(&shortcut).map_err(|e| e.to_string())?;
+    app_handle
+        .global_shortcut()
+        .register(shortcut_obj)
+        .map_err(|e| e.to_string())?;
+    Ok(())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     use tauri::menu::{Menu, MenuItem};
@@ -288,14 +298,62 @@ pub fn run() {
             launch_app,
             resolve_shortcut,
             get_file_icon,
-            hide_window
+            hide_window,
+            update_global_shortcut
         ])
         .setup(|app| {
+            #[cfg(desktop)]
+            {
+                app.handle().plugin(
+                    tauri_plugin_global_shortcut::Builder::new()
+                        .with_handler(|app, _shortcut, event| {
+                            if event.state == ShortcutState::Pressed {
+                                if let Some(window) = app.get_webview_window("main") {
+                                    if window.is_visible().unwrap_or(false) {
+                                        let _ = window.hide();
+                                    } else {
+                                        let _ = window.show();
+                                        let _ = window.set_focus();
+                                    }
+                                }
+                            }
+                        })
+                        .build(),
+                )?;
+
+                // Register default shortcut
+                let _ = app.handle().global_shortcut().register("Alt+Space");
+
+                // File drop event handler
+                let app_handle = app.handle().clone();
+                if let Some(window) = app.get_webview_window("main") {
+                    window.on_window_event(move |event| {
+                        if let tauri::WindowEvent::DragDrop(drop_event) = event {
+                            match drop_event {
+                                tauri::DragDropEvent::Drop { paths, position } => {
+                                    println!("Files dropped: {:?} at {:?}", paths, position);
+                                    // Emit event to all windows
+                                    let _ = app_handle.emit(
+                                        "file-drop",
+                                        serde_json::json!({
+                                            "paths": paths,
+                                            "position": position
+                                        }),
+                                    );
+                                }
+                                _ => {}
+                            }
+                        }
+                    });
+                }
+            }
+
             // Create system tray menu
             let show_hide = MenuItem::with_id(app, "show_hide", "Show/Hide", true, None::<&str>)?;
             let settings = MenuItem::with_id(app, "settings", "Settings", true, None::<&str>)?;
             let quit = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
             let menu = Menu::with_items(app, &[&show_hide, &settings, &quit])?;
+
             // Create system tray icon
             let _tray = TrayIconBuilder::new()
                 .menu(&menu)

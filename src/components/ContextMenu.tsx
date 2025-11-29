@@ -19,6 +19,9 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, cellId, onClose 
     const updateCell = useLauncherStore(state => state.updateCell);
     const appearance = useLauncherStore(state => state.appearance);
 
+    const activeGroupId = useLauncherStore(state => state.activeGroupId);
+    const [showSpecialSubmenu, setShowSpecialSubmenu] = React.useState(false);
+
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -32,16 +35,13 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, cellId, onClose 
     }, [onClose]);
 
     if (!cell) return null;
-    // Disable context menu for system cells
-    if (['launcher_setting', 'group_back', 'group_close', 'group_tree'].includes(cell.type)) return null;
+    if (cell.type === 'launcher_setting') return null;
 
     const handleDelete = (e: React.MouseEvent) => {
         e.stopPropagation();
         console.log('Delete clicked for', cellId);
         if (cell.type === 'group' && cell.groupId) {
-            if (confirm('Are you sure you want to delete this group and all its contents?')) {
-                deleteGroup(cell.groupId);
-            }
+            deleteGroup(cell.groupId);
         } else {
             removeCell(cellId);
         }
@@ -131,12 +131,33 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, cellId, onClose 
         onClose();
     };
 
+    const handleCreateSpecialCell = (type: 'group_tree' | 'group_close' | 'group_back') => {
+        let title = '';
+        switch (type) {
+            case 'group_tree': title = 'Tree'; break;
+            case 'group_close': title = 'Close'; break;
+            case 'group_back': title = 'Back'; break;
+        }
+
+        updateCell(cellId, {
+            type: type,
+            title: title,
+            icon: undefined,
+            shortcut: undefined,
+            target: undefined,
+            groupId: undefined
+        });
+        onClose();
+    };
+
     const isCyberpunk = appearance.style === 'cyberpunk';
+    const itemClass = `block w-full text-left px-4 py-2 text-sm ${isCyberpunk ? 'hover:bg-[#00f2ea]/20' : 'hover:bg-gray-700'}`;
+    const deleteClass = `block w-full text-left px-4 py-2 text-sm ${isCyberpunk ? 'hover:bg-[#00f2ea]/20 text-red-400' : 'hover:bg-gray-700 text-red-400'}`;
 
     return (
         <div
             ref={menuRef}
-            className={`fixed z-50 min-w-[160px] rounded shadow-lg border backdrop-blur-md ${isCyberpunk
+            className={`fixed z-50 min-w-[180px] rounded shadow-lg border backdrop-blur-md ${isCyberpunk
                 ? 'bg-black/80 border-[#00f2ea] text-[#00f2ea] shadow-[0_0_10px_#00f2ea]'
                 : 'bg-gray-800/90 border-gray-700 text-white'
                 }`}
@@ -144,58 +165,60 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, cellId, onClose 
             onMouseDown={(e) => e.stopPropagation()} // Prevent closing when clicking inside
         >
             <div className="py-1">
-                {cell.type === 'group' && (
+                {showSpecialSubmenu ? (
                     <>
-                        <button
-                            onClick={handleRename}
-                            className={`block w-full text-left px-4 py-2 text-sm ${isCyberpunk ? 'hover:bg-[#00f2ea]/20' : 'hover:bg-gray-700'
-                                }`}
-                        >
-                            Rename Group
+                        <button onClick={() => setShowSpecialSubmenu(false)} className={itemClass}>
+                            ← Back
                         </button>
-                        <button
-                            onClick={handleDelete}
-                            className={`block w-full text-left px-4 py-2 text-sm ${isCyberpunk ? 'hover:bg-[#00f2ea]/20 text-red-400' : 'hover:bg-gray-700 text-red-400'
-                                }`}
-                        >
-                            Delete Group
+                        <div className={`border-t ${isCyberpunk ? 'border-[#00f2ea]/30' : 'border-gray-600'} my-1`}></div>
+                        <button onClick={() => handleCreateSpecialCell('group_tree')} className={itemClass}>
+                            Tree
                         </button>
+                        <button onClick={() => handleCreateSpecialCell('group_close')} className={itemClass}>
+                            Close
+                        </button>
+                        {activeGroupId && (
+                            <button onClick={() => handleCreateSpecialCell('group_back')} className={itemClass}>
+                                Back
+                            </button>
+                        )}
                     </>
-                )}
-
-                {cell.type !== 'group' && (
+                ) : (
                     <>
-                        <button
-                            onClick={handleEditShortcut}
-                            className={`block w-full text-left px-4 py-2 text-sm ${isCyberpunk ? 'hover:bg-[#00f2ea]/20' : 'hover:bg-gray-700'
-                                }`}
-                        >
-                            Edit Shortcut (File)
-                        </button>
+                        {cell.type === 'group' && (
+                            <>
+                                <button onClick={handleRename} className={itemClass}>
+                                    Rename Group
+                                </button>
+                                <button onClick={handleDelete} className={deleteClass}>
+                                    Delete Group
+                                </button>
+                            </>
+                        )}
 
-                        <button
-                            onClick={handleEditShortcutFolder}
-                            className={`block w-full text-left px-4 py-2 text-sm ${isCyberpunk ? 'hover:bg-[#00f2ea]/20' : 'hover:bg-gray-700'
-                                }`}
-                        >
-                            Edit Shortcut (Folder)
-                        </button>
+                        {cell.type !== 'group' && (
+                            <>
+                                <button onClick={handleEditShortcut} className={itemClass}>
+                                    Edit Shortcut (File)
+                                </button>
 
-                        <button
-                            onClick={handleCreateGroup}
-                            className={`block w-full text-left px-4 py-2 text-sm ${isCyberpunk ? 'hover:bg-[#00f2ea]/20' : 'hover:bg-gray-700'
-                                }`}
-                        >
-                            Create Group Here
-                        </button>
+                                <button onClick={handleEditShortcutFolder} className={itemClass}>
+                                    Edit Shortcut (Folder)
+                                </button>
 
-                        <button
-                            onClick={handleDelete}
-                            className={`block w-full text-left px-4 py-2 text-sm ${isCyberpunk ? 'hover:bg-[#00f2ea]/20 text-red-400' : 'hover:bg-gray-700 text-red-400'
-                                }`}
-                        >
-                            Delete
-                        </button>
+                                <button onClick={handleCreateGroup} className={itemClass}>
+                                    Create Group Here
+                                </button>
+
+                                <button onClick={() => setShowSpecialSubmenu(true)} className={itemClass}>
+                                    Create Special Cell...
+                                </button>
+
+                                <button onClick={handleDelete} className={deleteClass}>
+                                    Delete
+                                </button>
+                            </>
+                        )}
                     </>
                 )}
             </div>
