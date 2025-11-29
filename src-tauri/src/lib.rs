@@ -284,6 +284,28 @@ fn update_global_shortcut(app_handle: tauri::AppHandle, shortcut: String) -> Res
     Ok(())
 }
 
+#[tauri::command]
+async fn save_dropped_file(
+    app_handle: tauri::AppHandle,
+    name: String,
+    content: Vec<u8>,
+) -> Result<String, String> {
+    let app_dir = app_handle
+        .path()
+        .app_data_dir()
+        .map_err(|e| e.to_string())?;
+
+    let dropped_files_dir = app_dir.join("dropped_files");
+    if !dropped_files_dir.exists() {
+        fs::create_dir_all(&dropped_files_dir).map_err(|e| e.to_string())?;
+    }
+
+    let file_path = dropped_files_dir.join(&name);
+    fs::write(&file_path, content).map_err(|e| e.to_string())?;
+
+    Ok(file_path.to_string_lossy().to_string())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     use tauri::menu::{Menu, MenuItem};
@@ -299,7 +321,8 @@ pub fn run() {
             resolve_shortcut,
             get_file_icon,
             hide_window,
-            update_global_shortcut
+            update_global_shortcut,
+            save_dropped_file
         ])
         .setup(|app| {
             #[cfg(desktop)]
