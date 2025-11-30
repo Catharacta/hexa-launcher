@@ -306,6 +306,30 @@ async fn save_dropped_file(
     Ok(file_path.to_string_lossy().to_string())
 }
 
+// Persistence commands for export/import functionality
+#[tauri::command]
+fn export_settings_json(app_handle: tauri::AppHandle) -> Result<String, String> {
+    let app_dir = app_handle
+        .path()
+        .app_data_dir()
+        .map_err(|e| e.to_string())?;
+    let path = app_dir.join("settings.json");
+    if !path.exists() {
+        return Ok("{}".to_string());
+    }
+    fs::read_to_string(path).map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+fn save_settings_to_file(file_path: String, data: String) -> Result<(), String> {
+    fs::write(&file_path, data).map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+fn load_settings_from_file(file_path: String) -> Result<String, String> {
+    fs::read_to_string(&file_path).map_err(|e| e.to_string())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     use tauri::menu::{Menu, MenuItem};
@@ -322,7 +346,10 @@ pub fn run() {
             get_file_icon,
             hide_window,
             update_global_shortcut,
-            save_dropped_file
+            save_dropped_file,
+            export_settings_json,
+            save_settings_to_file,
+            load_settings_from_file
         ])
         .setup(|app| {
             #[cfg(desktop)]

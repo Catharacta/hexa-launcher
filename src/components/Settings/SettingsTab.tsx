@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLauncherStore } from '../../store/launcherStore';
 import { clsx } from 'clsx';
 import { THEMES } from '../../utils/theme';
@@ -313,11 +313,228 @@ export const CellManagerTab: React.FC<SettingsTabProps> = ({ isActive }) => {
 };
 
 export const PersistenceTab: React.FC<SettingsTabProps> = ({ isActive }) => {
+    const [isExporting, setIsExporting] = useState(false);
+    const [isImporting, setIsImporting] = useState(false);
+    const [lastExport, setLastExport] = useState<string | null>(null);
+    const [lastImport, setLastImport] = useState<string | null>(null);
+
     if (!isActive) return null;
+
+    const handleExportToFile = async () => {
+        try {
+            setIsExporting(true);
+            const { save } = await import('@tauri-apps/plugin-dialog');
+
+            // Show save dialog
+            const filePath = await save({
+                defaultPath: 'hexa-launcher-settings.json',
+                filters: [{ name: 'JSON', extensions: ['json'] }]
+            });
+
+            if (!filePath) {
+                setIsExporting(false);
+                return;
+            }
+
+            // Export settings
+            const { exportSettingsJson, saveSettingsToFile } = await import('../../utils/tauri');
+            const settingsJson = await exportSettingsJson();
+            await saveSettingsToFile(filePath, settingsJson);
+
+            setLastExport(new Date().toLocaleString());
+            alert('Settings exported successfully!');
+        } catch (error) {
+            console.error('Export failed:', error);
+            alert(`Export failed: ${error}`);
+        } finally {
+            setIsExporting(false);
+        }
+    };
+
+    const handleImportFromFile = async () => {
+        try {
+            setIsImporting(true);
+            const { open } = await import('@tauri-apps/plugin-dialog');
+
+            // Show open dialog
+            const filePath = await open({
+                multiple: false,
+                filters: [{ name: 'JSON', extensions: ['json'] }]
+            });
+
+            if (!filePath) {
+                setIsImporting(false);
+                return;
+            }
+
+            // Load settings from file
+            const { loadSettingsFromFile, saveSettings } = await import('../../utils/tauri');
+            const settingsJson = await loadSettingsFromFile(filePath as string);
+            const settings = JSON.parse(settingsJson);
+
+            // Confirm import
+            const confirmed = confirm(
+                `Import settings?\n\n` +
+                `Cells: ${settings.cells?.length || 0}\n` +
+                `Groups: ${settings.groups?.length || 0}\n\n` +
+                `This will overwrite your current settings.`
+            );
+
+            if (!confirmed) {
+                setIsImporting(false);
+                return;
+            }
+
+            // Import settings
+            await saveSettings(settings);
+            setLastImport(new Date().toLocaleString());
+            alert('Settings imported successfully! Please reload the app.');
+
+            // Reload the app
+            window.location.reload();
+        } catch (error) {
+            console.error('Import failed:', error);
+            alert(`Import failed: ${error}`);
+        } finally {
+            setIsImporting(false);
+        }
+    };
+
+    const handleCopyToClipboard = async () => {
+        try {
+            const { exportSettingsJson } = await import('../../utils/tauri');
+            const settingsJson = await exportSettingsJson();
+            await navigator.clipboard.writeText(settingsJson);
+            alert('Settings copied to clipboard!');
+            setLastExport(new Date().toLocaleString());
+        } catch (error) {
+            console.error('Copy failed:', error);
+            alert(`Copy failed: ${error}`);
+        }
+    };
+
+    const handlePasteFromClipboard = async () => {
+        try {
+            setIsImporting(true);
+            const clipboardText = await navigator.clipboard.readText();
+
+            // Validate JSON
+            let settings;
+            try {
+                settings = JSON.parse(clipboardText);
+            } catch {
+                alert('Invalid JSON in clipboard');
+                setIsImporting(false);
+                return;
+            }
+
+            // Confirm import
+            const confirmed = confirm(
+                `Import settings from clipboard?\n\n` +
+                `Cells: ${settings.cells?.length || 0}\n` +
+                `Groups: ${settings.groups?.length || 0}\n\n` +
+                `This will overwrite your current settings.`
+            );
+
+            if (!confirmed) {
+                setIsImporting(false);
+                return;
+            }
+
+            // Import settings
+            const { saveSettings } = await import('../../utils/tauri');
+            await saveSettings(settings);
+            setLastImport(new Date().toLocaleString());
+            alert('Settings imported successfully! Please reload the app.');
+
+            // Reload the app
+            window.location.reload();
+        } catch (error) {
+            console.error('Paste import failed:', error);
+            alert(`Paste import failed: ${error}`);
+        } finally {
+            setIsImporting(false);
+        }
+    };
+
     return (
-        <div className="p-4">
+        <div className="p-4 space-y-6">
             <h2 className="text-xl font-bold mb-4 text-white">Persistence</h2>
-            <p className="text-gray-300">Backup and restore settings will go here.</p>
+
+            {/* Export Section */}
+            <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-gray-300">Export Settings</h3>
+                <p className="text-sm text-gray-400">Save your settings to a file or clipboard</p>
+
+                <div className="flex gap-3">
+                    <button
+                        onClick={handleExportToFile}
+                        disabled={isExporting}
+                        className={clsx(
+                            "px-4 py-2 rounded-lg border transition-all",
+                            isExporting
+                                ? "bg-gray-700 border-gray-600 text-gray-400 cursor-not-allowed"
+                                : "bg-gray-700 border-cyan-500 text-white hover:bg-gray-600"
+                        )}
+                    >
+                        {isExporting ? 'Exporting...' : 'Export to File'}
+                    </button>
+                    <button
+                        onClick={handleCopyToClipboard}
+                        className="px-4 py-2 rounded-lg border bg-gray-700 border-gray-600 text-white hover:bg-gray-600 transition-all"
+                    >
+                        Copy to Clipboard
+                    </button>
+                </div>
+            </div>
+
+            {/* Import Section */}
+            <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-gray-300">Import Settings</h3>
+                <p className="text-sm text-gray-400">Load settings from a file or clipboard</p>
+
+                <div className="flex gap-3">
+                    <button
+                        onClick={handleImportFromFile}
+                        disabled={isImporting}
+                        className={clsx(
+                            "px-4 py-2 rounded-lg border transition-all",
+                            isImporting
+                                ? "bg-gray-700 border-gray-600 text-gray-400 cursor-not-allowed"
+                                : "bg-gray-700 border-cyan-500 text-white hover:bg-gray-600"
+                        )}
+                    >
+                        {isImporting ? 'Importing...' : 'Import from File'}
+                    </button>
+                    <button
+                        onClick={handlePasteFromClipboard}
+                        disabled={isImporting}
+                        className={clsx(
+                            "px-4 py-2 rounded-lg border transition-all",
+                            isImporting
+                                ? "bg-gray-700 border-gray-600 text-gray-400 cursor-not-allowed"
+                                : "bg-gray-700 border-gray-600 text-white hover:bg-gray-600"
+                        )}
+                    >
+                        Paste from Clipboard
+                    </button>
+                </div>
+
+                <div className="mt-4 p-3 bg-yellow-900/20 border border-yellow-700/50 rounded-lg">
+                    <p className="text-xs text-yellow-300">
+                        ⚠️ Warning: Importing settings will overwrite your current configuration. Make sure to export your current settings first if you want to keep them.
+                    </p>
+                </div>
+            </div>
+
+            {/* Status Section */}
+            <div className="space-y-2 pt-4 border-t border-gray-700">
+                <h3 className="text-sm font-semibold text-gray-400">Status</h3>
+                <div className="text-sm text-gray-300">
+                    <p>Last Export: {lastExport || 'Never'}</p>
+                    <p>Last Import: {lastImport || 'Never'}</p>
+                </div>
+            </div>
         </div>
     );
 };

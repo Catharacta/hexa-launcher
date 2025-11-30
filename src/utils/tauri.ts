@@ -80,5 +80,34 @@ export const updateGlobalShortcut = async (shortcut: string): Promise<void> => {
         await invoke('update_global_shortcut', { shortcut });
     } catch (error) {
         console.error('Failed to update global shortcut:', error);
+        throw error;
     }
 };
+
+// Persistence functions for export/import
+export async function exportSettingsJson(): Promise<string> {
+    try {
+        return await invoke<string>('export_settings_json');
+    } catch (error) {
+        console.error('Failed to export settings:', error);
+        throw error;
+    }
+}
+
+export async function saveSettingsToFile(filePath: string, data: string): Promise<void> {
+    try {
+        await invoke('save_settings_to_file', { filePath, data });
+    } catch (error) {
+        console.error('Failed to save settings to file:', error);
+        throw error;
+    }
+}
+
+export async function loadSettingsFromFile(filePath: string): Promise<string> {
+    try {
+        return await invoke<string>('load_settings_from_file', { filePath });
+    } catch (error) {
+        console.error('Failed to load settings from file:', error);
+        throw error;
+    }
+}
