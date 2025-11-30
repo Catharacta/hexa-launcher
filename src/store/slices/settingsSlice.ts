@@ -1,19 +1,45 @@
-import { Settings, Cell, Group } from '../../types/models';
+import { Settings, Cell, Group, GeneralSettings, GridSettings } from '../../types/models';
 import { initialCells } from './cellsSlice';
-import { updateGlobalShortcut } from '../../utils/tauri';
+import { updateGlobalShortcut, saveSettings } from '../../utils/tauri';
 
 export interface SettingsSlice {
     hotkeys: Record<string, string>;
     iconCacheIndex: Record<string, string>;
+    general: GeneralSettings;
+    grid: GridSettings;
     loadFromSettings: (settings: Settings) => void;
     getCellsInActiveGroup: () => Cell[];
+    setGeneralSettings: (settings: Partial<GeneralSettings>) => void;
+    setGridSettings: (settings: Partial<GridSettings>) => void;
+    resetGeneralSettings: () => void;
+    resetGridSettings: () => void;
 }
 
 const SCHEMA_VERSION = 1;
 
+const DEFAULT_GENERAL_SETTINGS: GeneralSettings = {
+    startOnBoot: false,
+    language: 'en',
+    windowBehavior: {
+        alwaysOnTop: false,
+        hideOnBlur: false,
+        showOnMouseEdge: false,
+    },
+};
+
+const DEFAULT_GRID_SETTINGS: GridSettings = {
+    hexSize: 60,
+    gapSize: 0,
+    animationSpeed: 'normal',
+    showLabels: 'hover',
+    hoverEffect: true,
+};
+
 export const createSettingsSlice = (set: any, get: any): SettingsSlice => ({
     hotkeys: {},
     iconCacheIndex: {},
+    general: DEFAULT_GENERAL_SETTINGS,
+    grid: DEFAULT_GRID_SETTINGS,
 
     loadFromSettings: (settings) => {
         const cellsMap: Record<string, Cell> = { ...initialCells };
@@ -42,6 +68,8 @@ export const createSettingsSlice = (set: any, get: any): SettingsSlice => ({
             groups: groupsMap,
             activeGroupId: settings.activeGroupId || null,
             appearance: settings.appearance || get().appearance,
+            general: { ...DEFAULT_GENERAL_SETTINGS, ...settings.general },
+            grid: { ...DEFAULT_GRID_SETTINGS, ...settings.grid },
             hotkeys: settings.hotkeys || {},
             iconCacheIndex: settings.iconCacheIndex || {},
             keyBindings: settings.keyBindings ? {
@@ -68,6 +96,84 @@ export const createSettingsSlice = (set: any, get: any): SettingsSlice => ({
         }
         const group = state.groups[activeGroupId];
         return group?.cells.map((id: string) => state.cells[id]).filter(Boolean) || [];
+    },
+
+    setGeneralSettings: (settings) => {
+        set((state: any) => {
+            const newGeneral = { ...state.general, ...settings };
+            const newState = { general: newGeneral };
+            saveSettings({
+                schemaVersion: SCHEMA_VERSION,
+                cells: Object.values(state.cells),
+                groups: Object.values(state.groups),
+                activeGroupId: state.activeGroupId,
+                appearance: state.appearance,
+                general: newGeneral,
+                grid: state.grid,
+                hotkeys: state.hotkeys,
+                iconCacheIndex: state.iconCacheIndex,
+                keyBindings: state.keyBindings,
+            }).catch(console.error);
+            return newState;
+        });
+    },
+
+    setGridSettings: (settings) => {
+        set((state: any) => {
+            const newGrid = { ...state.grid, ...settings };
+            const newState = { grid: newGrid };
+            saveSettings({
+                schemaVersion: SCHEMA_VERSION,
+                cells: Object.values(state.cells),
+                groups: Object.values(state.groups),
+                activeGroupId: state.activeGroupId,
+                appearance: state.appearance,
+                general: state.general,
+                grid: newGrid,
+                hotkeys: state.hotkeys,
+                iconCacheIndex: state.iconCacheIndex,
+                keyBindings: state.keyBindings,
+            }).catch(console.error);
+            return newState;
+        });
+    },
+
+    resetGeneralSettings: () => {
+        set((state: any) => {
+            const newState = { general: DEFAULT_GENERAL_SETTINGS };
+            saveSettings({
+                schemaVersion: SCHEMA_VERSION,
+                cells: Object.values(state.cells),
+                groups: Object.values(state.groups),
+                activeGroupId: state.activeGroupId,
+                appearance: state.appearance,
+                general: DEFAULT_GENERAL_SETTINGS,
+                grid: state.grid,
+                hotkeys: state.hotkeys,
+                iconCacheIndex: state.iconCacheIndex,
+                keyBindings: state.keyBindings,
+            }).catch(console.error);
+            return newState;
+        });
+    },
+
+    resetGridSettings: () => {
+        set((state: any) => {
+            const newState = { grid: DEFAULT_GRID_SETTINGS };
+            saveSettings({
+                schemaVersion: SCHEMA_VERSION,
+                cells: Object.values(state.cells),
+                groups: Object.values(state.groups),
+                activeGroupId: state.activeGroupId,
+                appearance: state.appearance,
+                general: state.general,
+                grid: DEFAULT_GRID_SETTINGS,
+                hotkeys: state.hotkeys,
+                iconCacheIndex: state.iconCacheIndex,
+                keyBindings: state.keyBindings,
+            }).catch(console.error);
+            return newState;
+        });
     },
 });
 

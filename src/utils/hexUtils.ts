@@ -1,4 +1,4 @@
-import { Cube, Point } from '../types/hex';
+import { Cube, Point, CUBE_DIRECTIONS, cubeKey } from '../types/hex';
 export { CUBE_DIRECTIONS, cubeAdd, cubeKey } from '../types/hex';
 
 export const HEX_SIZE = 60; // Default hex size in pixels
@@ -150,4 +150,30 @@ export function detectEdgeIndex(center: Point, click: Point, size: number): numb
     if (angle >= 30 && angle < 90) return 5; // SE
 
     return null;
+}
+
+export function findEmptyAdjacentCube(
+    startCube: Cube,
+    occupiedPositions: Set<string>
+): Cube {
+    // Try each direction from the start cell
+    for (const dir of CUBE_DIRECTIONS) {
+        const candidate = {
+            x: startCube.x + dir.x,
+            y: startCube.y + dir.y,
+            z: startCube.z + dir.z,
+        };
+        const key = cubeKey(candidate);
+        if (!occupiedPositions.has(key)) {
+            return candidate;
+        }
+    }
+
+    // If all adjacent positions are occupied, return the first direction as fallback
+    // (The caller should handle overlap or try further if needed, but for now this matches existing logic)
+    return {
+        x: startCube.x + CUBE_DIRECTIONS[0].x,
+        y: startCube.y + CUBE_DIRECTIONS[0].y,
+        z: startCube.z + CUBE_DIRECTIONS[0].z,
+    };
 }

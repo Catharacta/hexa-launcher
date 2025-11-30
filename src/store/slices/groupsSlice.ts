@@ -1,6 +1,8 @@
 import { Group, Cell } from '../../types/models';
 import { saveSettings } from '../../utils/tauri';
 import { SCHEMA_VERSION } from './settingsSlice';
+import { createDefaultGroupCells, deleteGroupRecursive } from '../../utils/groupUtils';
+import { findEmptyAdjacentCube, cubeKey } from '../../utils/hexUtils';
 
 export interface GroupsSlice {
     groups: Record<string, Group>;
@@ -41,39 +43,7 @@ export const createGroupsSlice = (set: any, get: any): GroupsSlice => ({
     createGroupFolder: (name, locationCellId) => {
         set((state: any) => {
             const newGroupId = crypto.randomUUID();
-
-            // Create default system cells for the new group
-            const settingsCellId = crypto.randomUUID();
-            const backCellId = crypto.randomUUID();
-            const closeCellId = crypto.randomUUID();
-            const treeCellId = crypto.randomUUID();
-
-            const defaultCells: Cell[] = [
-                {
-                    id: settingsCellId,
-                    type: 'launcher_setting',
-                    cube: { x: 0, y: 0, z: 0 },
-                    title: 'Settings',
-                },
-                {
-                    id: backCellId,
-                    type: 'group_back',
-                    cube: { x: -1, y: 1, z: 0 },
-                    title: 'Back',
-                },
-                {
-                    id: closeCellId,
-                    type: 'group_close',
-                    cube: { x: 1, y: -1, z: 0 },
-                    title: 'Close',
-                },
-                {
-                    id: treeCellId,
-                    type: 'group_tree',
-                    cube: { x: 0, y: -1, z: 1 },
-                    title: 'Tree',
-                },
-            ];
+            const { ids: defaultCellIds, cells: defaultCellsList } = createDefaultGroupCells();
 
             // Check if we should convert an existing cell or create a new one
             const locationCell = locationCellId ? state.cells[locationCellId] : null;
@@ -92,7 +62,7 @@ export const createGroupsSlice = (set: any, get: any): GroupsSlice => ({
                 const newGroup: Group = {
                     id: newGroupId,
                     title: name,
-                    cells: [settingsCellId, backCellId, closeCellId, treeCellId, originalCellCopy.id],
+                    cells: [...defaultCellIds, originalCellCopy.id],
                     parentId: state.activeGroupId ?? undefined
                 };
 
@@ -116,7 +86,7 @@ export const createGroupsSlice = (set: any, get: any): GroupsSlice => ({
                         [locationCell.id]: groupCell,
                         [originalCellCopy.id]: originalCellCopy,
                         // Add default system cells
-                        ...Object.fromEntries(defaultCells.map(cell => [cell.id, cell]))
+                        ...Object.fromEntries(defaultCellsList.map(cell => [cell.id, cell]))
                     }
                 };
 
@@ -137,7 +107,7 @@ export const createGroupsSlice = (set: any, get: any): GroupsSlice => ({
                 const newGroup: Group = {
                     id: newGroupId,
                     title: name,
-                    cells: [settingsCellId, backCellId, closeCellId, treeCellId],
+                    cells: defaultCellIds,
                     parentId: state.activeGroupId ?? undefined
                 };
 
@@ -145,16 +115,6 @@ export const createGroupsSlice = (set: any, get: any): GroupsSlice => ({
                 let newCellCube = { x: 0, y: 0, z: 0 };
 
                 if (locationCell) {
-                    // Try to find an empty adjacent position
-                    const CUBE_DIRECTIONS = [
-                        { x: 1, y: -1, z: 0 },  // E
-                        { x: 1, y: 0, z: -1 },  // SE
-                        { x: 0, y: 1, z: -1 },  // SW
-                        { x: -1, y: 1, z: 0 },  // W
-                        { x: -1, y: 0, z: 1 },  // NW
-                        { x: 0, y: -1, z: 1 },  // NE
-                    ];
-
                     // Get all occupied positions in current view
                     const occupiedPositions = new Set<string>();
                     const cellsToCheck = state.activeGroupId
@@ -163,34 +123,11 @@ export const createGroupsSlice = (set: any, get: any): GroupsSlice => ({
 
                     cellsToCheck.forEach((cell: any) => {
                         if (cell) {
-                            occupiedPositions.add(`${cell.cube.x},${cell.cube.y},${cell.cube.z}`);
+                            occupiedPositions.add(cubeKey(cell.cube));
                         }
                     });
 
-                    // Try each direction from the location cell
-                    let foundEmpty = false;
-                    for (const dir of CUBE_DIRECTIONS) {
-                        const candidate = {
-                            x: locationCell.cube.x + dir.x,
-                            y: locationCell.cube.y + dir.y,
-                            z: locationCell.cube.z + dir.z,
-                        };
-                        const key = `${candidate.x},${candidate.y},${candidate.z}`;
-                        if (!occupiedPositions.has(key)) {
-                            newCellCube = candidate;
-                            foundEmpty = true;
-                            break;
-                        }
-                    }
-
-                    // If all adjacent positions are occupied, use the first direction anyway
-                    if (!foundEmpty) {
-                        newCellCube = {
-                            x: locationCell.cube.x + CUBE_DIRECTIONS[0].x,
-                            y: locationCell.cube.y + CUBE_DIRECTIONS[0].y,
-                            z: locationCell.cube.z + CUBE_DIRECTIONS[0].z,
-                        };
-                    }
+                    newCellCube = findEmptyAdjacentCube(locationCell.cube, occupiedPositions);
                 }
 
                 const newCellId = crypto.randomUUID();
@@ -208,7 +145,7 @@ export const createGroupsSlice = (set: any, get: any): GroupsSlice => ({
                         ...state.cells,
                         [newCellId]: newCell,
                         // Add default system cells
-                        ...Object.fromEntries(defaultCells.map(cell => [cell.id, cell]))
+                        ...Object.fromEntries(defaultCellsList.map(cell => [cell.id, cell]))
                     }
                 };
 
@@ -279,24 +216,7 @@ export const createGroupsSlice = (set: any, get: any): GroupsSlice => ({
         set((state: any) => {
             const newState: any = { cells: { ...state.cells }, groups: { ...state.groups } };
 
-            const deleteGroupRecursive = (targetGroupId: string) => {
-                const group = newState.groups[targetGroupId];
-                if (!group) return;
-
-                group.cells.forEach((childCellId: string) => {
-                    const childCell = newState.cells[childCellId];
-                    if (childCell) {
-                        if (childCell.type === 'group' && childCell.groupId) {
-                            deleteGroupRecursive(childCell.groupId);
-                        }
-                        delete newState.cells[childCellId];
-                    }
-                });
-
-                delete newState.groups[targetGroupId];
-            };
-
-            deleteGroupRecursive(groupId);
+            deleteGroupRecursive(groupId, newState.groups, newState.cells);
 
             const folderCell = Object.values(state.cells).find((c: any) => c.type === 'group' && c.groupId === groupId);
             if (folderCell) {

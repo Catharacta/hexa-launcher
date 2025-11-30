@@ -72,12 +72,32 @@ export interface KeyBindings {
     search: string; // "Ctrl+F"
 }
 
+export interface GeneralSettings {
+    startOnBoot: boolean;
+    language: 'en' | 'ja';
+    windowBehavior: {
+        alwaysOnTop: boolean;
+        hideOnBlur: boolean;
+        showOnMouseEdge: boolean;
+    };
+}
+
+export interface GridSettings {
+    hexSize: number; // Default: 60
+    gapSize: number; // Default: 0? (Currently implicit in hex layout)
+    animationSpeed: 'fast' | 'normal' | 'slow';
+    showLabels: 'always' | 'hover' | 'never';
+    hoverEffect: boolean;
+}
+
 export interface Settings {
     schemaVersion: number;
     cells: Cell[];
     groups: Group[];
     activeGroupId: string | null;
     appearance: AppearanceSettings;
+    general?: GeneralSettings; // New
+    grid?: GridSettings; // New
     hotkeys: Record<string, string>;
     iconCacheIndex: Record<string, string>;
     keyBindings?: KeyBindings; // Optional for backward compatibility
