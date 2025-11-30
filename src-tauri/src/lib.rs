@@ -3,6 +3,9 @@ use std::str::FromStr;
 use tauri::Manager;
 use tauri_plugin_global_shortcut::{GlobalShortcutExt, Shortcut, ShortcutState};
 
+mod startup;
+mod window_behavior;
+
 #[tauri::command]
 fn save_settings(app_handle: tauri::AppHandle, settings: String) -> Result<(), String> {
     let app_dir = app_handle
@@ -349,7 +352,11 @@ pub fn run() {
             save_dropped_file,
             export_settings_json,
             save_settings_to_file,
-            load_settings_from_file
+            load_settings_from_file,
+            startup::set_startup,
+            startup::get_startup_status,
+            window_behavior::set_always_on_top,
+            window_behavior::set_hide_on_blur,
         ])
         .setup(|app| {
             #[cfg(desktop)]
@@ -359,11 +366,20 @@ pub fn run() {
                         .with_handler(|app, _shortcut, event| {
                             if event.state == ShortcutState::Pressed {
                                 if let Some(window) = app.get_webview_window("main") {
-                                    if window.is_visible().unwrap_or(false) {
-                                        let _ = window.hide();
-                                    } else {
-                                        let _ = window.show();
-                                        let _ = window.set_focus();
+                                    match window.is_visible() {
+                                        Ok(true) => {
+                                            let _ = window.hide();
+                                        }
+                                        Ok(false) => {
+                                            let _ = window.show();
+                                            let _ = window.set_focus();
+                                            // Force focus workaround
+                                            let _ = window.set_always_on_top(true);
+                                            let _ = window.set_always_on_top(false);
+                                        }
+                                        Err(e) => {
+                                            eprintln!("Failed to check window visibility: {}", e);
+                                        }
                                     }
                                 }
                             }

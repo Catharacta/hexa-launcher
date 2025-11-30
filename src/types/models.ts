@@ -90,6 +90,19 @@ export interface GridSettings {
     hoverEffect: boolean;
 }
 
+export interface SecuritySettings {
+    requireAdminConfirmation: boolean;  // 管理者権限アプリの起動確認
+    showLaunchConfirmation: boolean;    // すべてのアプリ起動前に確認
+    trustedPaths: string[];             // 信頼できるパスのリスト
+}
+
+export interface AdvancedSettings {
+    debugMode: boolean;              // デバッグモード
+    showPerformanceMetrics: boolean; // パフォーマンスメトリクス表示
+    customCSS: string;               // カスタムCSS
+    disableAnimations: boolean;      // アニメーション無効化
+}
+
 export interface Settings {
     schemaVersion: number;
     cells: Cell[];
@@ -98,6 +111,8 @@ export interface Settings {
     appearance: AppearanceSettings;
     general?: GeneralSettings; // New
     grid?: GridSettings; // New
+    security?: SecuritySettings; // New
+    advanced?: AdvancedSettings; // New
     hotkeys: Record<string, string>;
     iconCacheIndex: Record<string, string>;
     keyBindings?: KeyBindings; // Optional for backward compatibility

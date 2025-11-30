@@ -1,7 +1,7 @@
 import { RefObject } from 'react';
 import { useLauncherStore } from '../../../store/launcherStore';
 import { Cell } from '../../../types/models';
-import { launchApp, hideWindow } from '../../../utils/tauri';
+import { launchAppWithSecurity, hideWindow } from '../../../utils/tauri';
 import { cubeToPixel, cubeAdd, cubeKey, CUBE_DIRECTIONS, detectEdgeIndex, HEX_SIZE } from '../../../utils/hexUtils';
 
 export const useCellHandlers = (
@@ -73,9 +73,9 @@ export const useCellHandlers = (
             addCell(newCell);
         } else {
             if (cell.type === 'app' && cell.target) {
-                launchApp(cell.target, cell.args, cell.workingDir).catch(console.error);
+                launchAppWithSecurity(cell.target, cell.args, cell.workingDir).catch(console.error);
             } else if (cell.type === 'shortcut' && cell.shortcut?.targetPath) {
-                launchApp(cell.shortcut.targetPath, cell.shortcut.arguments, cell.shortcut.workingDirectory).catch(console.error);
+                launchAppWithSecurity(cell.shortcut.targetPath, cell.shortcut.arguments, cell.shortcut.workingDirectory).catch(console.error);
             } else if (cell.type === 'launcher_setting') {
                 useLauncherStore.getState().setSettingsOpen(true);
             } else if (cell.type === 'group' && cell.groupId) {

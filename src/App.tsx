@@ -3,7 +3,8 @@ import { HexGrid } from './components/HexGrid';
 import { SettingsModal } from './components/Settings/SettingsModal';
 import { TreeModal } from './components/TreeModal';
 import { ErrorBoundary } from './components/ErrorBoundary';
-import { loadSettings } from './utils/tauri';
+import { CustomCSSInjector } from './components/CustomCSSInjector';
+import { loadSettings, hideWindow } from './utils/tauri';
 import { useLauncherStore } from './store/launcherStore';
 
 function App() {
@@ -12,6 +13,7 @@ function App() {
   const cells = useLauncherStore(state => state.cells);
   const groups = useLauncherStore(state => state.groups);
   const opacity = useLauncherStore(state => state.appearance.opacity);
+  const hideOnBlur = useLauncherStore(state => state.general.windowBehavior.hideOnBlur);
 
   // ------------------------------------------------------------
   // 設定を読み込む
@@ -55,8 +57,21 @@ function App() {
     };
   }, []);
 
+  // Hide on Blur
+  useEffect(() => {
+    if (!hideOnBlur) return;
+
+    const handleBlur = () => {
+      hideWindow().catch(console.error);
+    };
+
+    window.addEventListener('blur', handleBlur);
+    return () => window.removeEventListener('blur', handleBlur);
+  }, [hideOnBlur]);
+
   return (
     <ErrorBoundary>
+      <CustomCSSInjector />
       <div
         className="w-full h-screen relative transition-opacity duration-300"
         style={{ backgroundColor: `rgba(17, 24, 39, ${opacity ?? 0.9})` }}
