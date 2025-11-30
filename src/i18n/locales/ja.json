@@ -1,0 +1,69 @@
+{
+    "app": {
+        "title": "Hexa Launcher"
+    },
+    "settings": {
+        "title": "設定",
+        "general": "一般",
+        "appearance": "外観",
+        "keybinding": "キーバインド",
+        "cellManager": "セル管理",
+        "persistence": "永続化",
+        "security": "セキュリティ",
+        "advanced": "詳細設定",
+        "help": "ヘルプ"
+    },
+    "general": {
+        "startOnBoot": "起動時に自動起動",
+        "language": "言語",
+        "windowBehavior": "ウィンドウ動作",
+        "alwaysOnTop": "常に最前面",
+        "hideOnBlur": "フォーカス喪失時に隠す",
+        "showOnMouseEdge": "マウスが画面端に来たら表示"
+    },
+    "contextMenu": {
+        "editDetails": "詳細編集",
+        "editShortcutFile": "ショートカット編集（ファイル）",
+        "editShortcutFolder": "ショートカット編集（フォルダ）",
+        "createGroup": "グループ作成",
+        "createSpecialCell": "特殊セル作成...",
+        "delete": "削除",
+        "renameGroup": "グループ名変更",
+        "deleteGroup": "グループ削除",
+        "back": "← 戻る",
+        "tree": "ツリー",
+        "close": "閉じる"
+    },
+    "cellEditDialog": {
+        "title": "セル編集",
+        "name": "名前",
+        "targetPath": "ターゲットパス",
+        "arguments": "引数",
+        "workingDirectory": "作業ディレクトリ",
+        "browse": "参照",
+        "cancel": "キャンセル",
+        "save": "保存",
+        "nameRequired": "名前は必須です",
+        "updateSuccess": "セルを更新しました",
+        "readOnly": "読み取り専用",
+        "argumentsExample": "例: --fullscreen --debug",
+        "workingDirectoryExample": "例: C:\\Users\\Name\\Documents"
+    },
+    "toast": {
+        "error": {
+            "launchFailed": "アプリの起動に失敗しました: {{error}}",
+            "filePathNotFound": "ファイルパスを取得できませんでした",
+            "failedToCreateShortcut": "ショートカットの作成に失敗しました",
+            "failedToOpenDirectoryBrowser": "ディレクトリブラウザを開けませんでした"
+        },
+        "warning": {
+            "dropTargetTooFar": "ドロップ位置がセルから遠すぎます",
+            "noVisibleCells": "表示可能なセルがありません",
+            "cannotModifySettingsCell": "設定セルは変更できません",
+            "cannotModifyNavigationCell": "ナビゲーションセルは変更できません"
+        },
+        "success": {
+            "shortcutCreated": "ショートカットを作成しました: {{name}}"
+        }
+    }
+}

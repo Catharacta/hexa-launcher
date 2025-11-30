@@ -1,13 +1,49 @@
+export interface Toast {
+    id: string;
+    message: string;
+    type: 'success' | 'error' | 'info' | 'warning';
+    duration?: number;
+}
+
 export interface UiSlice {
     isSettingsOpen: boolean;
     treeModalOpen: boolean;
+    cellEditDialogOpen: boolean;
+    editingCellId: string | null;
+    toasts: Toast[];
     setSettingsOpen: (isOpen: boolean) => void;
     setTreeModalOpen: (isOpen: boolean) => void;
+    setCellEditDialogOpen: (isOpen: boolean, cellId?: string) => void;
+    addToast: (message: string, type?: Toast['type'], duration?: number) => void;
+    removeToast: (id: string) => void;
 }
 
 export const createUiSlice = (set: any, _get: any): UiSlice => ({
     isSettingsOpen: false,
     treeModalOpen: false,
+    cellEditDialogOpen: false,
+    editingCellId: null,
+    toasts: [],
     setSettingsOpen: (isOpen) => set({ isSettingsOpen: isOpen }),
     setTreeModalOpen: (isOpen) => set({ treeModalOpen: isOpen }),
+    setCellEditDialogOpen: (isOpen, cellId) => set({
+        cellEditDialogOpen: isOpen,
+        editingCellId: isOpen ? cellId || null : null
+    }),
+    addToast: (message, type = 'info', duration = 3000) => {
+        const id = Math.random().toString(36).substring(2, 9);
+        set((state: any) => ({
+            toasts: [...state.toasts, { id, message, type, duration }]
+        }));
+        if (duration > 0) {
+            setTimeout(() => {
+                set((state: any) => ({
+                    toasts: state.toasts.filter((t: Toast) => t.id !== id)
+                }));
+            }, duration);
+        }
+    },
+    removeToast: (id) => set((state: any) => ({
+        toasts: state.toasts.filter((t: Toast) => t.id !== id)
+    })),
 });

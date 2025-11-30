@@ -1,6 +1,7 @@
 import { invoke } from '@tauri-apps/api/core';
 import { Settings } from '../types/models';
 import { useLauncherStore } from '../store/launcherStore';
+import i18n from '../i18n/config';
 
 // 保存
 export async function saveSettings(settings: Settings): Promise<void> {
@@ -45,6 +46,7 @@ export async function launchAppWithSecurity(
 ): Promise<void> {
     const security = useLauncherStore.getState().security;
     const trustedPaths = security.trustedPaths;
+    const { addToast } = useLauncherStore.getState();
 
     // 信頼できるパスチェック
     const isTrusted = trustedPaths.some(trustedPath =>
@@ -74,7 +76,12 @@ export async function launchAppWithSecurity(
     }
 
     // アプリ起動
-    await launchApp(path, args, workingDir);
+    try {
+        await launchApp(path, args, workingDir);
+    } catch (error) {
+        console.error('Launch failed:', error);
+        addToast(i18n.t('toast.error.launchFailed', { error: String(error) }), 'error');
+    }
 }
 
 // ショートカット解決

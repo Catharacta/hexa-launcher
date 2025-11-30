@@ -1,0 +1,69 @@
+{
+    "app": {
+        "title": "Hexa Launcher"
+    },
+    "settings": {
+        "title": "Settings",
+        "general": "General",
+        "appearance": "Appearance",
+        "keybinding": "Keybinding",
+        "cellManager": "Cell Manager",
+        "persistence": "Persistence",
+        "security": "Security",
+        "advanced": "Advanced",
+        "help": "Help"
+    },
+    "general": {
+        "startOnBoot": "Start on Boot",
+        "language": "Language",
+        "windowBehavior": "Window Behavior",
+        "alwaysOnTop": "Always on Top",
+        "hideOnBlur": "Hide on Blur",
+        "showOnMouseEdge": "Show on Mouse Edge"
+    },
+    "contextMenu": {
+        "editDetails": "Edit Details",
+        "editShortcutFile": "Edit Shortcut (File)",
+        "editShortcutFolder": "Edit Shortcut (Folder)",
+        "createGroup": "Create Group Here",
+        "createSpecialCell": "Create Special Cell...",
+        "delete": "Delete",
+        "renameGroup": "Rename Group",
+        "deleteGroup": "Delete Group",
+        "back": "← Back",
+        "tree": "Tree",
+        "close": "Close"
+    },
+    "cellEditDialog": {
+        "title": "Edit Cell",
+        "name": "Name",
+        "targetPath": "Target Path",
+        "arguments": "Arguments",
+        "workingDirectory": "Working Directory",
+        "browse": "Browse",
+        "cancel": "Cancel",
+        "save": "Save",
+        "nameRequired": "Name cannot be empty",
+        "updateSuccess": "Cell updated successfully",
+        "readOnly": "Read-only",
+        "argumentsExample": "Example: --fullscreen --debug",
+        "workingDirectoryExample": "Example: C:\\Users\\Name\\Documents"
+    },
+    "toast": {
+        "error": {
+            "launchFailed": "Failed to launch app: {{error}}",
+            "filePathNotFound": "Could not get file path",
+            "failedToCreateShortcut": "Failed to create shortcut",
+            "failedToOpenDirectoryBrowser": "Failed to open directory browser"
+        },
+        "warning": {
+            "dropTargetTooFar": "Drop target too far from any cell",
+            "noVisibleCells": "No visible cells to drop onto",
+            "cannotModifySettingsCell": "Cannot modify settings cell",
+            "cannotModifyNavigationCell": "Cannot modify navigation cell"
+        },
+        "success": {
+            "shortcutCreated": "Shortcut created: {{name}}"
+        }
+    }
+}

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useLauncherStore } from '../../store/launcherStore';
 import { clsx } from 'clsx';
 import { THEMES } from '../../utils/theme';
@@ -12,12 +13,14 @@ import {
     loadSettingsFromFile,
     saveSettings
 } from '../../utils/tauri';
+import i18n from '../../i18n/config';
 
 export interface SettingsTabProps {
     isActive: boolean;
 }
 
 export const GeneralTab: React.FC<SettingsTabProps> = ({ isActive }) => {
+    const { t } = useTranslation();
     const general = useLauncherStore(state => state.general);
     const setGeneralSettings = useLauncherStore(state => state.setGeneralSettings);
     const resetGeneralSettings = useLauncherStore(state => state.resetGeneralSettings);
@@ -68,7 +71,7 @@ export const GeneralTab: React.FC<SettingsTabProps> = ({ isActive }) => {
     return (
         <div className="p-4 space-y-6">
             <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold text-white">General Settings</h2>
+                <h2 className="text-xl font-bold text-white">{t('settings.general')}</h2>
                 <button
                     onClick={resetGeneralSettings}
                     className="text-xs text-red-400 hover:text-red-300 underline"
@@ -80,7 +83,7 @@ export const GeneralTab: React.FC<SettingsTabProps> = ({ isActive }) => {
             {/* Start on Boot */}
             <div className="flex items-center justify-between">
                 <div>
-                    <label className="block text-sm font-medium text-white">Start on Boot</label>
+                    <label className="block text-sm font-medium text-white">{t('general.startOnBoot')}</label>
                     <p className="text-xs text-gray-400">Launch Hexa Launcher when Windows starts</p>
                 </div>
                 <button
@@ -100,12 +103,12 @@ export const GeneralTab: React.FC<SettingsTabProps> = ({ isActive }) => {
 
             {/* Window Behavior */}
             <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-300">Window Behavior</h3>
+                <h3 className="text-lg font-semibold text-gray-300">{t('general.windowBehavior')}</h3>
 
                 {/* Always on Top */}
                 <div className="flex items-center justify-between">
                     <div>
-                        <label className="block text-sm font-medium text-white">Always on Top</label>
+                        <label className="block text-sm font-medium text-white">{t('general.alwaysOnTop')}</label>
                         <p className="text-xs text-gray-400">Keep launcher above other windows</p>
                     </div>
                     <input
@@ -119,7 +122,7 @@ export const GeneralTab: React.FC<SettingsTabProps> = ({ isActive }) => {
                 {/* Hide on Blur */}
                 <div className="flex items-center justify-between">
                     <div>
-                        <label className="block text-sm font-medium text-white">Hide on Blur</label>
+                        <label className="block text-sm font-medium text-white">{t('general.hideOnBlur')}</label>
                         <p className="text-xs text-gray-400">Hide launcher when it loses focus</p>
                     </div>
                     <input
@@ -133,7 +136,7 @@ export const GeneralTab: React.FC<SettingsTabProps> = ({ isActive }) => {
                 {/* Show on Mouse Edge */}
                 <div className="flex items-center justify-between">
                     <div>
-                        <label className="block text-sm font-medium text-white">Show on Mouse Edge</label>
+                        <label className="block text-sm font-medium text-white">{t('general.showOnMouseEdge')}</label>
                         <p className="text-xs text-gray-400">Show launcher when mouse reaches screen edge</p>
                     </div>
                     <input
@@ -147,10 +150,14 @@ export const GeneralTab: React.FC<SettingsTabProps> = ({ isActive }) => {
 
             {/* Language */}
             <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Language</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">{t('general.language')}</label>
                 <select
                     value={general.language}
-                    onChange={(e) => setGeneralSettings({ language: e.target.value as 'en' | 'ja' })}
+                    onChange={(e) => {
+                        const newLang = e.target.value as 'en' | 'ja';
+                        setGeneralSettings({ language: newLang });
+                        i18n.changeLanguage(newLang);
+                    }}
                     className="w-full bg-gray-700 border border-gray-600 text-white rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-500"
                 >
                     <option value="en">English</option>
@@ -395,7 +402,7 @@ export const PersistenceTab: React.FC<SettingsTabProps> = ({ isActive }) => {
             }
 
             // Export settings
-            // const { exportSettingsJson, saveSettingsToFile } = await import('../../utils/tauri');
+            // const {exportSettingsJson, saveSettingsToFile} = await import('../../utils/tauri');
             const settingsJson = await exportSettingsJson();
             await saveSettingsToFile(filePath, settingsJson);
 
@@ -426,7 +433,7 @@ export const PersistenceTab: React.FC<SettingsTabProps> = ({ isActive }) => {
             }
 
             // Load settings from file
-            // const { loadSettingsFromFile, saveSettings } = await import('../../utils/tauri');
+            // const {loadSettingsFromFile, saveSettings} = await import('../../utils/tauri');
             const settingsJson = await loadSettingsFromFile(filePath as string);
             const settings = JSON.parse(settingsJson);
 
@@ -460,7 +467,7 @@ export const PersistenceTab: React.FC<SettingsTabProps> = ({ isActive }) => {
 
     const handleCopyToClipboard = async () => {
         try {
-            // const { exportSettingsJson } = await import('../../utils/tauri');
+            // const {exportSettingsJson} = await import('../../utils/tauri');
             const settingsJson = await exportSettingsJson();
             await navigator.clipboard.writeText(settingsJson);
             alert('Settings copied to clipboard!');
@@ -500,7 +507,7 @@ export const PersistenceTab: React.FC<SettingsTabProps> = ({ isActive }) => {
             }
 
             // Import settings
-            // const { saveSettings } = await import('../../utils/tauri');
+            // const {saveSettings} = await import('../../utils/tauri');
             await saveSettings(settings);
             setLastImport(new Date().toLocaleString());
             alert('Settings imported successfully! Please reload the app.');

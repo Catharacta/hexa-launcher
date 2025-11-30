@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useLauncherStore } from '../store/launcherStore';
 import { openDialog, getFileIcon } from '../utils/tauri';
+import { useTranslation } from 'react-i18next';
 
 interface ContextMenuProps {
     x: number;
@@ -10,6 +11,7 @@ interface ContextMenuProps {
 }
 
 export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, cellId, onClose }) => {
+    const { t } = useTranslation();
     const menuRef = useRef<HTMLDivElement>(null);
     const cell = useLauncherStore(state => state.cells[cellId]);
     const removeCell = useLauncherStore(state => state.removeCell);
@@ -162,20 +164,20 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, cellId, onClose 
                 : 'bg-gray-800/90 border-gray-700 text-white'
                 }`}
             style={{ top: y, left: x }}
-            onMouseDown={(e) => e.stopPropagation()} // Prevent closing when clicking inside
+            onMouseDown={(e) => e.stopPropagation()}
         >
             <div className="py-1">
                 {showSpecialSubmenu ? (
                     <>
                         <button onClick={() => setShowSpecialSubmenu(false)} className={itemClass}>
-                            ← Back
+                            {t('contextMenu.back')}
                         </button>
                         <div className={`border-t ${isCyberpunk ? 'border-[#00f2ea]/30' : 'border-gray-600'} my-1`}></div>
                         <button onClick={() => handleCreateSpecialCell('group_tree')} className={itemClass}>
-                            Tree
+                            {t('contextMenu.tree')}
                         </button>
                         <button onClick={() => handleCreateSpecialCell('group_close')} className={itemClass}>
-                            Close
+                            {t('contextMenu.close')}
                         </button>
                         {activeGroupId && (
                             <button onClick={() => handleCreateSpecialCell('group_back')} className={itemClass}>
@@ -188,34 +190,44 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, cellId, onClose 
                         {cell.type === 'group' && (
                             <>
                                 <button onClick={handleRename} className={itemClass}>
-                                    Rename Group
+                                    {t('contextMenu.renameGroup')}
                                 </button>
                                 <button onClick={handleDelete} className={deleteClass}>
-                                    Delete Group
+                                    {t('contextMenu.deleteGroup')}
                                 </button>
                             </>
                         )}
 
                         {cell.type !== 'group' && (
                             <>
+                                <button onClick={(e) => {
+                                    e.stopPropagation();
+                                    useLauncherStore.getState().setCellEditDialogOpen(true, cellId);
+                                    onClose();
+                                }} className={itemClass}>
+                                    {t('contextMenu.editDetails')}
+                                </button>
+
+                                <div className={`border-t ${isCyberpunk ? 'border-[#00f2ea]/30' : 'border-gray-600'} my-1`}></div>
+
                                 <button onClick={handleEditShortcut} className={itemClass}>
-                                    Edit Shortcut (File)
+                                    {t('contextMenu.editShortcutFile')}
                                 </button>
 
                                 <button onClick={handleEditShortcutFolder} className={itemClass}>
-                                    Edit Shortcut (Folder)
+                                    {t('contextMenu.editShortcutFolder')}
                                 </button>
 
                                 <button onClick={handleCreateGroup} className={itemClass}>
-                                    Create Group Here
+                                    {t('contextMenu.createGroup')}
                                 </button>
 
                                 <button onClick={() => setShowSpecialSubmenu(true)} className={itemClass}>
-                                    Create Special Cell...
+                                    {t('contextMenu.createSpecialCell')}
                                 </button>
 
                                 <button onClick={handleDelete} className={deleteClass}>
-                                    Delete
+                                    {t('contextMenu.delete')}
                                 </button>
                             </>
                         )}

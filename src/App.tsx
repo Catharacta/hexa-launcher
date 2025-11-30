@@ -4,8 +4,12 @@ import { SettingsModal } from './components/Settings/SettingsModal';
 import { TreeModal } from './components/TreeModal';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { CustomCSSInjector } from './components/CustomCSSInjector';
+import { ToastContainer } from './components/ToastContainer';
+import { CellEditDialog } from './components/CellEditDialog';
 import { loadSettings, hideWindow } from './utils/tauri';
 import { useLauncherStore } from './store/launcherStore';
+import './i18n/config'; // Initialize i18n
+import i18n from './i18n/config';
 
 function App() {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -69,6 +73,12 @@ function App() {
     return () => window.removeEventListener('blur', handleBlur);
   }, [hideOnBlur]);
 
+  // Set language from settings
+  useEffect(() => {
+    const language = useLauncherStore.getState().general.language;
+    i18n.changeLanguage(language);
+  }, []);
+
   return (
     <ErrorBoundary>
       <CustomCSSInjector />
@@ -79,6 +89,8 @@ function App() {
         <HexGrid />
         <SettingsModal />
         <TreeModal />
+        <CellEditDialog />
+        <ToastContainer />
         <div className="absolute top-0 left-0 p-2 text-white text-xs pointer-events-none">
           Cells: {Object.keys(cells).length} | Groups: {Object.keys(groups).length} | Loaded:{' '}
           {isLoaded ? 'Yes' : 'No'}

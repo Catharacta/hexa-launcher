@@ -33,6 +33,7 @@ export const useFileDropHandler = (svgRef: RefObject<SVGSVGElement | null>) => {
 
             if (!filePath) {
                 console.warn('File path not found in HTML5 drop event.');
+                useLauncherStore.getState().addToast('Could not get file path', 'error');
                 return;
             }
 
@@ -119,6 +120,7 @@ export const useFileDropHandler = (svgRef: RefObject<SVGSVGElement | null>) => {
         // --- Common Processing Logic ---
         const processFileDrop = async (filePath: string, x: number, y: number) => {
             console.log('Processing file drop:', filePath, 'at', x, y);
+            const { addToast } = useLauncherStore.getState();
 
             // Find the closest cell within range
             const state = useLauncherStore.getState();
@@ -129,6 +131,11 @@ export const useFileDropHandler = (svgRef: RefObject<SVGSVGElement | null>) => {
                 : state.rootCellIds.map(id => state.cells[id]).filter(Boolean);
 
             console.log('Visible cells count:', visibleCells.length);
+
+            if (visibleCells.length === 0) {
+                addToast('No visible cells to drop onto', 'warning');
+                return;
+            }
 
             let targetCell = null;
             let minDist = Infinity; // Start with Infinity to find absolute closest
@@ -142,7 +149,7 @@ export const useFileDropHandler = (svgRef: RefObject<SVGSVGElement | null>) => {
                 const { x: cellX, y: cellY } = cubeToPixel(cell.cube, HEX_SIZE);
                 const dist = Math.sqrt(Math.pow(cellX - dropX, 2) + Math.pow(cellY - dropY, 2));
 
-                console.log(`Cell ${cell.id}: pos(${Math.round(cellX)},${Math.round(cellY)}) dist=${Math.round(dist)}`);
+                // console.log(`Cell ${cell.id}: pos(${Math.round(cellX)},${Math.round(cellY)}) dist=${Math.round(dist)}`);
 
                 if (dist < minDist) {
                     minDist = dist;
@@ -155,29 +162,41 @@ export const useFileDropHandler = (svgRef: RefObject<SVGSVGElement | null>) => {
             // Only accept if within threshold
             if (minDist > THRESHOLD) {
                 console.log(`Closest cell is too far (> ${THRESHOLD})`);
-                targetCell = null;
+                addToast('Drop target too far from any cell', 'warning');
+                return;
             }
 
             const fileName = filePath.split(/[\\\/]/).pop()?.replace(/\.(exe|lnk|url)$/i, '') || 'App';
-            const icon = await getFileIcon(filePath);
 
-            if (targetCell) {
-                if (targetCell.type === 'launcher_setting') return;
-                if (['group_back', 'group_close', 'group_tree'].includes(targetCell.type)) return;
+            try {
+                const icon = await getFileIcon(filePath);
 
-                console.log('Updating cell:', targetCell.id);
-                state.updateCell(targetCell.id, {
-                    type: 'shortcut',
-                    title: fileName,
-                    icon: icon || undefined,
-                    shortcut: {
-                        kind: 'file',
-                        targetPath: filePath,
-                    },
-                    target: filePath
-                });
-            } else {
-                console.log('No cell within range at drop position. Ignoring drop.');
+                if (targetCell) {
+                    if (targetCell.type === 'launcher_setting') {
+                        addToast('Cannot modify settings cell', 'warning');
+                        return;
+                    }
+                    if (['group_back', 'group_close', 'group_tree'].includes(targetCell.type)) {
+                        addToast('Cannot modify navigation cell', 'warning');
+                        return;
+                    }
+
+                    console.log('Updating cell:', targetCell.id);
+                    state.updateCell(targetCell.id, {
+                        type: 'shortcut',
+                        title: fileName,
+                        icon: icon || undefined,
+                        shortcut: {
+                            kind: 'file',
+                            targetPath: filePath,
+                        },
+                        target: filePath
+                    });
+                    addToast(`Shortcut created: ${fileName}`, 'success');
+                }
+            } catch (error) {
+                console.error('Failed to process file drop:', error);
+                addToast('Failed to create shortcut', 'error');
             }
         };
 
