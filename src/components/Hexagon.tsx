@@ -82,20 +82,20 @@ export const Hexagon: React.FC<HexagonProps> = ({
                 className={clsx(
                     "stroke-2 transition-all duration-200",
                     isCyberpunk ? "fill-[#0d0d0d] cyberpunk-cell" : "fill-gray-800",
-                    hoverEffect && !isCyberpunk && "hover:fill-gray-700 hover:stroke-[3px] group-hover:filter",
+                    (hoverEffect && !isCyberpunk) && "hover:fill-gray-700 hover:stroke-[3px] group-hover:filter",
                     isCyberpunk ? "stroke-[#00f2ea]" : theme.stroke,
                     layerClass === 'cyberpunk-glitch-layer-1' && "fill-purple-900 stroke-purple-500",
                     layerClass === 'cyberpunk-glitch-layer-2' && "fill-cyan-900 stroke-cyan-500",
                     isDragTarget && "stroke-[4px] stroke-white filter drop-shadow(0 0 8px rgba(255,255,255,0.8))",
-                    isSelected && !isCyberpunk && "fill-gray-700 stroke-[4px] animate-pulse",
-                    isSelected && isCyberpunk && "fill-gray-700 stroke-[4px] stroke-[#00f2ea] animate-pulse",
+                    isSelected && !isCyberpunk && "fill-gray-700 stroke-[3px]",
+                    isSelected && isCyberpunk && "stroke-[#00f2ea]",
                     isSearchMatch && "stroke-[4px] stroke-yellow-400 filter drop-shadow(0 0 10px rgba(250,204,21,0.8))"
                 )}
                 style={{
                     opacity: isSearchActive && !isSearchMatch ? 0.3 : 1,
                     ...(isSelected && !isCyberpunk ? {
                         stroke: theme.color,
-                        filter: `drop-shadow(0 0 12px ${theme.color}99)`
+                        filter: `drop-shadow(0 0 8px ${theme.color}80)`
                     } : {})
                 }}
             />
@@ -106,7 +106,8 @@ export const Hexagon: React.FC<HexagonProps> = ({
                     <div className={clsx(
                         "transition-transform duration-200 flex items-center justify-center",
                         showLabel === 'always' && "mb-1",
-                        showLabel === 'hover' && "group-hover:-translate-y-2"
+                        showLabel === 'hover' && "group-hover:-translate-y-2",
+                        showLabel === 'hover' && isSelected && "-translate-y-2"
                     )}>
                         {cell.type === 'launcher_setting' ? (
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={clsx("w-8 h-8", isCyberpunk ? "text-[#00f2ea]" : theme.text)}>
@@ -139,7 +140,10 @@ export const Hexagon: React.FC<HexagonProps> = ({
                                 "text-[10px] truncate w-full px-1 transition-all duration-200",
                                 isCyberpunk ? "text-[#00f2ea]" : theme.textLight,
                                 showLabel === 'hover'
-                                    ? "absolute bottom-1 left-0 right-0 opacity-0 group-hover:opacity-100"
+                                    ? clsx(
+                                        "absolute bottom-1 left-0 right-0 opacity-0 group-hover:opacity-100",
+                                        isSelected && "opacity-100"
+                                    )
                                     : "opacity-100"
                             )}
                         >

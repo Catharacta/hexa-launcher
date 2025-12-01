@@ -6,7 +6,7 @@ export interface SelectionSlice {
 }
 
 export const createSelectionSlice = (set: any, _get: any): SelectionSlice => ({
-    selectedCellIds: [],
+    selectedCellIds: ['root-center'],
     selectCell: (id, multi) => {
         set((state: any) => {
             if (multi) {
