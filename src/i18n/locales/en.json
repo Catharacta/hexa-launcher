@@ -70,6 +70,7 @@
         "animationSpeed": "Animation Speed",
         "showLabels": "Show Labels",
         "hoverEffect": "Hover Effect",
+        "enableAnimations": "Enable Animations",
         "speed": {
             "fast": "Fast",
             "normal": "Normal",

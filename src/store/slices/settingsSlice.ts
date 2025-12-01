@@ -39,6 +39,7 @@ const DEFAULT_GRID_SETTINGS: GridSettings = {
     animationSpeed: 'normal',
     showLabels: 'hover',
     hoverEffect: true,
+    enableAnimations: true,
 };
 
 const DEFAULT_SECURITY_SETTINGS: SecuritySettings = {

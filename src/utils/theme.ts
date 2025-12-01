@@ -55,6 +55,30 @@ export const THEMES: Record<string, ThemeDefinition> = {
         stroke: "stroke-red-500 hover:stroke-red-400 group-hover:drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]",
         text: "text-red-400",
         textLight: "text-red-100"
+    },
+    pink: {
+        name: 'pink',
+        label: 'Pink',
+        color: '#ec4899',
+        stroke: "stroke-pink-500 hover:stroke-pink-400 group-hover:drop-shadow-[0_0_8px_rgba(236,72,153,0.5)]",
+        text: "text-pink-400",
+        textLight: "text-pink-100"
+    },
+    yellow: {
+        name: 'yellow',
+        label: 'Yellow',
+        color: '#eab308',
+        stroke: "stroke-yellow-500 hover:stroke-yellow-400 group-hover:drop-shadow-[0_0_8px_rgba(234,179,8,0.5)]",
+        text: "text-yellow-400",
+        textLight: "text-yellow-100"
+    },
+    slate: {
+        name: 'slate',
+        label: 'Slate',
+        color: '#64748b',
+        stroke: "stroke-slate-400 hover:stroke-slate-300 group-hover:drop-shadow-[0_0_8px_rgba(148,163,184,0.5)]",
+        text: "text-slate-400",
+        textLight: "text-slate-100"
     }
 };
 

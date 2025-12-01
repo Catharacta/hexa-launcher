@@ -57,7 +57,7 @@ export const HexGrid: React.FC = () => {
         : rootCellIds.map(id => cellsMap[id]).filter(Boolean);
 
     // Custom Hooks
-    useFileDropHandler(svgRef);
+    const { hoveredCellId: fileDropHoveredCellId } = useFileDropHandler(svgRef);
     useKeyboardShortcuts();
 
     const {
@@ -133,6 +133,7 @@ export const HexGrid: React.FC = () => {
                         const isBeingDragged = cell.id === draggedCellId;
                         const isSwapTarget = cell.id === hoveredTargetCellId;
                         const isSelected = selectedCellIds.includes(cell.id);
+                        const isFileDropTarget = cell.id === fileDropHoveredCellId;
                         return (
                             <Hexagon
                                 key={cell.id}
@@ -145,7 +146,7 @@ export const HexGrid: React.FC = () => {
                                 onMouseDown={(e) => handleMouseDown(cell, e)}
                                 themeColor={appearance.themeColor}
                                 isDragging={isBeingDragged}
-                                isDragTarget={isSwapTarget}
+                                isDragTarget={isSwapTarget || isFileDropTarget}
                                 isSelected={isSelected}
                                 showLabel={grid.showLabels}
                                 hoverEffect={grid.hoverEffect}

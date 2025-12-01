@@ -1,9 +1,11 @@
-import { useEffect, RefObject } from 'react';
+import { useEffect, RefObject, useState } from 'react';
 import { useLauncherStore } from '../../../store/launcherStore';
 import { cubeToPixel, HEX_SIZE } from '../../../utils/hexUtils';
 import { getFileIcon } from '../../../utils/tauri';
 
 export const useFileDropHandler = (svgRef: RefObject<SVGSVGElement | null>) => {
+    const [hoveredCellId, setHoveredCellId] = useState<string | null>(null);
+
     useEffect(() => {
         let unlistenDrop: (() => void) | undefined;
 
@@ -14,13 +16,61 @@ export const useFileDropHandler = (svgRef: RefObject<SVGSVGElement | null>) => {
             if (e.dataTransfer) {
                 e.dataTransfer.dropEffect = 'copy';
             }
-            console.log('HTML5 DragOver event fired');
+
+            // Track hovered cell for visual feedback
+            const svg = svgRef.current;
+            if (svg) {
+                const point = svg.createSVGPoint();
+                point.x = e.clientX;
+                point.y = e.clientY;
+                const ctm = svg.getScreenCTM();
+                let finalX = 0;
+                let finalY = 0;
+
+                if (ctm) {
+                    const svgPoint = point.matrixTransform(ctm.inverse());
+                    finalX = svgPoint.x;
+                    finalY = svgPoint.y;
+                } else {
+                    finalX = e.clientX - window.innerWidth / 2;
+                    finalY = e.clientY - window.innerHeight / 2;
+                }
+
+                // Find closest cell
+                const state = useLauncherStore.getState();
+                const visibleCells = state.activeGroupId
+                    ? (state.groups[state.activeGroupId]?.cells.map(id => state.cells[id]).filter(Boolean) || [])
+                    : state.rootCellIds.map(id => state.cells[id]).filter(Boolean);
+
+                let closestCell = null;
+                let minDist = Infinity;
+                const THRESHOLD = HEX_SIZE * 1.5;
+
+                for (const cell of visibleCells) {
+                    const { x: cellX, y: cellY } = cubeToPixel(cell.cube, HEX_SIZE);
+                    const dist = Math.sqrt(Math.pow(cellX - finalX, 2) + Math.pow(cellY - finalY, 2));
+                    if (dist < minDist && dist < THRESHOLD) {
+                        minDist = dist;
+                        closestCell = cell;
+                    }
+                }
+
+                setHoveredCellId(closestCell?.id || null);
+            }
+        };
+
+        const handleDragLeave = (e: DragEvent) => {
+            // Clear hover state when leaving window
+            if (e.target === document.body || e.target === document.documentElement) {
+                setHoveredCellId(null);
+            }
         };
 
         const handleDrop = async (e: DragEvent) => {
             console.log('HTML5 Drop event fired');
             e.preventDefault();
             e.stopPropagation();
+            setHoveredCellId(null);
 
             const files = e.dataTransfer?.files;
             if (!files || files.length === 0) {
@@ -202,13 +252,17 @@ export const useFileDropHandler = (svgRef: RefObject<SVGSVGElement | null>) => {
 
         // Attach listeners
         window.addEventListener('dragover', handleDragOver);
+        window.addEventListener('dragleave', handleDragLeave);
         window.addEventListener('drop', handleDrop);
         setupTauriListener();
 
         return () => {
             window.removeEventListener('dragover', handleDragOver);
+            window.removeEventListener('dragleave', handleDragLeave);
             window.removeEventListener('drop', handleDrop);
             if (unlistenDrop) unlistenDrop();
         };
     }, []);
+
+    return { hoveredCellId };
 };

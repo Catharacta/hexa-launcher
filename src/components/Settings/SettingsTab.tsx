@@ -375,6 +375,17 @@ export const CellManagerTab: React.FC<SettingsTabProps> = ({ isActive }) => {
                     className="w-4 h-4 rounded bg-gray-700 border-gray-600 text-cyan-500 focus:ring-cyan-500"
                 />
             </div>
+
+            {/* Enable Animations */}
+            <div className="flex items-center justify-between">
+                <label className="text-sm text-gray-300">{t('cellManager.enableAnimations')}</label>
+                <input
+                    type="checkbox"
+                    checked={grid.enableAnimations}
+                    onChange={(e) => setGridSettings({ enableAnimations: e.target.checked })}
+                    className="w-4 h-4 rounded bg-gray-700 border-gray-600 text-cyan-500 focus:ring-cyan-500"
+                />
+            </div>
         </div>
     );
 };

@@ -70,6 +70,7 @@
         "animationSpeed": "アニメーション速度",
         "showLabels": "ラベルを表示",
         "hoverEffect": "ホバー効果",
+        "enableAnimations": "アニメーションを有効化",
         "speed": {
             "fast": "速い",
             "normal": "普通",

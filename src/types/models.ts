@@ -88,6 +88,7 @@ export interface GridSettings {
     animationSpeed: 'fast' | 'normal' | 'slow';
     showLabels: 'always' | 'hover' | 'never';
     hoverEffect: boolean;
+    enableAnimations: boolean; // Enable/disable all animations
 }
 
 export interface SecuritySettings {

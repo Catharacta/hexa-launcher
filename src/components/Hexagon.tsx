@@ -87,11 +87,16 @@ export const Hexagon: React.FC<HexagonProps> = ({
                     layerClass === 'cyberpunk-glitch-layer-1' && "fill-purple-900 stroke-purple-500",
                     layerClass === 'cyberpunk-glitch-layer-2' && "fill-cyan-900 stroke-cyan-500",
                     isDragTarget && "stroke-[4px] stroke-white filter drop-shadow(0 0 8px rgba(255,255,255,0.8))",
-                    isSelected && "fill-gray-700 stroke-[4px] stroke-blue-500 filter drop-shadow(0 0 8px rgba(59,130,246,0.8))",
+                    isSelected && !isCyberpunk && "fill-gray-700 stroke-[4px] animate-pulse",
+                    isSelected && isCyberpunk && "fill-gray-700 stroke-[4px] stroke-[#00f2ea] animate-pulse",
                     isSearchMatch && "stroke-[4px] stroke-yellow-400 filter drop-shadow(0 0 10px rgba(250,204,21,0.8))"
                 )}
                 style={{
-                    opacity: isSearchActive && !isSearchMatch ? 0.3 : 1
+                    opacity: isSearchActive && !isSearchMatch ? 0.3 : 1,
+                    ...(isSelected && !isCyberpunk ? {
+                        stroke: theme.color,
+                        filter: `drop-shadow(0 0 12px ${theme.color}99)`
+                    } : {})
                 }}
             />
 
@@ -149,7 +154,11 @@ export const Hexagon: React.FC<HexagonProps> = ({
     return (
         <g
             transform={`translate(${x}, ${y})`}
-            className={clsx("group cursor-pointer", isDragging && "opacity-50")}
+            className={clsx(
+                "group cursor-pointer transition-transform duration-200",
+                isDragging && "opacity-50",
+                hoverEffect && !isDragging && "hover:scale-105"
+            )}
             onClick={onClick}
             onContextMenu={onContextMenu}
             onMouseDown={onMouseDown}
