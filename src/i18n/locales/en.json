@@ -49,6 +49,127 @@
         "argumentsExample": "Example: --fullscreen --debug",
         "workingDirectoryExample": "Example: C:\\Users\\Name\\Documents"
     },
+    "common": {
+        "resetToDefaults": "Reset to Defaults",
+        "never": "Never",
+        "add": "Add",
+        "remove": "Remove"
+    },
+    "appearance": {
+        "visualStyle": "Visual Style",
+        "style": {
+            "default": "Default",
+            "cyberpunk": "Cyberpunk"
+        },
+        "opacity": "Background Opacity",
+        "themeColor": "Theme Color"
+    },
+    "cellManager": {
+        "hexSize": "Hex Size",
+        "gapSize": "Gap Size",
+        "animationSpeed": "Animation Speed",
+        "showLabels": "Show Labels",
+        "hoverEffect": "Hover Effect",
+        "speed": {
+            "fast": "Fast",
+            "normal": "Normal",
+            "slow": "Slow"
+        },
+        "labels": {
+            "always": "Always",
+            "hover": "On Hover",
+            "never": "Never"
+        }
+    },
+    "persistence": {
+        "exportSettings": "Export Settings",
+        "exportDescription": "Save your settings to a file or clipboard",
+        "exportToFile": "Export to File",
+        "exporting": "Exporting...",
+        "copyToClipboard": "Copy to Clipboard",
+        "importSettings": "Import Settings",
+        "importDescription": "Load settings from a file or clipboard",
+        "importFromFile": "Import from File",
+        "importing": "Importing...",
+        "pasteFromClipboard": "Paste from Clipboard",
+        "importWarning": "Warning: Importing settings will overwrite your current configuration. Make sure to export your current settings first if you want to keep them.",
+        "status": "Status",
+        "lastExport": "Last Export",
+        "lastImport": "Last Import"
+    },
+    "security": {
+        "requireAdminConfirmation": "Require Admin Confirmation",
+        "adminConfirmationDesc": "Show confirmation when launching apps that require admin privileges",
+        "showLaunchConfirmation": "Show Launch Confirmation",
+        "launchConfirmationDesc": "Show confirmation dialog before launching any application",
+        "trustedPaths": "Trusted Paths",
+        "trustedPathsDesc": "Applications in these paths will not show security warnings"
+    },
+    "advanced": {
+        "debugMode": "Debug Mode",
+        "debugModeDesc": "Enable detailed console logging",
+        "showPerformanceMetrics": "Show Performance Metrics",
+        "performanceMetricsDesc": "Display performance information in console",
+        "disableAnimations": "Disable Animations",
+        "disableAnimationsDesc": "Turn off all animations for better performance",
+        "clearIconCache": "Clear Icon Cache",
+        "clearIconCacheDesc": "Clear cached icons and reload them on next launch",
+        "customCss": "Custom CSS",
+        "customCssDesc": "Apply custom CSS styles",
+        "customCssWarning": "Warning: Custom CSS can break the UI. Use with caution. Changes apply immediately.",
+        "iconCache": "Icon Cache",
+        "cachedIcons": "Cached icons",
+        "clearIconCacheConfirm": "Clear icon cache? Icons will be reloaded on next launch.",
+        "clearIconCacheSuccess": "Icon cache cleared! Please reload the app."
+    },
+    "keybinding": {
+        "globalShortcut": "Global Shortcut",
+        "toggleLauncher": "Toggle Launcher",
+        "toggleLauncherDesc": "Press the key combination to toggle the launcher visibility.",
+        "hexNav": "Hexagonal Navigation",
+        "nav": {
+            "topLeft": "Top-Left",
+            "topRight": "Top-Right",
+            "left": "Left",
+            "right": "Right",
+            "bottomLeft": "Bottom-Left",
+            "bottomRight": "Bottom-Right"
+        },
+        "hexNavDesc": "Keys used to navigate between hexagonal cells.",
+        "editActions": "Edit Actions",
+        "action": {
+            "createShortcutFile": "Create Shortcut (File)",
+            "createShortcutFolder": "Create Shortcut (Folder)",
+            "createGroup": "Create Group",
+            "renameCell": "Rename Cell",
+            "deleteCell": "Delete Cell"
+        },
+        "structureActions": "Structure Actions",
+        "directionalCreateModifier": "Directional Create Modifier",
+        "directionalCreateModifierDesc": "Hold this modifier + Hex Navigation Key to create a new cell in that direction.",
+        "pressKey": "Press Key..."
+    },
+    "help": {
+        "versionInfo": "Version Information",
+        "application": "Application",
+        "build": "Build",
+        "platform": "Platform",
+        "documentation": "Documentation",
+        "githubRepo": "GitHub Repository",
+        "githubRepoDesc": "View source code and report issues",
+        "userGuide": "User Guide",
+        "userGuideDesc": "Learn how to use Hexa Launcher",
+        "reportIssue": "Report an Issue",
+        "reportIssueDesc": "Found a bug? Let us know",
+        "keyboardShortcuts": "Keyboard Shortcuts",
+        "toggleLauncher": "Toggle Launcher",
+        "search": "Search",
+        "navigate": "Navigate",
+        "createGroup": "Create Group",
+        "deleteCell": "Delete Cell",
+        "aboutDesc": "Hexa Launcher is a hexagonal grid-based application launcher for Windows. Built with React, TypeScript, and Tauri.",
+        "copyright": "© 2024 Hexa Launcher. Licensed under MIT License."
+    },
     "toast": {
         "error": {
             "launchFailed": "Failed to launch app: {{error}}",

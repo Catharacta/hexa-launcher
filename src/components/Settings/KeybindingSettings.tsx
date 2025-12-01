@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useLauncherStore } from '../../store/launcherStore';
 import { clsx } from 'clsx';
+import { useTranslation } from 'react-i18next';
 
 export const KeybindingSettings: React.FC = () => {
+    const { t } = useTranslation();
     const { keyBindings, setKeyBindings } = useLauncherStore();
     const [recordingTarget, setRecordingTarget] = useState<string | null>(null);
 
@@ -77,7 +79,7 @@ export const KeybindingSettings: React.FC = () => {
                         : "bg-gray-800 text-cyan-400 hover:bg-gray-600"
                 )}
             >
-                {recordingTarget === target ? "Press Key..." : value}
+                {recordingTarget === target ? t('keybinding.pressKey') : value}
             </button>
         </div>
     );
@@ -86,46 +88,46 @@ export const KeybindingSettings: React.FC = () => {
         <div className="space-y-6">
             {/* Global Hotkey */}
             <div>
-                <h3 className="text-lg font-semibold text-white mb-3">Global Shortcut</h3>
-                {renderKeyInput("Toggle Launcher", keyBindings.globalToggle, "globalToggle")}
+                <h3 className="text-lg font-semibold text-white mb-3">{t('keybinding.globalShortcut')}</h3>
+                {renderKeyInput(t('keybinding.toggleLauncher'), keyBindings.globalToggle, "globalToggle")}
                 <p className="text-xs text-gray-400 mt-2">
-                    Press the key combination to toggle the launcher visibility.
+                    {t('keybinding.toggleLauncherDesc')}
                 </p>
             </div>
 
             {/* Hex Navigation */}
             <div>
-                <h3 className="text-lg font-semibold text-white mb-3">Hexagonal Navigation</h3>
+                <h3 className="text-lg font-semibold text-white mb-3">{t('keybinding.hexNav')}</h3>
                 <div className="grid grid-cols-2 gap-4">
-                    {renderKeyInput("Top-Left", keyBindings.hexNav.northWest, "hexNav.northWest")}
-                    {renderKeyInput("Top-Right", keyBindings.hexNav.northEast, "hexNav.northEast")}
-                    {renderKeyInput("Left", keyBindings.hexNav.west, "hexNav.west")}
-                    {renderKeyInput("Right", keyBindings.hexNav.east, "hexNav.east")}
-                    {renderKeyInput("Bottom-Left", keyBindings.hexNav.southWest, "hexNav.southWest")}
-                    {renderKeyInput("Bottom-Right", keyBindings.hexNav.southEast, "hexNav.southEast")}
+                    {renderKeyInput(t('keybinding.nav.topLeft'), keyBindings.hexNav.northWest, "hexNav.northWest")}
+                    {renderKeyInput(t('keybinding.nav.topRight'), keyBindings.hexNav.northEast, "hexNav.northEast")}
+                    {renderKeyInput(t('keybinding.nav.left'), keyBindings.hexNav.west, "hexNav.west")}
+                    {renderKeyInput(t('keybinding.nav.right'), keyBindings.hexNav.east, "hexNav.east")}
+                    {renderKeyInput(t('keybinding.nav.bottomLeft'), keyBindings.hexNav.southWest, "hexNav.southWest")}
+                    {renderKeyInput(t('keybinding.nav.bottomRight'), keyBindings.hexNav.southEast, "hexNav.southEast")}
                 </div>
                 <p className="text-xs text-gray-400 mt-2">
-                    Keys used to navigate between hexagonal cells.
+                    {t('keybinding.hexNavDesc')}
                 </p>
             </div>
 
             {/* Edit Actions */}
             <div>
-                <h3 className="text-lg font-semibold text-white mb-3">Edit Actions</h3>
+                <h3 className="text-lg font-semibold text-white mb-3">{t('keybinding.editActions')}</h3>
                 <div className="grid grid-cols-2 gap-4">
-                    {renderKeyInput("Create Shortcut (File)", keyBindings.actions?.createShortcutFile || '', "actions.createShortcutFile")}
-                    {renderKeyInput("Create Shortcut (Folder)", keyBindings.actions?.createShortcutFolder || '', "actions.createShortcutFolder")}
-                    {renderKeyInput("Create Group", keyBindings.actions?.createGroup || '', "actions.createGroup")}
-                    {renderKeyInput("Rename Cell", keyBindings.actions?.renameCell || '', "actions.renameCell")}
-                    {renderKeyInput("Delete Cell", keyBindings.actions?.deleteCell || '', "actions.deleteCell")}
+                    {renderKeyInput(t('keybinding.action.createShortcutFile'), keyBindings.actions?.createShortcutFile || '', "actions.createShortcutFile")}
+                    {renderKeyInput(t('keybinding.action.createShortcutFolder'), keyBindings.actions?.createShortcutFolder || '', "actions.createShortcutFolder")}
+                    {renderKeyInput(t('keybinding.action.createGroup'), keyBindings.actions?.createGroup || '', "actions.createGroup")}
+                    {renderKeyInput(t('keybinding.action.renameCell'), keyBindings.actions?.renameCell || '', "actions.renameCell")}
+                    {renderKeyInput(t('keybinding.action.deleteCell'), keyBindings.actions?.deleteCell || '', "actions.deleteCell")}
                 </div>
             </div>
 
             {/* Structure Actions */}
             <div>
-                <h3 className="text-lg font-semibold text-white mb-3">Structure Actions</h3>
+                <h3 className="text-lg font-semibold text-white mb-3">{t('keybinding.structureActions')}</h3>
                 <div className="flex flex-col items-start gap-2 bg-gray-700 p-3 rounded-lg w-full">
-                    <span className="text-gray-300 text-sm font-medium">Directional Create Modifier</span>
+                    <span className="text-gray-300 text-sm font-medium">{t('keybinding.directionalCreateModifier')}</span>
                     <select
                         value={keyBindings.directionalCreateModifier}
                         onChange={(e) => setKeyBindings({ directionalCreateModifier: e.target.value })}
@@ -137,7 +139,7 @@ export const KeybindingSettings: React.FC = () => {
                     </select>
                 </div>
                 <p className="text-xs text-gray-400 mt-2">
-                    Hold this modifier + Hex Navigation Key to create a new cell in that direction.
+                    {t('keybinding.directionalCreateModifierDesc')}
                 </p>
             </div>
 
@@ -165,7 +167,7 @@ export const KeybindingSettings: React.FC = () => {
                     })}
                     className="px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-900/30 rounded transition-colors"
                 >
-                    Reset to Defaults
+                    {t('common.resetToDefaults')}
                 </button>
             </div>
         </div>

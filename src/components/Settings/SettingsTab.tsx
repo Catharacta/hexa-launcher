@@ -169,6 +169,7 @@ export const GeneralTab: React.FC<SettingsTabProps> = ({ isActive }) => {
 };
 
 export const AppearanceTab: React.FC<SettingsTabProps> = ({ isActive }) => {
+    const { t } = useTranslation();
     const appearance = useLauncherStore(state => state.appearance);
     const setAppearance = useLauncherStore(state => state.setAppearance);
     const resetAppearance = useLauncherStore(state => state.resetAppearance);
@@ -178,19 +179,19 @@ export const AppearanceTab: React.FC<SettingsTabProps> = ({ isActive }) => {
     return (
         <div className="p-4 space-y-6">
             <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold text-white">Appearance</h2>
+                <h2 className="text-xl font-bold text-white">{t('settings.appearance')}</h2>
                 <button
                     onClick={resetAppearance}
                     className="text-xs text-red-400 hover:text-red-300 underline"
                 >
-                    Reset to Defaults
+                    {t('common.resetToDefaults')}
                 </button>
             </div>
 
             {/* Visual Style Setting */}
             <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Visual Style
+                    {t('appearance.visualStyle')}
                 </label>
                 <div className="flex gap-4">
                     <button
@@ -202,7 +203,7 @@ export const AppearanceTab: React.FC<SettingsTabProps> = ({ isActive }) => {
                                 : "bg-gray-800 border-gray-600 text-gray-400 hover:bg-gray-700"
                         )}
                     >
-                        Default
+                        {t('appearance.style.default')}
                     </button>
                     <button
                         onClick={() => setAppearance({ style: 'cyberpunk' })}
@@ -213,7 +214,7 @@ export const AppearanceTab: React.FC<SettingsTabProps> = ({ isActive }) => {
                                 : "bg-gray-800 border-gray-600 text-gray-400 hover:bg-gray-700"
                         )}
                     >
-                        Cyberpunk
+                        {t('appearance.style.cyberpunk')}
                     </button>
                 </div>
             </div>
@@ -221,7 +222,7 @@ export const AppearanceTab: React.FC<SettingsTabProps> = ({ isActive }) => {
             {/* Opacity Setting */}
             <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Background Opacity: {Math.round(appearance.opacity * 100)}%
+                    {t('appearance.opacity')}: {Math.round(appearance.opacity * 100)}%
                 </label>
                 <input
                     type="range"
@@ -238,7 +239,7 @@ export const AppearanceTab: React.FC<SettingsTabProps> = ({ isActive }) => {
             {appearance.style !== 'cyberpunk' && (
                 <div>
                     <label className="block text-sm font-medium text-gray-300 mb-2">
-                        Theme Color
+                        {t('appearance.themeColor')}
                     </label>
                     <div className="flex flex-wrap gap-3">
                         {Object.values(THEMES).map((theme) => (
@@ -279,6 +280,7 @@ export const KeybindingTab: React.FC<SettingsTabProps> = ({ isActive }) => {
 };
 
 export const CellManagerTab: React.FC<SettingsTabProps> = ({ isActive }) => {
+    const { t } = useTranslation();
     const grid = useLauncherStore(state => state.grid);
     const setGridSettings = useLauncherStore(state => state.setGridSettings);
     const resetGridSettings = useLauncherStore(state => state.resetGridSettings);
@@ -287,19 +289,19 @@ export const CellManagerTab: React.FC<SettingsTabProps> = ({ isActive }) => {
     return (
         <div className="p-4 space-y-6">
             <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold text-white">Cells & Groups</h2>
+                <h2 className="text-xl font-bold text-white">{t('settings.cellManager')}</h2>
                 <button
                     onClick={resetGridSettings}
                     className="text-xs text-red-400 hover:text-red-300 underline"
                 >
-                    Reset to Defaults
+                    {t('common.resetToDefaults')}
                 </button>
             </div>
 
             {/* Hex Size */}
             <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Hex Size: {grid.hexSize}px
+                    {t('cellManager.hexSize')}: {grid.hexSize}px
                 </label>
                 <input
                     type="range"
@@ -315,7 +317,7 @@ export const CellManagerTab: React.FC<SettingsTabProps> = ({ isActive }) => {
             {/* Gap Size */}
             <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Gap Size: {grid.gapSize}px
+                    {t('cellManager.gapSize')}: {grid.gapSize}px
                 </label>
                 <input
                     type="range"
@@ -330,7 +332,7 @@ export const CellManagerTab: React.FC<SettingsTabProps> = ({ isActive }) => {
 
             {/* Animation Speed */}
             <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Animation Speed</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">{t('cellManager.animationSpeed')}</label>
                 <div className="flex gap-2">
                     {(['slow', 'normal', 'fast'] as const).map((speed) => (
                         <button
@@ -343,7 +345,7 @@ export const CellManagerTab: React.FC<SettingsTabProps> = ({ isActive }) => {
                                     : "bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600"
                             )}
                         >
-                            {speed}
+                            {t(`cellManager.speed.${speed}`)}
                         </button>
                     ))}
                 </div>
@@ -351,21 +353,21 @@ export const CellManagerTab: React.FC<SettingsTabProps> = ({ isActive }) => {
 
             {/* Show Labels */}
             <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Show Labels</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">{t('cellManager.showLabels')}</label>
                 <select
                     value={grid.showLabels}
                     onChange={(e) => setGridSettings({ showLabels: e.target.value as 'always' | 'hover' | 'never' })}
                     className="w-full bg-gray-700 border border-gray-600 text-white rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-500"
                 >
-                    <option value="always">Always</option>
-                    <option value="hover">On Hover</option>
-                    <option value="never">Never</option>
+                    <option value="always">{t('cellManager.labels.always')}</option>
+                    <option value="hover">{t('cellManager.labels.hover')}</option>
+                    <option value="never">{t('cellManager.labels.never')}</option>
                 </select>
             </div>
 
             {/* Hover Effect */}
             <div className="flex items-center justify-between">
-                <label className="text-sm text-gray-300">Hover Effect</label>
+                <label className="text-sm text-gray-300">{t('cellManager.hoverEffect')}</label>
                 <input
                     type="checkbox"
                     checked={grid.hoverEffect}
@@ -378,6 +380,7 @@ export const CellManagerTab: React.FC<SettingsTabProps> = ({ isActive }) => {
 };
 
 export const PersistenceTab: React.FC<SettingsTabProps> = ({ isActive }) => {
+    const { t } = useTranslation();
     const [isExporting, setIsExporting] = useState(false);
     const [isImporting, setIsImporting] = useState(false);
     const [lastExport, setLastExport] = useState<string | null>(null);
@@ -524,12 +527,12 @@ export const PersistenceTab: React.FC<SettingsTabProps> = ({ isActive }) => {
 
     return (
         <div className="p-4 space-y-6">
-            <h2 className="text-xl font-bold mb-4 text-white">Persistence</h2>
+            <h2 className="text-xl font-bold mb-4 text-white">{t('settings.persistence')}</h2>
 
             {/* Export Section */}
             <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-300">Export Settings</h3>
-                <p className="text-sm text-gray-400">Save your settings to a file or clipboard</p>
+                <h3 className="text-lg font-semibold text-gray-300">{t('persistence.exportSettings')}</h3>
+                <p className="text-sm text-gray-400">{t('persistence.exportDescription')}</p>
 
                 <div className="flex gap-3">
                     <button
@@ -542,21 +545,21 @@ export const PersistenceTab: React.FC<SettingsTabProps> = ({ isActive }) => {
                                 : "bg-gray-700 border-cyan-500 text-white hover:bg-gray-600"
                         )}
                     >
-                        {isExporting ? 'Exporting...' : 'Export to File'}
+                        {isExporting ? t('persistence.exporting') : t('persistence.exportToFile')}
                     </button>
                     <button
                         onClick={handleCopyToClipboard}
                         className="px-4 py-2 rounded-lg border bg-gray-700 border-gray-600 text-white hover:bg-gray-600 transition-all"
                     >
-                        Copy to Clipboard
+                        {t('persistence.copyToClipboard')}
                     </button>
                 </div>
             </div>
 
             {/* Import Section */}
             <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-300">Import Settings</h3>
-                <p className="text-sm text-gray-400">Load settings from a file or clipboard</p>
+                <h3 className="text-lg font-semibold text-gray-300">{t('persistence.importSettings')}</h3>
+                <p className="text-sm text-gray-400">{t('persistence.importDescription')}</p>
 
                 <div className="flex gap-3">
                     <button
@@ -569,7 +572,7 @@ export const PersistenceTab: React.FC<SettingsTabProps> = ({ isActive }) => {
                                 : "bg-gray-700 border-cyan-500 text-white hover:bg-gray-600"
                         )}
                     >
-                        {isImporting ? 'Importing...' : 'Import from File'}
+                        {isImporting ? t('persistence.importing') : t('persistence.importFromFile')}
                     </button>
                     <button
                         onClick={handlePasteFromClipboard}
@@ -581,23 +584,23 @@ export const PersistenceTab: React.FC<SettingsTabProps> = ({ isActive }) => {
                                 : "bg-gray-700 border-gray-600 text-white hover:bg-gray-600"
                         )}
                     >
-                        Paste from Clipboard
+                        {t('persistence.pasteFromClipboard')}
                     </button>
                 </div>
 
                 <div className="mt-4 p-3 bg-yellow-900/20 border border-yellow-700/50 rounded-lg">
                     <p className="text-xs text-yellow-300">
-                        ⚠️ Warning: Importing settings will overwrite your current configuration. Make sure to export your current settings first if you want to keep them.
+                        ⚠️ {t('persistence.importWarning')}
                     </p>
                 </div>
             </div>
 
             {/* Status Section */}
             <div className="space-y-2 pt-4 border-t border-gray-700">
-                <h3 className="text-sm font-semibold text-gray-400">Status</h3>
+                <h3 className="text-sm font-semibold text-gray-400">{t('persistence.status')}</h3>
                 <div className="text-sm text-gray-300">
-                    <p>Last Export: {lastExport || 'Never'}</p>
-                    <p>Last Import: {lastImport || 'Never'}</p>
+                    <p>{t('persistence.lastExport')}: {lastExport || t('common.never')}</p>
+                    <p>{t('persistence.lastImport')}: {lastImport || t('common.never')}</p>
                 </div>
             </div>
         </div>
@@ -605,6 +608,7 @@ export const PersistenceTab: React.FC<SettingsTabProps> = ({ isActive }) => {
 };
 
 export const SecurityTab: React.FC<SettingsTabProps> = ({ isActive }) => {
+    const { t } = useTranslation();
     const security = useLauncherStore(state => state.security);
     const setSecuritySettings = useLauncherStore(state => state.setSecuritySettings);
     const resetSecuritySettings = useLauncherStore(state => state.resetSecuritySettings);
@@ -630,20 +634,20 @@ export const SecurityTab: React.FC<SettingsTabProps> = ({ isActive }) => {
     return (
         <div className="p-4 space-y-6">
             <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold text-white">Security</h2>
+                <h2 className="text-xl font-bold text-white">{t('settings.security')}</h2>
                 <button
                     onClick={resetSecuritySettings}
                     className="text-xs text-red-400 hover:text-red-300 underline"
                 >
-                    Reset to Defaults
+                    {t('common.resetToDefaults')}
                 </button>
             </div>
 
             {/* Admin Confirmation */}
             <div className="flex items-center justify-between">
                 <div>
-                    <label className="block text-sm font-medium text-white">Require Admin Confirmation</label>
-                    <p className="text-xs text-gray-400">Show confirmation when launching apps that require admin privileges</p>
+                    <label className="block text-sm font-medium text-white">{t('security.requireAdminConfirmation')}</label>
+                    <p className="text-xs text-gray-400">{t('security.adminConfirmationDesc')}</p>
                 </div>
                 <input
                     type="checkbox"
@@ -656,8 +660,8 @@ export const SecurityTab: React.FC<SettingsTabProps> = ({ isActive }) => {
             {/* Launch Confirmation */}
             <div className="flex items-center justify-between">
                 <div>
-                    <label className="block text-sm font-medium text-white">Show Launch Confirmation</label>
-                    <p className="text-xs text-gray-400">Show confirmation dialog before launching any application</p>
+                    <label className="block text-sm font-medium text-white">{t('security.showLaunchConfirmation')}</label>
+                    <p className="text-xs text-gray-400">{t('security.launchConfirmationDesc')}</p>
                 </div>
                 <input
                     type="checkbox"
@@ -670,8 +674,8 @@ export const SecurityTab: React.FC<SettingsTabProps> = ({ isActive }) => {
             {/* Trusted Paths */}
             <div className="space-y-3">
                 <div>
-                    <label className="block text-sm font-medium text-white mb-1">Trusted Paths</label>
-                    <p className="text-xs text-gray-400">Applications in these paths will not show security warnings</p>
+                    <label className="block text-sm font-medium text-white mb-1">{t('security.trustedPaths')}</label>
+                    <p className="text-xs text-gray-400">{t('security.trustedPathsDesc')}</p>
                 </div>
 
                 <div className="flex gap-2">
@@ -687,7 +691,7 @@ export const SecurityTab: React.FC<SettingsTabProps> = ({ isActive }) => {
                         onClick={handleAddPath}
                         className="px-4 py-2 rounded-lg border bg-gray-700 border-cyan-500 text-white hover:bg-gray-600 transition-all"
                     >
-                        Add
+                        {t('common.add')}
                     </button>
                 </div>
 
@@ -700,7 +704,7 @@ export const SecurityTab: React.FC<SettingsTabProps> = ({ isActive }) => {
                                     onClick={() => handleRemovePath(path)}
                                     className="ml-2 text-red-400 hover:text-red-300 text-xs"
                                 >
-                                    Remove
+                                    {t('common.remove')}
                                 </button>
                             </div>
                         ))}
@@ -712,6 +716,7 @@ export const SecurityTab: React.FC<SettingsTabProps> = ({ isActive }) => {
 };
 
 export const AdvancedTab: React.FC<SettingsTabProps> = ({ isActive }) => {
+    const { t } = useTranslation();
     const advanced = useLauncherStore(state => state.advanced);
     const setAdvancedSettings = useLauncherStore(state => state.setAdvancedSettings);
     const resetAdvancedSettings = useLauncherStore(state => state.resetAdvancedSettings);
@@ -720,7 +725,7 @@ export const AdvancedTab: React.FC<SettingsTabProps> = ({ isActive }) => {
     if (!isActive) return null;
 
     const handleClearIconCache = () => {
-        if (confirm('Clear icon cache? Icons will be reloaded on next launch.')) {
+        if (confirm(t('advanced.clearIconCacheConfirm'))) {
             // Clear icon cache by resetting iconCacheIndex
             const { saveSettings } = require('../../utils/tauri');
             const state = useLauncherStore.getState();
@@ -738,7 +743,7 @@ export const AdvancedTab: React.FC<SettingsTabProps> = ({ isActive }) => {
                 iconCacheIndex: {}, // Clear cache
                 keyBindings: state.keyBindings,
             }).then(() => {
-                alert('Icon cache cleared! Please reload the app.');
+                alert(t('advanced.clearIconCacheSuccess'));
             }).catch(console.error);
         }
     };
@@ -746,20 +751,20 @@ export const AdvancedTab: React.FC<SettingsTabProps> = ({ isActive }) => {
     return (
         <div className="p-4 space-y-6">
             <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold text-white">Advanced</h2>
+                <h2 className="text-xl font-bold text-white">{t('settings.advanced')}</h2>
                 <button
                     onClick={resetAdvancedSettings}
                     className="text-xs text-red-400 hover:text-red-300 underline"
                 >
-                    Reset to Defaults
+                    {t('common.resetToDefaults')}
                 </button>
             </div>
 
             {/* Debug Mode */}
             <div className="flex items-center justify-between">
                 <div>
-                    <label className="block text-sm font-medium text-white">Debug Mode</label>
-                    <p className="text-xs text-gray-400">Enable detailed console logging</p>
+                    <label className="block text-sm font-medium text-white">{t('advanced.debugMode')}</label>
+                    <p className="text-xs text-gray-400">{t('advanced.debugModeDesc')}</p>
                 </div>
                 <input
                     type="checkbox"
@@ -772,8 +777,8 @@ export const AdvancedTab: React.FC<SettingsTabProps> = ({ isActive }) => {
             {/* Performance Metrics */}
             <div className="flex items-center justify-between">
                 <div>
-                    <label className="block text-sm font-medium text-white">Show Performance Metrics</label>
-                    <p className="text-xs text-gray-400">Display performance information in console</p>
+                    <label className="block text-sm font-medium text-white">{t('advanced.showPerformanceMetrics')}</label>
+                    <p className="text-xs text-gray-400">{t('advanced.performanceMetricsDesc')}</p>
                 </div>
                 <input
                     type="checkbox"
@@ -786,8 +791,8 @@ export const AdvancedTab: React.FC<SettingsTabProps> = ({ isActive }) => {
             {/* Disable Animations */}
             <div className="flex items-center justify-between">
                 <div>
-                    <label className="block text-sm font-medium text-white">Disable Animations</label>
-                    <p className="text-xs text-gray-400">Turn off all animations for better performance</p>
+                    <label className="block text-sm font-medium text-white">{t('advanced.disableAnimations')}</label>
+                    <p className="text-xs text-gray-400">{t('advanced.disableAnimationsDesc')}</p>
                 </div>
                 <input
                     type="checkbox"
@@ -839,6 +844,7 @@ export const AdvancedTab: React.FC<SettingsTabProps> = ({ isActive }) => {
 };
 
 export const HelpTab: React.FC<SettingsTabProps> = ({ isActive }) => {
+    const { t } = useTranslation();
     if (!isActive) return null;
 
     const handleOpenLink = (url: string) => {
@@ -848,22 +854,22 @@ export const HelpTab: React.FC<SettingsTabProps> = ({ isActive }) => {
 
     return (
         <div className="p-4 space-y-6">
-            <h2 className="text-xl font-bold mb-4 text-white">Help & About</h2>
+            <h2 className="text-xl font-bold mb-4 text-white">{t('settings.help')}</h2>
 
             {/* Version Info */}
             <div className="space-y-2">
-                <h3 className="text-lg font-semibold text-gray-300">Version Information</h3>
+                <h3 className="text-lg font-semibold text-gray-300">{t('help.versionInfo')}</h3>
                 <div className="bg-gray-700 rounded-lg p-4 space-y-2">
                     <div className="flex justify-between">
-                        <span className="text-sm text-gray-400">Application:</span>
+                        <span className="text-sm text-gray-400">{t('help.application')}:</span>
                         <span className="text-sm text-white font-mono">Hexa Launcher v1.0.0</span>
                     </div>
                     <div className="flex justify-between">
-                        <span className="text-sm text-gray-400">Build:</span>
+                        <span className="text-sm text-gray-400">{t('help.build')}:</span>
                         <span className="text-sm text-white font-mono">2024.11.30</span>
                     </div>
                     <div className="flex justify-between">
-                        <span className="text-sm text-gray-400">Platform:</span>
+                        <span className="text-sm text-gray-400">{t('help.platform')}:</span>
                         <span className="text-sm text-white font-mono">Windows</span>
                     </div>
                 </div>
@@ -871,7 +877,7 @@ export const HelpTab: React.FC<SettingsTabProps> = ({ isActive }) => {
 
             {/* Documentation Links */}
             <div className="space-y-3">
-                <h3 className="text-lg font-semibold text-gray-300">Documentation</h3>
+                <h3 className="text-lg font-semibold text-gray-300">{t('help.documentation')}</h3>
                 <div className="space-y-2">
                     <button
                         onClick={() => handleOpenLink('https://github.com/yourusername/hexa-launcher')}
@@ -882,8 +888,8 @@ export const HelpTab: React.FC<SettingsTabProps> = ({ isActive }) => {
                                 <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
                             </svg>
                             <div>
-                                <p className="text-sm font-medium text-white">GitHub Repository</p>
-                                <p className="text-xs text-gray-400">View source code and report issues</p>
+                                <p className="text-sm font-medium text-white">{t('help.githubRepo')}</p>
+                                <p className="text-xs text-gray-400">{t('help.githubRepoDesc')}</p>
                             </div>
                         </div>
                         <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -900,8 +906,8 @@ export const HelpTab: React.FC<SettingsTabProps> = ({ isActive }) => {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                             </svg>
                             <div>
-                                <p className="text-sm font-medium text-white">User Guide</p>
-                                <p className="text-xs text-gray-400">Learn how to use Hexa Launcher</p>
+                                <p className="text-sm font-medium text-white">{t('help.userGuide')}</p>
+                                <p className="text-xs text-gray-400">{t('help.userGuideDesc')}</p>
                             </div>
                         </div>
                         <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -918,8 +924,8 @@ export const HelpTab: React.FC<SettingsTabProps> = ({ isActive }) => {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                             </svg>
                             <div>
-                                <p className="text-sm font-medium text-white">Report an Issue</p>
-                                <p className="text-xs text-gray-400">Found a bug? Let us know</p>
+                                <p className="text-sm font-medium text-white">{t('help.reportIssue')}</p>
+                                <p className="text-xs text-gray-400">{t('help.reportIssueDesc')}</p>
                             </div>
                         </div>
                         <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -931,26 +937,26 @@ export const HelpTab: React.FC<SettingsTabProps> = ({ isActive }) => {
 
             {/* Keyboard Shortcuts Reference */}
             <div className="space-y-3">
-                <h3 className="text-lg font-semibold text-gray-300">Keyboard Shortcuts</h3>
+                <h3 className="text-lg font-semibold text-gray-300">{t('help.keyboardShortcuts')}</h3>
                 <div className="bg-gray-700 rounded-lg p-4 space-y-2 text-sm">
                     <div className="flex justify-between">
-                        <span className="text-gray-400">Toggle Launcher</span>
+                        <span className="text-gray-400">{t('help.toggleLauncher')}</span>
                         <kbd className="px-2 py-1 bg-gray-800 rounded text-white font-mono text-xs">Alt+Space</kbd>
                     </div>
                     <div className="flex justify-between">
-                        <span className="text-gray-400">Search</span>
+                        <span className="text-gray-400">{t('help.search')}</span>
                         <kbd className="px-2 py-1 bg-gray-800 rounded text-white font-mono text-xs">Ctrl+F</kbd>
                     </div>
                     <div className="flex justify-between">
-                        <span className="text-gray-400">Navigate</span>
+                        <span className="text-gray-400">{t('help.navigate')}</span>
                         <kbd className="px-2 py-1 bg-gray-800 rounded text-white font-mono text-xs">Q/W/A/S/Z/X</kbd>
                     </div>
                     <div className="flex justify-between">
-                        <span className="text-gray-400">Create Group</span>
+                        <span className="text-gray-400">{t('help.createGroup')}</span>
                         <kbd className="px-2 py-1 bg-gray-800 rounded text-white font-mono text-xs">Ctrl+G</kbd>
                     </div>
                     <div className="flex justify-between">
-                        <span className="text-gray-400">Delete Cell</span>
+                        <span className="text-gray-400">{t('help.deleteCell')}</span>
                         <kbd className="px-2 py-1 bg-gray-800 rounded text-white font-mono text-xs">Delete</kbd>
                     </div>
                 </div>
@@ -959,11 +965,10 @@ export const HelpTab: React.FC<SettingsTabProps> = ({ isActive }) => {
             {/* About */}
             <div className="space-y-2 pt-4 border-t border-gray-700">
                 <p className="text-sm text-gray-400">
-                    Hexa Launcher is a hexagonal grid-based application launcher for Windows.
-                    Built with React, TypeScript, and Tauri.
+                    {t('help.aboutDesc')}
                 </p>
                 <p className="text-xs text-gray-500">
-                    © 2024 Hexa Launcher. Licensed under MIT License.
+                    {t('help.copyright')}
                 </p>
             </div>
         </div>

@@ -49,6 +49,127 @@
         "argumentsExample": "例: --fullscreen --debug",
         "workingDirectoryExample": "例: C:\\Users\\Name\\Documents"
     },
+    "common": {
+        "resetToDefaults": "デフォルトに戻す",
+        "never": "なし",
+        "add": "追加",
+        "remove": "削除"
+    },
+    "appearance": {
+        "visualStyle": "ビジュアルスタイル",
+        "style": {
+            "default": "デフォルト",
+            "cyberpunk": "サイバーパンク"
+        },
+        "opacity": "背景の不透明度",
+        "themeColor": "テーマカラー"
+    },
+    "cellManager": {
+        "hexSize": "ヘックスサイズ",
+        "gapSize": "ギャップサイズ",
+        "animationSpeed": "アニメーション速度",
+        "showLabels": "ラベルを表示",
+        "hoverEffect": "ホバー効果",
+        "speed": {
+            "fast": "速い",
+            "normal": "普通",
+            "slow": "遅い"
+        },
+        "labels": {
+            "always": "常に表示",
+            "hover": "ホバー時",
+            "never": "表示しない"
+        }
+    },
+    "persistence": {
+        "exportSettings": "設定のエクスポート",
+        "exportDescription": "設定をファイルまたはクリップボードに保存します",
+        "exportToFile": "ファイルにエクスポート",
+        "exporting": "エクスポート中...",
+        "copyToClipboard": "クリップボードにコピー",
+        "importSettings": "設定のインポート",
+        "importDescription": "ファイルまたはクリップボードから設定を読み込みます",
+        "importFromFile": "ファイルからインポート",
+        "importing": "インポート中...",
+        "pasteFromClipboard": "クリップボードから貼り付け",
+        "importWarning": "警告: 設定をインポートすると現在の設定は上書きされます。必要に応じて先に現在の設定をエクスポートしてください。",
+        "status": "ステータス",
+        "lastExport": "最後のエクスポート",
+        "lastImport": "最後のインポート"
+    },
+    "security": {
+        "requireAdminConfirmation": "管理者権限の確認",
+        "adminConfirmationDesc": "管理者権限が必要なアプリの起動時に確認を表示します",
+        "showLaunchConfirmation": "起動確認を表示",
+        "launchConfirmationDesc": "すべてのアプリケーション起動前に確認ダイアログを表示します",
+        "trustedPaths": "信頼できるパス",
+        "trustedPathsDesc": "これらのパス内のアプリはセキュリティ警告を表示しません"
+    },
+    "advanced": {
+        "debugMode": "デバッグモード",
+        "debugModeDesc": "詳細なコンソールログを有効にします",
+        "showPerformanceMetrics": "パフォーマンスメトリクスを表示",
+        "performanceMetricsDesc": "コンソールにパフォーマンス情報を表示します",
+        "disableAnimations": "アニメーションを無効化",
+        "disableAnimationsDesc": "パフォーマンス向上のためすべてのアニメーションをオフにします",
+        "clearIconCache": "アイコンキャッシュをクリア",
+        "clearIconCacheDesc": "キャッシュされたアイコンを削除し、次回起動時に再読み込みします",
+        "customCss": "カスタムCSS",
+        "customCssDesc": "独自のCSSスタイルを適用します",
+        "customCssWarning": "警告: カスタムCSSはUIを壊す可能性があります。注意して使用してください。変更は即座に適用されます。",
+        "iconCache": "アイコンキャッシュ",
+        "cachedIcons": "キャッシュ済みアイコン",
+        "clearIconCacheConfirm": "アイコンキャッシュをクリアしますか？アイコンは次回起動時に再読み込みされます。",
+        "clearIconCacheSuccess": "アイコンキャッシュがクリアされました！アプリを再読み込みしてください。"
+    },
+    "keybinding": {
+        "globalShortcut": "グローバルショートカット",
+        "toggleLauncher": "ランチャーの切り替え",
+        "toggleLauncherDesc": "ランチャーの表示/非表示を切り替えるキーの組み合わせを押してください。",
+        "hexNav": "六角形ナビゲーション",
+        "nav": {
+            "topLeft": "左上",
+            "topRight": "右上",
+            "left": "左",
+            "right": "右",
+            "bottomLeft": "左下",
+            "bottomRight": "右下"
+        },
+        "hexNavDesc": "六角形セル間の移動に使用するキーです。",
+        "editActions": "編集アクション",
+        "action": {
+            "createShortcutFile": "ショートカット作成 (ファイル)",
+            "createShortcutFolder": "ショートカット作成 (フォルダ)",
+            "createGroup": "グループ作成",
+            "renameCell": "セル名変更",
+            "deleteCell": "セル削除"
+        },
+        "structureActions": "構造アクション",
+        "directionalCreateModifier": "方向指定作成修飾キー",
+        "directionalCreateModifierDesc": "この修飾キーを押しながら六角形ナビゲーションキーを押すと、その方向に新しいセルを作成します。",
+        "pressKey": "キーを押してください..."
+    },
+    "help": {
+        "versionInfo": "バージョン情報",
+        "application": "アプリケーション",
+        "build": "ビルド",
+        "platform": "プラットフォーム",
+        "documentation": "ドキュメント",
+        "githubRepo": "GitHubリポジトリ",
+        "githubRepoDesc": "ソースコードの閲覧と問題の報告",
+        "userGuide": "ユーザーガイド",
+        "userGuideDesc": "Hexa Launcherの使い方を学ぶ",
+        "reportIssue": "問題を報告",
+        "reportIssueDesc": "バグを見つけましたか？お知らせください",
+        "keyboardShortcuts": "キーボードショートカット",
+        "toggleLauncher": "ランチャーの切り替え",
+        "search": "検索",
+        "navigate": "移動",
+        "createGroup": "グループ作成",
+        "deleteCell": "セル削除",
+        "aboutDesc": "Hexa LauncherはWindows用の六角形グリッドベースのアプリケーションランチャーです。React、TypeScript、Tauriで構築されています。",
+        "copyright": "© 2024 Hexa Launcher. MITライセンスの下でライセンスされています。"
+    },
     "toast": {
         "error": {
             "launchFailed": "アプリの起動に失敗しました: {{error}}",
