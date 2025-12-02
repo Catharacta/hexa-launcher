@@ -1,3 +1,6 @@
+import { saveSettings } from '../../utils/tauri';
+import { SCHEMA_VERSION } from './settingsSlice';
+
 export interface SearchSlice {
     isSearchActive: boolean;
     searchQuery: string;
@@ -46,11 +49,47 @@ export const createSearchSlice = (set: any, _get: any): SearchSlice => ({
                 ...history.filter((q: string) => q !== query)
             ].slice(0, MAX_HISTORY);
 
-            return { searchHistory: newHistory };
+            const newState = { searchHistory: newHistory };
+
+            saveSettings({
+                schemaVersion: SCHEMA_VERSION,
+                cells: Object.values(state.cells),
+                groups: Object.values(state.groups),
+                activeGroupId: state.activeGroupId,
+                appearance: state.appearance,
+                general: state.general,
+                grid: state.grid,
+                security: state.security,
+                advanced: state.advanced,
+                hotkeys: state.hotkeys,
+                iconCacheIndex: state.iconCacheIndex,
+                keyBindings: state.keyBindings,
+                searchHistory: newHistory,
+            }).catch(console.error);
+
+            return newState;
         });
     },
 
     clearSearchHistory: () => {
-        set({ searchHistory: [] });
+        set((state: any) => {
+            const newState = { searchHistory: [] };
+            saveSettings({
+                schemaVersion: SCHEMA_VERSION,
+                cells: Object.values(state.cells),
+                groups: Object.values(state.groups),
+                activeGroupId: state.activeGroupId,
+                appearance: state.appearance,
+                general: state.general,
+                grid: state.grid,
+                security: state.security,
+                advanced: state.advanced,
+                hotkeys: state.hotkeys,
+                iconCacheIndex: state.iconCacheIndex,
+                keyBindings: state.keyBindings,
+                searchHistory: [],
+            }).catch(console.error);
+            return newState;
+        });
     },
 });

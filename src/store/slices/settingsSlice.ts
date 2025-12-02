@@ -98,16 +98,9 @@ export const createSettingsSlice = (set: any, get: any): SettingsSlice => ({
             iconCacheIndex: settings.iconCacheIndex || {},
             keyBindings: settings.keyBindings ? {
                 ...get().keyBindings,
-                ...settings.keyBindings,
-                hexNav: {
-                    ...get().keyBindings.hexNav,
-                    ...(settings.keyBindings.hexNav || {})
-                },
-                actions: {
-                    ...get().keyBindings.actions,
-                    ...(settings.keyBindings.actions || {})
-                }
+                ...settings.keyBindings
             } : get().keyBindings,
+            searchHistory: settings.searchHistory || [],
             rootCellIds: finalRootCellIds,
         });
     },

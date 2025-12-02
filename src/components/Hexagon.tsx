@@ -24,7 +24,7 @@ export interface HexagonProps {
     hoverEffect?: boolean;
 }
 
-export const Hexagon: React.FC<HexagonProps> = ({
+export const HexagonComponent: React.FC<HexagonProps> = ({
     cell,
     size,
     x,
@@ -157,32 +157,37 @@ export const Hexagon: React.FC<HexagonProps> = ({
 
     return (
         <g
-            transform={`translate(${x}, ${y})`}
-            className={clsx(
-                "group cursor-pointer transition-transform duration-200",
-                isDragging && "opacity-50",
-                hoverEffect && !isDragging && "hover:scale-105"
-            )}
+            transform={`translate(${x},${y})`}
+            onMouseEnter={() => {
+                if (showLabel === 'hover' || showLabel === 'always') {
+                    // Handled by CSS/parent state usually, but here we might trigger state
+                }
+            }}
             onClick={onClick}
             onContextMenu={onContextMenu}
             onMouseDown={onMouseDown}
+            className={clsx(
+                "transition-all duration-200 cursor-pointer group",
+                isDragging && "opacity-50 scale-95",
+                isGhost && "opacity-30 pointer-events-none",
+                // Add will-change for performance
+                "will-change-transform"
+            )}
+            style={{
+                filter: isDragging ? 'grayscale(100%)' : 'none'
+            }}
         >
-            {/* Main Content */}
-            <g className={clsx(isCyberpunk && "cyberpunk-content-main")}>
-                {renderContent()}
-            </g>
-
-            {/* Glitch Layers (Only for Cyberpunk) */}
-            {isCyberpunk && (
+            {/* Glitch layers for cyberpunk theme */}
+            {isCyberpunk && isSelected && (
                 <>
-                    <g className="cyberpunk-glitch-layer-1 pointer-events-none opacity-0">
-                        {renderContent('cyberpunk-glitch-layer-1')}
-                    </g>
-                    <g className="cyberpunk-glitch-layer-2 pointer-events-none opacity-0">
-                        {renderContent('cyberpunk-glitch-layer-2')}
-                    </g>
+                    {renderContent('cyberpunk-glitch-layer-1')}
+                    {renderContent('cyberpunk-glitch-layer-2')}
                 </>
             )}
+
+            {renderContent()}
         </g>
     );
 };
+
+export const Hexagon = React.memo(HexagonComponent);
