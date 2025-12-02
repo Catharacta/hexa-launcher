@@ -3,6 +3,8 @@ use std::str::FromStr;
 use tauri::Manager;
 use tauri_plugin_global_shortcut::{GlobalShortcutExt, Shortcut, ShortcutState};
 
+mod mouse_edge;
+mod security;
 mod startup;
 mod window_behavior;
 
@@ -163,6 +165,20 @@ fn get_file_icon(path: String) -> Result<String, String> {
     {
         Err("Icon extraction is only supported on Windows".to_string())
     }
+}
+
+#[tauri::command]
+fn start_mouse_edge_monitor(app_handle: tauri::AppHandle) -> Result<(), String> {
+    let monitor = app_handle.state::<mouse_edge::MouseEdgeMonitor>();
+    monitor.start(app_handle.clone());
+    Ok(())
+}
+
+#[tauri::command]
+fn stop_mouse_edge_monitor(app_handle: tauri::AppHandle) -> Result<(), String> {
+    let monitor = app_handle.state::<mouse_edge::MouseEdgeMonitor>();
+    monitor.stop();
+    Ok(())
 }
 
 #[cfg(target_os = "windows")]
@@ -357,8 +373,14 @@ pub fn run() {
             startup::get_startup_status,
             window_behavior::set_always_on_top,
             window_behavior::set_hide_on_blur,
+            security::check_requires_admin,
+            start_mouse_edge_monitor,
+            stop_mouse_edge_monitor,
         ])
         .setup(|app| {
+            // Initialize mouse edge monitor
+            app.manage(mouse_edge::MouseEdgeMonitor::new());
+
             #[cfg(desktop)]
             {
                 app.handle().plugin(

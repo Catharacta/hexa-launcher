@@ -187,3 +187,29 @@ export async function setAlwaysOnTop(enable: boolean): Promise<void> {
         throw error;
     }
 }
+
+export async function setHideOnBlur(enable: boolean): Promise<void> {
+    // Backend command exists but frontend handles logic
+    // Just calling it for completeness if needed in future
+    try {
+        await invoke('set_hide_on_blur', { enable });
+    } catch (error) {
+        console.error('Failed to set hide on blur:', error);
+    }
+}
+
+export async function startMouseEdgeMonitor(): Promise<void> {
+    try {
+        await invoke('start_mouse_edge_monitor');
+    } catch (error) {
+        console.error('Failed to start mouse edge monitor:', error);
+    }
+}
+
+export async function stopMouseEdgeMonitor(): Promise<void> {
+    try {
+        await invoke('stop_mouse_edge_monitor');
+    } catch (error) {
+        console.error('Failed to stop mouse edge monitor:', error);
+    }
+}

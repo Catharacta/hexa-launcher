@@ -6,24 +6,22 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import { CustomCSSInjector } from './components/CustomCSSInjector';
 import { ToastContainer } from './components/ToastContainer';
 import { CellEditDialog } from './components/CellEditDialog';
-import { loadSettings, hideWindow } from './utils/tauri';
+import { loadSettings, hideWindow, startMouseEdgeMonitor, stopMouseEdgeMonitor } from './utils/tauri';
 import { useLauncherStore } from './store/launcherStore';
 import './i18n/config'; // Initialize i18n
 import i18n from './i18n/config';
 
 function App() {
   const [isLoaded, setIsLoaded] = useState(false);
-  const loadFromSettings = useLauncherStore(state => state.loadFromSettings);
-  const cells = useLauncherStore(state => state.cells);
-  const groups = useLauncherStore(state => state.groups);
-  const opacity = useLauncherStore(state => state.appearance.opacity);
-  const hideOnBlur = useLauncherStore(state => state.general.windowBehavior.hideOnBlur);
 
-  // ------------------------------------------------------------
-  // 設定を読み込む
-  // React StrictMode で2回呼ばれても問題ないように、
-  // マウントされているコンポーネントのみが結果を処理する。
-  // ------------------------------------------------------------
+  // 必要なアクション・状態をストアから取得
+  const loadFromSettings = useLauncherStore(state => state.loadFromSettings);
+  const cells = useLauncherStore(state => state.cells ?? {});
+  const groups = useLauncherStore(state => state.groups ?? {});
+  const hideOnBlur = useLauncherStore(state => state.general?.windowBehavior?.hideOnBlur ?? false);
+  const opacity = useLauncherStore(state => state.appearance?.opacity ?? 0.9);
+  const showOnMouseEdge = useLauncherStore(state => state.general?.windowBehavior?.showOnMouseEdge ?? false);
+
   useEffect(() => {
     let mounted = true;
     loadSettings()
@@ -43,7 +41,7 @@ function App() {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [loadFromSettings]);
 
   // Listen for open-settings event from system tray
   useEffect(() => {
@@ -57,26 +55,51 @@ function App() {
 
     let unlistenPromise = setupListener();
     return () => {
-      unlistenPromise.then(unlisten => unlisten());
+      unlistenPromise.then(unlisten => unlisten && unlisten());
     };
   }, []);
 
-  // Hide on Blur
+  // Hide on Blur（設定フラグが true の時のみ）
   useEffect(() => {
     if (!hideOnBlur) return;
 
-    const handleBlur = () => {
-      hideWindow().catch(console.error);
+    let unlisten: (() => void) | undefined;
+
+    const setupListener = async () => {
+      const { getCurrentWindow } = await import('@tauri-apps/api/window');
+      const appWindow = getCurrentWindow();
+
+      unlisten = await appWindow.onFocusChanged(({ payload: focused }) => {
+        if (!focused) {
+          hideWindow().catch(console.error);
+        }
+      });
     };
 
-    window.addEventListener('blur', handleBlur);
-    return () => window.removeEventListener('blur', handleBlur);
+    setupListener();
+
+    return () => {
+      if (unlisten) unlisten();
+    };
   }, [hideOnBlur]);
 
-  // Set language from settings
+  // Show on Mouse Edge
   useEffect(() => {
-    const language = useLauncherStore.getState().general.language;
-    i18n.changeLanguage(language);
+    if (showOnMouseEdge) {
+      startMouseEdgeMonitor().catch(console.error);
+    } else {
+      stopMouseEdgeMonitor().catch(console.error);
+    }
+
+    return () => {
+      stopMouseEdgeMonitor().catch(console.error);
+    };
+  }, [showOnMouseEdge]);
+
+  // 言語設定の適用
+  useEffect(() => {
+    const language = useLauncherStore.getState()?.general?.language;
+    if (language) i18n.changeLanguage(language);
   }, []);
 
   return (
@@ -84,7 +107,7 @@ function App() {
       <CustomCSSInjector />
       <div
         className="w-full h-screen relative transition-opacity duration-300"
-        style={{ backgroundColor: `rgba(17, 24, 39, ${opacity ?? 0.9})` }}
+        style={{ backgroundColor: `rgba(17, 24, 39, ${opacity})` }}
       >
         <HexGrid />
         <SettingsModal />
