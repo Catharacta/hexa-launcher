@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "tauri": "tauri",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "release:prepare": "node scripts/update-version.js"
   },
   "dependencies": {
     "@tauri-apps/api": "^2",
