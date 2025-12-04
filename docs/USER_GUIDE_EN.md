@@ -28,7 +28,7 @@ Hexa Launcher is an innovative application launcher that uses a hexagonal grid l
 
 ### Download and Install
 
-1. Download the latest version from the [Releases](https://github.com/your-repo/hexa-launcher/releases) page
+1. Download the latest version from the [Releases](https://github.com/Catharacta/hexa-launcher/releases) page
 2. Run `hexa-launcher-setup.exe`
 3. Follow the installation wizard
 4. After installation, press `Alt+Space` to launch
@@ -364,9 +364,9 @@ Customize all keyboard shortcuts:
 
 If your issue persists:
 
-1. Search existing issues on [GitHub Issues](https://github.com/your-repo/hexa-launcher/issues)
+1. Search existing issues on [GitHub Issues](https://github.com/Catharacta/hexa-launcher/issues)
 2. Create a new issue to report
-3. Ask the community in [Discussions](https://github.com/your-repo/hexa-launcher/discussions)
+3. Ask the community in [Discussions](https://github.com/Catharacta/hexa-launcher/discussions)
 
 ---
 

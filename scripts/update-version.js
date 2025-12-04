@@ -1,12 +1,18 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Get version from command line args or package.json
 const args = process.argv.slice(2);
 let version = args[0];
 
+const packageJsonPath = path.join(__dirname, '../package.json');
+const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
+
 if (!version) {
-    const packageJson = require('../package.json');
     version = packageJson.version;
 }
 
@@ -16,7 +22,7 @@ version = version.replace(/^v/, '');
 console.log(`Updating version to: ${version}`);
 
 // Configuration
-const repoUrl = 'https://github.com/Catharacta/hexa-launcher'; // Will be updated by user
+const repoUrl = 'https://github.com/Catharacta/hexa-launcher';
 const filesToUpdate = [
     '../README.md',
     '../docs/USER_GUIDE_JA.md',
@@ -24,8 +30,6 @@ const filesToUpdate = [
 ];
 
 // Update package.json
-const packageJsonPath = path.join(__dirname, '../package.json');
-const packageJson = require(packageJsonPath);
 if (packageJson.version !== version) {
     packageJson.version = version;
     fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2) + '\n');
@@ -34,7 +38,7 @@ if (packageJson.version !== version) {
 
 // Update tauri.conf.json
 const tauriConfPath = path.join(__dirname, '../src-tauri/tauri.conf.json');
-const tauriConf = require(tauriConfPath);
+const tauriConf = JSON.parse(fs.readFileSync(tauriConfPath, 'utf-8'));
 if (tauriConf.version !== version) {
     tauriConf.version = version;
     fs.writeFileSync(tauriConfPath, JSON.stringify(tauriConf, null, 2) + '\n');
@@ -51,10 +55,12 @@ filesToUpdate.forEach(file => {
         content = content.replace(/version-\d+\.\d+\.\d+/g, `version-${version}`);
 
         // Update download links (if they contain version)
-        // Example: hexa-launcher-app_0.1.0_x64_en-US.msi
         content = content.replace(/hexa-launcher-app_\d+\.\d+\.\d+/g, `hexa-launcher-app_${version}`);
 
-        // Update generic version references if strictly formatted (risky, so sticking to safe replacements)
+        // Update repository URLs
+        // Replace placeholders or old URLs with the configured repoUrl
+        const repoBase = repoUrl.replace('https://github.com/', '');
+        content = content.replace(/github\.com\/your-repo\/hexa-launcher/g, `github.com/${repoBase}`);
 
         fs.writeFileSync(filePath, content);
         console.log(`Updated ${file}`);

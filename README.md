@@ -34,7 +34,7 @@ Hexa Launcherは、六角形（ヘックス）グリッドを使用した革新�
 
 ### ビルド済みバイナリ
 
-1. [Releases](https://github.com/your-repo/hexa-launcher/releases)から最新版をダウンロード
+1. [Releases](https://github.com/Catharacta/hexa-launcher/releases)から最新版をダウンロード
 2. インストーラーを実行
 3. `Alt+Space`でランチャーを起動
 
@@ -42,7 +42,7 @@ Hexa Launcherは、六角形（ヘックス）グリッドを使用した革新�
 
 ```bash
 # リポジトリをクローン
-git clone https://github.com/your-repo/hexa-launcher.git
+git clone https://github.com/Catharacta/hexa-launcher.git
 cd hexa-launcher
 
 # 依存関係をインストール
@@ -207,6 +207,6 @@ MIT License - 詳細は[LICENSE](LICENSE)ファイルを参照
 
 ## リンク
 
-- [公式ドキュメント](https://github.com/your-repo/hexa-launcher/wiki)
-- [バグ報告](https://github.com/your-repo/hexa-launcher/issues)
-- [機能リクエスト](https://github.com/your-repo/hexa-launcher/discussions)
+- [公式ドキュメント](https://github.com/Catharacta/hexa-launcher/wiki)
+- [バグ報告](https://github.com/Catharacta/hexa-launcher/issues)
+- [機能リクエスト](https://github.com/Catharacta/hexa-launcher/discussions)
