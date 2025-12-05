@@ -5,16 +5,12 @@ import { Cell } from '../../../types/models';
 
 export const useDragAndDrop = () => {
     const {
-        cells: cellsMap,
-        groups,
-        activeGroupId,
         moveCell,
         moveCells,
         moveCellToGroup,
         selectedCellIds,
         selectCell,
         clearSelection,
-        rootCellIds,
     } = useLauncherStore();
 
     const [draggedCellId, setDraggedCellId] = useState<string | null>(null);
