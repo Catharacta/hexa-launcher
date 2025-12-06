@@ -79,7 +79,7 @@ export const HexGrid: React.FC = () => {
 
     return (
         <div
-            className="w-full h-screen bg-gray-900 overflow-hidden flex items-center justify-center select-none relative"
+            className="w-full h-screen bg-transparent overflow-hidden flex items-center justify-center select-none relative"
             onMouseDown={handleBackgroundClick}
             onDragOver={(e) => e.preventDefault()}
         >
