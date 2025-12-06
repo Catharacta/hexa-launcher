@@ -878,11 +878,30 @@ export const HelpTab: React.FC<SettingsTabProps> = ({ isActive }) => {
 
     if (!isActive) return null;
 
+    const addToast = useLauncherStore((state) => state.addToast);
+
     const handleOpenLink = async (url: string) => {
         try {
+            // Try standard import access
             await ((opener as any).open || (opener as any).default?.open)(url);
-        } catch (err) {
-            console.error('Failed to open URL:', err);
+        } catch (err: any) {
+            console.error('Failed to open URL via import:', err);
+
+            // Fallback: Check global Tauri scope (v2 compatibility)
+            try {
+                const globalTauri = (window as any).__TAURI__;
+                if (globalTauri?.opener?.open) {
+                    await globalTauri.opener.open(url);
+                    return;
+                }
+            } catch (fallbackErr) {
+                console.error('Fallback failed:', fallbackErr);
+            }
+
+            const msg = `Failed to open URL: ${err?.message || String(err)}`;
+            addToast(msg, 'error');
+            // Alert is necessary if toast system fails or is hidden
+            alert(`${msg}\n\nURL: ${url}\n\nPlease check permissions or report this issue.`);
         }
     };
 
