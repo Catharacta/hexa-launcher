@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLauncherStore } from '../../store/launcherStore';
 import { clsx } from 'clsx';
+// @ts-ignore
+import * as opener from '@tauri-apps/plugin-opener';
 import { THEMES } from '../../utils/theme';
 import { KeybindingSettings } from './KeybindingSettings';
 import {
@@ -878,9 +880,7 @@ export const HelpTab: React.FC<SettingsTabProps> = ({ isActive }) => {
 
     const handleOpenLink = async (url: string) => {
         try {
-            // @ts-ignore
-            const { open } = require('@tauri-apps/plugin-opener');
-            await open(url);
+            await ((opener as any).open || (opener as any).default?.open)(url);
         } catch (err) {
             console.error('Failed to open URL:', err);
         }
@@ -932,7 +932,7 @@ export const HelpTab: React.FC<SettingsTabProps> = ({ isActive }) => {
                     </button>
 
                     <button
-                        onClick={() => handleOpenLink('https://github.com/Catharacta/hexa-launcher/wiki')}
+                        onClick={() => handleOpenLink('https://github.com/Catharacta/hexa-launcher')}
                         className="w-full text-left px-4 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg transition-all flex items-center justify-between group"
                     >
                         <div className="flex items-center gap-3">
