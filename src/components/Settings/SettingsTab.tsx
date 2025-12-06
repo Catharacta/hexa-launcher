@@ -856,11 +856,34 @@ export const AdvancedTab: React.FC<SettingsTabProps> = ({ isActive }) => {
 
 export const HelpTab: React.FC<SettingsTabProps> = ({ isActive }) => {
     const { t } = useTranslation();
+    const [version, setVersion] = useState('');
+    const [appName, setAppName] = useState('');
+
+    useEffect(() => {
+        if (isActive) {
+            import('@tauri-apps/api/app').then(async (app) => {
+                try {
+                    setVersion(await app.getVersion());
+                    setAppName(await app.getName());
+                } catch (e) {
+                    console.error('Failed to get app info', e);
+                    setVersion('Unknown');
+                    setAppName('Hexa Launcher');
+                }
+            });
+        }
+    }, [isActive]);
+
     if (!isActive) return null;
 
-    const handleOpenLink = (url: string) => {
-        const { open } = require('@tauri-apps/plugin-opener');
-        open(url).catch((err: any) => console.error('Failed to open URL:', err));
+    const handleOpenLink = async (url: string) => {
+        try {
+            // @ts-ignore
+            const { open } = require('@tauri-apps/plugin-opener');
+            await open(url);
+        } catch (err) {
+            console.error('Failed to open URL:', err);
+        }
     };
 
     return (
@@ -873,11 +896,11 @@ export const HelpTab: React.FC<SettingsTabProps> = ({ isActive }) => {
                 <div className="bg-gray-700 rounded-lg p-4 space-y-2">
                     <div className="flex justify-between">
                         <span className="text-sm text-gray-400">{t('help.application')}:</span>
-                        <span className="text-sm text-white font-mono">Hexa Launcher v1.0.0</span>
+                        <span className="text-sm text-white font-mono">{appName || 'Hexa Launcher'} v{version || '...'}</span>
                     </div>
                     <div className="flex justify-between">
                         <span className="text-sm text-gray-400">{t('help.build')}:</span>
-                        <span className="text-sm text-white font-mono">2024.11.30</span>
+                        <span className="text-sm text-white font-mono">2025.12.06</span>
                     </div>
                     <div className="flex justify-between">
                         <span className="text-sm text-gray-400">{t('help.platform')}:</span>
@@ -891,7 +914,7 @@ export const HelpTab: React.FC<SettingsTabProps> = ({ isActive }) => {
                 <h3 className="text-lg font-semibold text-gray-300">{t('help.documentation')}</h3>
                 <div className="space-y-2">
                     <button
-                        onClick={() => handleOpenLink('https://github.com/yourusername/hexa-launcher')}
+                        onClick={() => handleOpenLink('https://github.com/Catharacta/hexa-launcher')}
                         className="w-full text-left px-4 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg transition-all flex items-center justify-between group"
                     >
                         <div className="flex items-center gap-3">
@@ -909,7 +932,7 @@ export const HelpTab: React.FC<SettingsTabProps> = ({ isActive }) => {
                     </button>
 
                     <button
-                        onClick={() => handleOpenLink('https://github.com/yourusername/hexa-launcher/wiki')}
+                        onClick={() => handleOpenLink('https://github.com/Catharacta/hexa-launcher/wiki')}
                         className="w-full text-left px-4 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg transition-all flex items-center justify-between group"
                     >
                         <div className="flex items-center gap-3">
@@ -927,7 +950,7 @@ export const HelpTab: React.FC<SettingsTabProps> = ({ isActive }) => {
                     </button>
 
                     <button
-                        onClick={() => handleOpenLink('https://github.com/yourusername/hexa-launcher/issues')}
+                        onClick={() => handleOpenLink('https://github.com/Catharacta/hexa-launcher/issues')}
                         className="w-full text-left px-4 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg transition-all flex items-center justify-between group"
                     >
                         <div className="flex items-center gap-3">

@@ -67,14 +67,14 @@ export const SettingsModal: React.FC = () => {
 
                 {/* Content */}
                 <div className="flex-1 bg-gray-800 overflow-y-auto">
-                    <GeneralTab isActive={activeTab === 'general'} />
-                    <AppearanceTab isActive={activeTab === 'appearance'} />
-                    <KeybindingTab isActive={activeTab === 'keybinding'} />
-                    <CellManagerTab isActive={activeTab === 'cell'} />
-                    <PersistenceTab isActive={activeTab === 'persistence'} />
-                    <SecurityTab isActive={activeTab === 'security'} />
-                    <AdvancedTab isActive={activeTab === 'advanced'} />
-                    <HelpTab isActive={activeTab === 'help'} />
+                    {activeTab === 'general' && <GeneralTab isActive={true} />}
+                    {activeTab === 'appearance' && <AppearanceTab isActive={true} />}
+                    {activeTab === 'keybinding' && <KeybindingTab isActive={true} />}
+                    {activeTab === 'cell' && <CellManagerTab isActive={true} />}
+                    {activeTab === 'persistence' && <PersistenceTab isActive={true} />}
+                    {activeTab === 'security' && <SecurityTab isActive={true} />}
+                    {activeTab === 'advanced' && <AdvancedTab isActive={true} />}
+                    {activeTab === 'help' && <HelpTab isActive={true} />}
                 </div>
             </div>
         </div>
