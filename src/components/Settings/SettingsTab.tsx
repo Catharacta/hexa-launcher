@@ -895,7 +895,17 @@ export const HelpTab: React.FC<SettingsTabProps> = ({ isActive }) => {
                     return;
                 }
             } catch (fallbackErr) {
-                console.error('Fallback failed:', fallbackErr);
+                console.error('Global fallback failed:', fallbackErr);
+            }
+
+            // Ultimate Fallback: Direct Invoke
+            try {
+                const { invoke } = await import('@tauri-apps/api/core');
+                // Try 'plugin:opener|open'
+                await invoke('plugin:opener|open', { path: url });
+                return;
+            } catch (invokeErr) {
+                console.error('Invoke fallback failed:', invokeErr);
             }
 
             const msg = `Failed to open URL: ${err?.message || String(err)}`;
