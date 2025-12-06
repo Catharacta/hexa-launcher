@@ -19,7 +19,6 @@ function App() {
   const cells = useLauncherStore(state => state.cells ?? {});
   const groups = useLauncherStore(state => state.groups ?? {});
   const hideOnBlur = useLauncherStore(state => state.general?.windowBehavior?.hideOnBlur ?? false);
-  const opacity = useLauncherStore(state => state.appearance?.opacity ?? 0.9);
   const showOnMouseEdge = useLauncherStore(state => state.general?.windowBehavior?.showOnMouseEdge ?? false);
 
   useEffect(() => {
@@ -107,7 +106,7 @@ function App() {
       <CustomCSSInjector />
       <div
         className="w-full h-screen relative transition-opacity duration-300"
-        style={{ backgroundColor: `rgba(17, 24, 39, ${opacity})` }}
+        style={{ backgroundColor: 'transparent' }}
       >
         <HexGrid />
         <SettingsModal />
