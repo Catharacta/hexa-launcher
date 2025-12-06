@@ -41,6 +41,7 @@ pub fn check_requires_admin(path: String) -> Result<bool, String> {
     }
 }
 
+#[allow(dead_code)]
 pub fn is_trusted_path(path: &str, trusted_paths: &[String]) -> bool {
     let path_obj = Path::new(path);
 
