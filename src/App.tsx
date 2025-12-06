@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { HexGrid } from './components/HexGrid';
 import { SettingsModal } from './components/Settings/SettingsModal';
 import { TreeModal } from './components/TreeModal';
@@ -12,34 +12,23 @@ import './i18n/config'; // Initialize i18n
 import i18n from './i18n/config';
 
 function App() {
-  const [isLoaded, setIsLoaded] = useState(false);
-
   // 必要なアクション・状態をストアから取得
   const loadFromSettings = useLauncherStore(state => state.loadFromSettings);
-  const cells = useLauncherStore(state => state.cells ?? {});
-  const groups = useLauncherStore(state => state.groups ?? {});
   const hideOnBlur = useLauncherStore(state => state.general?.windowBehavior?.hideOnBlur ?? false);
   const showOnMouseEdge = useLauncherStore(state => state.general?.windowBehavior?.showOnMouseEdge ?? false);
 
   useEffect(() => {
-    let mounted = true;
     loadSettings()
       .then(settings => {
-        if (!mounted) return;
         if (settings) {
           loadFromSettings(settings);
         } else {
           console.log('No settings found, using initial state');
         }
-        setIsLoaded(true);
       })
       .catch(err => {
         console.error('loadSettings failed', err);
-        if (mounted) setIsLoaded(true);
       });
-    return () => {
-      mounted = false;
-    };
   }, [loadFromSettings]);
 
   // Listen for open-settings event from system tray
@@ -113,10 +102,7 @@ function App() {
         <TreeModal />
         <CellEditDialog />
         <ToastContainer />
-        <div className="absolute top-0 left-0 p-2 text-white text-xs pointer-events-none">
-          Cells: {Object.keys(cells).length} | Groups: {Object.keys(groups).length} | Loaded:{' '}
-          {isLoaded ? 'Yes' : 'No'}
-        </div>
+
       </div>
     </ErrorBoundary>
   );

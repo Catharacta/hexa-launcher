@@ -34,7 +34,7 @@ export const SettingsModal: React.FC = () => {
     ];
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
             <div className="bg-gray-800 w-3/4 h-3/4 rounded-lg shadow-2xl flex overflow-hidden border border-gray-700">
                 {/* Sidebar */}
                 <div className="w-64 bg-gray-900 flex flex-col border-r border-gray-700">
