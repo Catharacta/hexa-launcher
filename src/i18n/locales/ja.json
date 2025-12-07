@@ -137,6 +137,7 @@
             "bottomRight": "右下"
         },
         "hexNavDesc": "六角形セル間の移動に使用するキーです。",
+        "search": "検索",
         "editActions": "編集アクション",
         "action": {
             "createShortcutFile": "ショートカット作成 (ファイル)",

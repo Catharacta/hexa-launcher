@@ -137,6 +137,7 @@
             "bottomRight": "Bottom-Right"
         },
         "hexNavDesc": "Keys used to navigate between hexagonal cells.",
+        "search": "Search",
         "editActions": "Edit Actions",
         "action": {
             "createShortcutFile": "Create Shortcut (File)",
