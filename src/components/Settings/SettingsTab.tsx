@@ -69,7 +69,7 @@ export const GeneralTab: React.FC<SettingsTabProps> = ({ isActive }) => {
         }
     };
 
-    if (!isActive) return null;
+
     return (
         <div className="p-4 space-y-6">
             <div className="flex justify-between items-center mb-4">
@@ -170,13 +170,13 @@ export const GeneralTab: React.FC<SettingsTabProps> = ({ isActive }) => {
     );
 };
 
-export const AppearanceTab: React.FC<SettingsTabProps> = ({ isActive }) => {
+export const AppearanceTab: React.FC<SettingsTabProps> = ({ isActive: _ }) => {
     const { t } = useTranslation();
     const appearance = useLauncherStore(state => state.appearance);
     const setAppearance = useLauncherStore(state => state.setAppearance);
     const resetAppearance = useLauncherStore(state => state.resetAppearance);
 
-    if (!isActive) return null;
+
 
     return (
         <div className="p-4 space-y-6">
@@ -271,8 +271,8 @@ export const AppearanceTab: React.FC<SettingsTabProps> = ({ isActive }) => {
     );
 };
 
-export const KeybindingTab: React.FC<SettingsTabProps> = ({ isActive }) => {
-    if (!isActive) return null;
+export const KeybindingTab: React.FC<SettingsTabProps> = ({ isActive: _ }) => {
+
     return (
         <div className="p-4">
             <h2 className="text-xl font-bold mb-4 text-white">Keybindings</h2>
@@ -281,13 +281,13 @@ export const KeybindingTab: React.FC<SettingsTabProps> = ({ isActive }) => {
     );
 };
 
-export const CellManagerTab: React.FC<SettingsTabProps> = ({ isActive }) => {
+export const CellManagerTab: React.FC<SettingsTabProps> = ({ isActive: _ }) => {
     const { t } = useTranslation();
     const grid = useLauncherStore(state => state.grid);
     const setGridSettings = useLauncherStore(state => state.setGridSettings);
     const resetGridSettings = useLauncherStore(state => state.resetGridSettings);
 
-    if (!isActive) return null;
+
     return (
         <div className="p-4 space-y-6">
             <div className="flex justify-between items-center mb-4">
@@ -392,14 +392,14 @@ export const CellManagerTab: React.FC<SettingsTabProps> = ({ isActive }) => {
     );
 };
 
-export const PersistenceTab: React.FC<SettingsTabProps> = ({ isActive }) => {
+export const PersistenceTab: React.FC<SettingsTabProps> = ({ isActive: _ }) => {
     const { t } = useTranslation();
     const [isExporting, setIsExporting] = useState(false);
     const [isImporting, setIsImporting] = useState(false);
     const [lastExport, setLastExport] = useState<string | null>(null);
     const [lastImport, setLastImport] = useState<string | null>(null);
 
-    if (!isActive) return null;
+
 
     const handleExportToFile = async () => {
         try {
@@ -620,14 +620,14 @@ export const PersistenceTab: React.FC<SettingsTabProps> = ({ isActive }) => {
     );
 };
 
-export const SecurityTab: React.FC<SettingsTabProps> = ({ isActive }) => {
+export const SecurityTab: React.FC<SettingsTabProps> = ({ isActive: _ }) => {
     const { t } = useTranslation();
     const security = useLauncherStore(state => state.security);
     const setSecuritySettings = useLauncherStore(state => state.setSecuritySettings);
     const resetSecuritySettings = useLauncherStore(state => state.resetSecuritySettings);
     const [newPath, setNewPath] = useState('');
 
-    if (!isActive) return null;
+
 
     const handleAddPath = () => {
         if (newPath.trim() && !security.trustedPaths.includes(newPath.trim())) {
@@ -728,14 +728,14 @@ export const SecurityTab: React.FC<SettingsTabProps> = ({ isActive }) => {
     );
 };
 
-export const AdvancedTab: React.FC<SettingsTabProps> = ({ isActive }) => {
+export const AdvancedTab: React.FC<SettingsTabProps> = ({ isActive: _ }) => {
     const { t } = useTranslation();
     const advanced = useLauncherStore(state => state.advanced);
     const setAdvancedSettings = useLauncherStore(state => state.setAdvancedSettings);
     const resetAdvancedSettings = useLauncherStore(state => state.resetAdvancedSettings);
     const iconCacheIndex = useLauncherStore(state => state.iconCacheIndex);
 
-    if (!isActive) return null;
+
 
     const handleClearIconCache = () => {
         if (confirm(t('advanced.clearIconCacheConfirm'))) {
@@ -876,7 +876,7 @@ export const HelpTab: React.FC<SettingsTabProps> = ({ isActive }) => {
         }
     }, [isActive]);
 
-    if (!isActive) return null;
+
 
     const addToast = useLauncherStore((state) => state.addToast);
 
