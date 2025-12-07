@@ -118,7 +118,7 @@ use windows::Win32::Graphics::Gdi::{
 };
 use windows::Win32::Storage::FileSystem::FILE_ATTRIBUTE_NORMAL;
 use windows::Win32::UI::Shell::{SHGetFileInfoW, SHFILEINFOW, SHGFI_ICON, SHGFI_LARGEICON};
-use windows::Win32::UI::WindowsAndMessaging::{DestroyIcon, GetIconInfo, HICON};
+use windows::Win32::UI::WindowsAndMessaging::{DestroyIcon, GetCursorPos, GetIconInfo, HICON};
 
 #[tauri::command]
 fn get_file_icon(path: String) -> Result<String, String> {
@@ -393,6 +393,40 @@ pub fn run() {
                                             let _ = window.hide();
                                         }
                                         Ok(false) => {
+                                            // Multi-monitor logic: Move to cursor monitor
+                                            #[cfg(target_os = "windows")]
+                                            unsafe {
+                                                let mut point = std::mem::zeroed();
+                                                if GetCursorPos(&mut point).is_ok() {
+                                                    let mouse_x = point.x;
+                                                    let mouse_y = point.y;
+                                                    if let Ok(monitors) =
+                                                        app.handle().available_monitors()
+                                                    {
+                                                        for monitor in monitors {
+                                                            let m_pos = monitor.position();
+                                                            let m_size = monitor.size();
+                                                            let x_in_monitor = mouse_x >= m_pos.x
+                                                                && mouse_x
+                                                                    < m_pos.x + m_size.width as i32;
+                                                            let y_in_monitor = mouse_y >= m_pos.y
+                                                                && mouse_y
+                                                                    < m_pos.y
+                                                                        + m_size.height as i32;
+
+                                                            if x_in_monitor && y_in_monitor {
+                                                                let _ = window.set_position(
+                                                                    tauri::Position::Physical(
+                                                                        m_pos.clone(),
+                                                                    ),
+                                                                );
+                                                                break;
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+
                                             let _ = window.show();
                                             let _ = window.unminimize();
                                             let _ = window.set_focus();
@@ -454,6 +488,36 @@ pub fn run() {
                                 if window.is_visible().unwrap_or(false) {
                                     let _ = window.hide();
                                 } else {
+                                    // Multi-monitor logic: Move to cursor monitor
+                                    #[cfg(target_os = "windows")]
+                                    unsafe {
+                                        let mut point = std::mem::zeroed();
+                                        if GetCursorPos(&mut point).is_ok() {
+                                            let mouse_x = point.x;
+                                            let mouse_y = point.y;
+                                            if let Ok(monitors) = app.handle().available_monitors()
+                                            {
+                                                for monitor in monitors {
+                                                    let m_pos = monitor.position();
+                                                    let m_size = monitor.size();
+                                                    let x_in_monitor = mouse_x >= m_pos.x
+                                                        && mouse_x < m_pos.x + m_size.width as i32;
+                                                    let y_in_monitor = mouse_y >= m_pos.y
+                                                        && mouse_y < m_pos.y + m_size.height as i32;
+
+                                                    if x_in_monitor && y_in_monitor {
+                                                        let _ = window.set_position(
+                                                            tauri::Position::Physical(
+                                                                m_pos.clone(),
+                                                            ),
+                                                        );
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+
                                     let _ = window.show();
                                     let _ = window.set_focus();
                                 }
