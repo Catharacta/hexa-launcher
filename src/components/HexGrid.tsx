@@ -16,7 +16,9 @@ export const HexGrid: React.FC = () => {
         appearance,
         selectedCellIds,
         rootCellIds,
-        grid, // Get grid settings
+        grid,
+        searchResults,
+        isSearchActive,
     } = useLauncherStore();
 
     const [contextMenu, setContextMenu] = useState<{ x: number; y: number; cellId: string } | null>(null);
@@ -134,6 +136,7 @@ export const HexGrid: React.FC = () => {
                         const isSwapTarget = cell.id === hoveredTargetCellId;
                         const isSelected = selectedCellIds.includes(cell.id);
                         const isFileDropTarget = cell.id === fileDropHoveredCellId;
+                        const isSearchMatch = searchResults.includes(cell.id);
                         return (
                             <Hexagon
                                 key={cell.id}
@@ -148,6 +151,8 @@ export const HexGrid: React.FC = () => {
                                 isDragging={isBeingDragged}
                                 isDragTarget={isSwapTarget || isFileDropTarget}
                                 isSelected={isSelected}
+                                isSearchMatch={isSearchMatch}
+                                isSearchActive={isSearchActive}
                                 showLabel={grid.showLabels}
                                 hoverEffect={grid.hoverEffect}
                             />

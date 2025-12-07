@@ -25,7 +25,7 @@ export const KeybindingSettings: React.FC = () => {
 
         let newKey = key;
 
-        if (recordingTarget === 'globalToggle') {
+        if (recordingTarget === 'globalToggle' || recordingTarget === 'search') {
             const modifiers = [];
             if (e.ctrlKey) modifiers.push('Ctrl');
             if (e.altKey) modifiers.push('Alt');
@@ -39,6 +39,8 @@ export const KeybindingSettings: React.FC = () => {
 
         if (recordingTarget === 'globalToggle') {
             setKeyBindings({ globalToggle: newKey });
+        } else if (recordingTarget === 'search') {
+            setKeyBindings({ search: newKey });
         } else if (recordingTarget.startsWith('hexNav.')) {
             const direction = recordingTarget.split('.')[1];
             setKeyBindings({
@@ -92,6 +94,15 @@ export const KeybindingSettings: React.FC = () => {
                 {renderKeyInput(t('keybinding.toggleLauncher'), keyBindings.globalToggle, "globalToggle")}
                 <p className="text-xs text-gray-400 mt-2">
                     {t('keybinding.toggleLauncherDesc')}
+                </p>
+            </div>
+
+            {/* Search Shortcut */}
+            <div>
+                <h3 className="text-lg font-semibold text-white mb-3">{t('keybinding.search')}</h3>
+                {renderKeyInput(t('keybinding.search'), keyBindings.search, "search")}
+                <p className="text-xs text-gray-400 mt-2">
+                    {t('keybinding.toggleLauncherDesc')} {/* Reuse generic or add new desc if needed, sticking to simple label for now */}
                 </p>
             </div>
 
@@ -164,6 +175,7 @@ export const KeybindingSettings: React.FC = () => {
                             deleteCell: 'Delete',
                         },
                         directionalCreateModifier: 'Shift',
+                        search: 'Ctrl+F',
                     })}
                     className="px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-900/30 rounded transition-colors"
                 >

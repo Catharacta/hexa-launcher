@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { HexGrid } from './components/HexGrid';
+import { SearchBar } from './components/SearchBar';
 import { SettingsModal } from './components/Settings/SettingsModal';
 import { TreeModal } from './components/TreeModal';
 import { ErrorBoundary } from './components/ErrorBoundary';
@@ -98,6 +99,7 @@ function App() {
         style={{ backgroundColor: 'transparent' }}
       >
         <HexGrid />
+        <SearchBar />
         <SettingsModal />
         <TreeModal />
         <CellEditDialog />
