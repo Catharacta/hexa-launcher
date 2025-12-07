@@ -19,7 +19,8 @@
         "transparent": true,
         "shadow": false,
         "dragDropEnabled": true,
-        "maximized": true
+        "maximized": true,
+        "visible": false
       }
     ],
     "security": {

@@ -91,6 +91,19 @@ function App() {
     if (language) i18n.changeLanguage(language);
   }, []);
 
+  // Show window gracefully after mount to prevent white flash
+  useEffect(() => {
+    const showWindow = async () => {
+      const { getCurrentWindow } = await import('@tauri-apps/api/window');
+      // Small delay to ensure styles are applied
+      setTimeout(async () => {
+        await getCurrentWindow().show();
+        await getCurrentWindow().setFocus();
+      }, 100);
+    };
+    showWindow();
+  }, []);
+
   return (
     <ErrorBoundary>
       <CustomCSSInjector />
