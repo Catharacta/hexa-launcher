@@ -881,38 +881,58 @@ export const HelpTab: React.FC<SettingsTabProps> = ({ isActive }) => {
     const addToast = useLauncherStore((state) => state.addToast);
 
     const handleOpenLink = async (url: string) => {
+        let errors: string[] = [];
+
+        // 1. Try standard import access
         try {
-            // Try standard import access
-            await ((opener as any).open || (opener as any).default?.open)(url);
-        } catch (err: any) {
-            console.error('Failed to open URL via import:', err);
-
-            // Fallback: Check global Tauri scope (v2 compatibility)
-            try {
-                const globalTauri = (window as any).__TAURI__;
-                if (globalTauri?.opener?.open) {
-                    await globalTauri.opener.open(url);
-                    return;
-                }
-            } catch (fallbackErr) {
-                console.error('Global fallback failed:', fallbackErr);
-            }
-
-            // Ultimate Fallback: Direct Invoke
-            try {
-                const { invoke } = await import('@tauri-apps/api/core');
-                // Try 'plugin:opener|open'
-                await invoke('plugin:opener|open', { path: url });
+            const openFn = (opener as any).open || (opener as any).default?.open;
+            if (openFn) {
+                await openFn(url);
                 return;
-            } catch (invokeErr) {
-                console.error('Invoke fallback failed:', invokeErr);
             }
-
-            const msg = `Failed to open URL: ${err?.message || String(err)}`;
-            addToast(msg, 'error');
-            // Alert is necessary if toast system fails or is hidden
-            alert(`${msg}\n\nURL: ${url}\n\nPlease check permissions or report this issue.`);
+            errors.push('Imported opener function not found');
+        } catch (err: any) {
+            console.error('Import attempt failed:', err);
+            errors.push(`Import error: ${err?.message || err}`);
         }
+
+        // 2. Fallback: Check global Tauri scope (v2 compatibility)
+        try {
+            const globalTauri = (window as any).__TAURI__;
+            if (globalTauri?.opener?.open) {
+                await globalTauri.opener.open(url);
+                return;
+            }
+        } catch (fallbackErr: any) {
+            console.error('Global fallback failed:', fallbackErr);
+            errors.push(`Global fallback error: ${fallbackErr?.message || fallbackErr}`);
+        }
+
+        // 3. Plugin Invoke Fallback
+        try {
+            const { invoke } = await import('@tauri-apps/api/core');
+            // Try 'plugin:opener|open'
+            await invoke('plugin:opener|open', { path: url });
+            return;
+        } catch (invokeErr: any) {
+            console.error('Invoke fallback failed:', invokeErr);
+            errors.push(`Plugin invoke error: ${invokeErr?.message || invokeErr}`);
+        }
+
+        // 4. Ultimate Fallback: Custom 'launch_app' command
+        try {
+            const { invoke } = await import('@tauri-apps/api/core');
+            // 'launch_app' handles explorer spawn on Windows
+            await invoke('launch_app', { path: url, args: null, workingDir: null });
+            return;
+        } catch (customErr: any) {
+            console.error('Custom launch_app fallback failed:', customErr);
+            errors.push(`Custom launch_app error: ${customErr?.message || customErr}`);
+        }
+
+        const msg = `Failed to open URL via all methods:\n${errors.join('\n')}`;
+        addToast('Failed to open link', 'error');
+        alert(`${msg}\n\nURL: ${url}`);
     };
 
     return (
