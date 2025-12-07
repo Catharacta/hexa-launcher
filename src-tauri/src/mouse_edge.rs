@@ -59,8 +59,18 @@ impl MouseEdgeMonitor {
                                                 app_handle.get_webview_window("main")
                                             {
                                                 if !window.is_visible().unwrap_or(false) {
+                                                    println!(
+                                                        "Edge trigger on monitor at {:?}",
+                                                        m_pos
+                                                    );
                                                     // Move window to this monitor
                                                     let _ = window.unmaximize();
+                                                    let _ = window.set_size(tauri::Size::Physical(
+                                                        tauri::PhysicalSize {
+                                                            width: 800,
+                                                            height: 600,
+                                                        },
+                                                    ));
                                                     let _ = window.set_position(
                                                         tauri::Position::Physical(m_pos.clone()),
                                                     );

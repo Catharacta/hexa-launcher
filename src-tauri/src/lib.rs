@@ -413,7 +413,9 @@ pub fn run() {
                                                                         + m_size.height as i32;
 
                                                             if x_in_monitor && y_in_monitor {
+                                                                println!("Shortcut trigger on monitor at {:?}", m_pos);
                                                                 let _ = window.unmaximize();
+                                                                let _ = window.set_size(tauri::Size::Physical(tauri::PhysicalSize { width: 800, height: 600 }));
                                                                 let _ = window.set_position(
                                                                     tauri::Position::Physical(
                                                                         m_pos.clone(),
@@ -504,8 +506,11 @@ pub fn run() {
                                                     let y_in_monitor = mouse_y >= m_pos.y
                                                         && mouse_y < m_pos.y + m_size.height as i32;
 
+                                                    // Debug logs
+                                                    println!("Tray trigger on monitor at {:?}", m_pos);
                                                     if x_in_monitor && y_in_monitor {
                                                         let _ = window.unmaximize();
+                                                        let _ = window.set_size(tauri::Size::Physical(tauri::PhysicalSize { width: 800, height: 600 }));
                                                         let _ = window.set_position(
                                                             tauri::Position::Physical(
                                                                 m_pos.clone(),
