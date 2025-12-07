@@ -1,0 +1,14 @@
+    Checking hexa-launcher-app v0.1.0 (C:\Users\atuya\Documents\develop\hexa-launcher\src-tauri)
+error[E0599]: no method named `handle` found for reference `&AppHandle<_>` in the current scope
+   --> src\lib.rs:498:71
+    |
+498 | ...                   if let Ok(monitors) = app.handle().available_monitors()
+    |                                                 ^^^^^^
+    |
+help: there is a method `app_handle` with a similar name
+    |
+498 |                                             if let Ok(monitors) = app.app_handle().available_monitors()
+    |                                                                       ++++
+
+For more information about this error, try `rustc --explain E0599`.
+error: could not compile `hexa-launcher-app` (lib) due to 1 previous error

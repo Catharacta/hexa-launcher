@@ -60,11 +60,13 @@ impl MouseEdgeMonitor {
                                             {
                                                 if !window.is_visible().unwrap_or(false) {
                                                     // Move window to this monitor
+                                                    let _ = window.unmaximize();
                                                     let _ = window.set_position(
                                                         tauri::Position::Physical(m_pos.clone()),
                                                     );
 
                                                     let _ = window.show();
+                                                    let _ = window.maximize();
                                                     let _ = window.set_focus();
                                                     let _ = window.set_always_on_top(true);
                                                     let _ = window.set_always_on_top(false);

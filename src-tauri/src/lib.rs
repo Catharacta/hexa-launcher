@@ -400,9 +400,7 @@ pub fn run() {
                                                 if GetCursorPos(&mut point).is_ok() {
                                                     let mouse_x = point.x;
                                                     let mouse_y = point.y;
-                                                    if let Ok(monitors) =
-                                                        app.handle().available_monitors()
-                                                    {
+                                                    if let Ok(monitors) = app.available_monitors() {
                                                         for monitor in monitors {
                                                             let m_pos = monitor.position();
                                                             let m_size = monitor.size();
@@ -415,6 +413,7 @@ pub fn run() {
                                                                         + m_size.height as i32;
 
                                                             if x_in_monitor && y_in_monitor {
+                                                                let _ = window.unmaximize();
                                                                 let _ = window.set_position(
                                                                     tauri::Position::Physical(
                                                                         m_pos.clone(),
@@ -428,6 +427,7 @@ pub fn run() {
                                             }
 
                                             let _ = window.show();
+                                            let _ = window.maximize();
                                             let _ = window.unminimize();
                                             let _ = window.set_focus();
                                             // Force focus workaround
@@ -495,8 +495,7 @@ pub fn run() {
                                         if GetCursorPos(&mut point).is_ok() {
                                             let mouse_x = point.x;
                                             let mouse_y = point.y;
-                                            if let Ok(monitors) = app.handle().available_monitors()
-                                            {
+                                            if let Ok(monitors) = app.available_monitors() {
                                                 for monitor in monitors {
                                                     let m_pos = monitor.position();
                                                     let m_size = monitor.size();
@@ -506,6 +505,7 @@ pub fn run() {
                                                         && mouse_y < m_pos.y + m_size.height as i32;
 
                                                     if x_in_monitor && y_in_monitor {
+                                                        let _ = window.unmaximize();
                                                         let _ = window.set_position(
                                                             tauri::Position::Physical(
                                                                 m_pos.clone(),
@@ -519,6 +519,7 @@ pub fn run() {
                                     }
 
                                     let _ = window.show();
+                                    let _ = window.maximize();
                                     let _ = window.set_focus();
                                 }
                             }
