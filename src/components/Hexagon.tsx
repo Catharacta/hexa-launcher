@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Plus } from 'lucide-react';
 import { Cell } from '../types/models';
 import { THEMES } from '../utils/theme';
 import { clsx } from 'clsx';
@@ -131,7 +132,12 @@ export const HexagonComponent: React.FC<HexagonProps> = ({
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21L21 17.25" />
                             </svg>
                         ) : (
-                            iconUrl && <img src={iconUrl} alt={cell.title} className="w-8 h-8 object-contain" />
+
+                            iconUrl ? (
+                                <img src={iconUrl} alt={cell.title} className="w-8 h-8 object-contain" />
+                            ) : (
+                                <Plus className={clsx("w-8 h-8", isCyberpunk ? "text-[#00f2ea]" : theme.text)} />
+                            )
                         )}
                     </div>
                     {(showLabel === 'always' || (showLabel === 'hover' && !isGhost)) && (

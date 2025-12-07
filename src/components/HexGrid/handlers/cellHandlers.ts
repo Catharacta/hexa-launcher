@@ -68,7 +68,8 @@ export const useCellHandlers = (
                 type: 'app',
                 cube: newCube,
                 title: 'New App',
-                icon: 'https://vitejs.dev/logo.svg',
+
+                // icon: undefined, // Uses default icon
             };
             addCell(newCell);
         } else {
