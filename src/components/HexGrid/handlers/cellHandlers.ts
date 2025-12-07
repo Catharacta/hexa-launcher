@@ -94,6 +94,7 @@ export const useCellHandlers = (
     const handleBackgroundClick = () => {
         clearSelection();
         setContextMenu(null);
+        hideWindow().catch(console.error);
     };
 
     return {
