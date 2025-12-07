@@ -83,30 +83,11 @@ fn launch_app(
     Ok(())
 }
 
+mod shortcut_utils;
+
 #[tauri::command]
-fn resolve_shortcut(path: String) -> Result<String, String> {
-    // Use PowerShell to resolve the shortcut target
-    let output = std::process::Command::new("powershell")
-        .args(&[
-            "-NoProfile",
-            "-Command",
-            &format!(
-                "(New-Object -ComObject WScript.Shell).CreateShortcut('{}').TargetPath",
-                path
-            ),
-        ])
-        .output()
-        .map_err(|e| e.to_string())?;
-
-    if !output.status.success() {
-        return Err(String::from_utf8_lossy(&output.stderr).to_string());
-    }
-
-    let target = String::from_utf8_lossy(&output.stdout).trim().to_string();
-    if target.is_empty() {
-        return Err("Could not resolve shortcut target".to_string());
-    }
-    Ok(target)
+fn resolve_shortcut(path: String) -> Result<shortcut_utils::ShortcutInfo, String> {
+    shortcut_utils::resolve_lnk(&path)
 }
 
 use base64::Engine;

@@ -84,13 +84,15 @@ export async function launchAppWithSecurity(
     }
 }
 
+import { ResolvedShortcut } from '../types/models';
+
 // ショートカット解決
-export const resolveShortcut = async (path: string): Promise<string> => {
+export const resolveShortcut = async (path: string): Promise<ResolvedShortcut> => {
     try {
-        return await invoke('resolve_shortcut', { path });
+        return await invoke<ResolvedShortcut>('resolve_shortcut', { path });
     } catch (error) {
         console.error('Failed to resolve shortcut:', error);
-        return path; // Fallback to original path
+        return { target: path, arguments: '', working_dir: '' }; // Fallback
     }
 };
 
