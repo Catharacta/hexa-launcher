@@ -27,6 +27,7 @@ export const useDragAndDrop = () => {
     }, [draggedCellId]);
 
     const handleMouseDown = (cell: Cell, e: React.MouseEvent) => {
+        e.stopPropagation();
         if (e.button !== 0) return;
         dragStartRef.current = { x: e.clientX, y: e.clientY };
         isDraggingRef.current = false;
