@@ -856,25 +856,23 @@ export const AdvancedTab: React.FC<SettingsTabProps> = ({ isActive: _ }) => {
     );
 };
 
-export const HelpTab: React.FC<SettingsTabProps> = ({ isActive }) => {
+export const HelpTab: React.FC<SettingsTabProps> = ({ isActive: _ }) => {
     const { t } = useTranslation();
     const [version, setVersion] = useState('');
     const [appName, setAppName] = useState('');
 
     useEffect(() => {
-        if (isActive) {
-            import('@tauri-apps/api/app').then(async (app) => {
-                try {
-                    setVersion(await app.getVersion());
-                    setAppName(await app.getName());
-                } catch (e) {
-                    console.error('Failed to get app info', e);
-                    setVersion('Unknown');
-                    setAppName('Hexa Launcher');
-                }
-            });
-        }
-    }, [isActive]);
+        import('@tauri-apps/api/app').then(async (app) => {
+            try {
+                setVersion(await app.getVersion());
+                setAppName(await app.getName());
+            } catch (e) {
+                console.error('Failed to get app info', e);
+                setVersion('Unknown');
+                setAppName('Hexa Launcher');
+            }
+        });
+    }, []);
 
 
 
