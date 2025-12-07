@@ -17,7 +17,9 @@
         "height": 600,
         "decorations": false,
         "transparent": true,
-        "dragDropEnabled": true
+        "shadow": false,
+        "dragDropEnabled": true,
+        "maximized": true
       }
     ],
     "security": {

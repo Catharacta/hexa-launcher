@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLauncherStore } from '../../store/launcherStore';
 import {
@@ -9,7 +9,7 @@ import {
     PersistenceTab,
     SecurityTab,
     AdvancedTab,
-    HelpTab
+    HelpTab,
 } from './SettingsTab';
 
 type TabId = 'general' | 'appearance' | 'keybinding' | 'cell' | 'persistence' | 'security' | 'advanced' | 'help';
@@ -19,6 +19,17 @@ export const SettingsModal: React.FC = () => {
     const isSettingsOpen = useLauncherStore((state) => state.isSettingsOpen);
     const setSettingsOpen = useLauncherStore((state) => state.setSettingsOpen);
     const [activeTab, setActiveTab] = useState<TabId>('general');
+    const [visitedTabs, setVisitedTabs] = useState<Set<TabId>>(new Set(['general']));
+
+    useEffect(() => {
+        if (!visitedTabs.has(activeTab)) {
+            setVisitedTabs(prev => {
+                const newSet = new Set(prev);
+                newSet.add(activeTab);
+                return newSet;
+            });
+        }
+    }, [activeTab, visitedTabs]);
 
     if (!isSettingsOpen) return null;
 
@@ -67,14 +78,46 @@ export const SettingsModal: React.FC = () => {
 
                 {/* Content */}
                 <div className="flex-1 bg-gray-800 overflow-y-auto">
-                    <GeneralTab isActive={activeTab === 'general'} />
-                    <AppearanceTab isActive={activeTab === 'appearance'} />
-                    <KeybindingTab isActive={activeTab === 'keybinding'} />
-                    <CellManagerTab isActive={activeTab === 'cell'} />
-                    <PersistenceTab isActive={activeTab === 'persistence'} />
-                    <SecurityTab isActive={activeTab === 'security'} />
-                    <AdvancedTab isActive={activeTab === 'advanced'} />
-                    <HelpTab isActive={activeTab === 'help'} />
+                    {visitedTabs.has('general') && (
+                        <div className={activeTab === 'general' ? 'block' : 'hidden'}>
+                            <GeneralTab isActive={activeTab === 'general'} />
+                        </div>
+                    )}
+                    {visitedTabs.has('appearance') && (
+                        <div className={activeTab === 'appearance' ? 'block' : 'hidden'}>
+                            <AppearanceTab isActive={activeTab === 'appearance'} />
+                        </div>
+                    )}
+                    {visitedTabs.has('keybinding') && (
+                        <div className={activeTab === 'keybinding' ? 'block' : 'hidden'}>
+                            <KeybindingTab isActive={activeTab === 'keybinding'} />
+                        </div>
+                    )}
+                    {visitedTabs.has('cell') && (
+                        <div className={activeTab === 'cell' ? 'block' : 'hidden'}>
+                            <CellManagerTab isActive={activeTab === 'cell'} />
+                        </div>
+                    )}
+                    {visitedTabs.has('persistence') && (
+                        <div className={activeTab === 'persistence' ? 'block' : 'hidden'}>
+                            <PersistenceTab isActive={activeTab === 'persistence'} />
+                        </div>
+                    )}
+                    {visitedTabs.has('security') && (
+                        <div className={activeTab === 'security' ? 'block' : 'hidden'}>
+                            <SecurityTab isActive={activeTab === 'security'} />
+                        </div>
+                    )}
+                    {visitedTabs.has('advanced') && (
+                        <div className={activeTab === 'advanced' ? 'block' : 'hidden'}>
+                            <AdvancedTab isActive={activeTab === 'advanced'} />
+                        </div>
+                    )}
+                    {visitedTabs.has('help') && (
+                        <div className={activeTab === 'help' ? 'block' : 'hidden'}>
+                            <HelpTab isActive={activeTab === 'help'} />
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

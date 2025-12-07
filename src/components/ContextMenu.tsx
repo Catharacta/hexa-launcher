@@ -36,6 +36,28 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, cellId, onClose 
         };
     }, [onClose]);
 
+    // Smart Positioning Logic
+    const [style, setStyle] = React.useState<React.CSSProperties>({ top: y, left: x, visibility: 'hidden' });
+
+    useEffect(() => {
+        if (menuRef.current) {
+            const rect = menuRef.current.getBoundingClientRect();
+            let newX = x;
+            let newY = y;
+
+            // Horizontal adjustment
+            if (x + rect.width > window.innerWidth) {
+                newX = x - rect.width;
+            }
+            // Vertical adjustment
+            if (y + rect.height > window.innerHeight) {
+                newY = y - rect.height;
+            }
+
+            setStyle({ top: newY, left: newX, visibility: 'visible' });
+        }
+    }, [x, y]);
+
     if (!cell) return null;
     if (cell.type === 'launcher_setting') return null;
 
@@ -163,7 +185,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, cellId, onClose 
                 ? 'bg-black/80 border-[#00f2ea] text-[#00f2ea] shadow-[0_0_10px_#00f2ea]'
                 : 'bg-gray-800/90 border-gray-700 text-white'
                 }`}
-            style={{ top: y, left: x }}
+            style={style}
             onMouseDown={(e) => e.stopPropagation()}
         >
             <div className="py-1">

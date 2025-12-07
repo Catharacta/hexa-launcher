@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLauncherStore } from '../../store/launcherStore';
 import { clsx } from 'clsx';
+// @ts-ignore
+import * as opener from '@tauri-apps/plugin-opener';
 import { THEMES } from '../../utils/theme';
 import { KeybindingSettings } from './KeybindingSettings';
 import {
@@ -67,7 +69,7 @@ export const GeneralTab: React.FC<SettingsTabProps> = ({ isActive }) => {
         }
     };
 
-    if (!isActive) return null;
+
     return (
         <div className="p-4 space-y-6">
             <div className="flex justify-between items-center mb-4">
@@ -168,13 +170,13 @@ export const GeneralTab: React.FC<SettingsTabProps> = ({ isActive }) => {
     );
 };
 
-export const AppearanceTab: React.FC<SettingsTabProps> = ({ isActive }) => {
+export const AppearanceTab: React.FC<SettingsTabProps> = ({ isActive: _ }) => {
     const { t } = useTranslation();
     const appearance = useLauncherStore(state => state.appearance);
     const setAppearance = useLauncherStore(state => state.setAppearance);
     const resetAppearance = useLauncherStore(state => state.resetAppearance);
 
-    if (!isActive) return null;
+
 
     return (
         <div className="p-4 space-y-6">
@@ -269,8 +271,8 @@ export const AppearanceTab: React.FC<SettingsTabProps> = ({ isActive }) => {
     );
 };
 
-export const KeybindingTab: React.FC<SettingsTabProps> = ({ isActive }) => {
-    if (!isActive) return null;
+export const KeybindingTab: React.FC<SettingsTabProps> = ({ isActive: _ }) => {
+
     return (
         <div className="p-4">
             <h2 className="text-xl font-bold mb-4 text-white">Keybindings</h2>
@@ -279,13 +281,13 @@ export const KeybindingTab: React.FC<SettingsTabProps> = ({ isActive }) => {
     );
 };
 
-export const CellManagerTab: React.FC<SettingsTabProps> = ({ isActive }) => {
+export const CellManagerTab: React.FC<SettingsTabProps> = ({ isActive: _ }) => {
     const { t } = useTranslation();
     const grid = useLauncherStore(state => state.grid);
     const setGridSettings = useLauncherStore(state => state.setGridSettings);
     const resetGridSettings = useLauncherStore(state => state.resetGridSettings);
 
-    if (!isActive) return null;
+
     return (
         <div className="p-4 space-y-6">
             <div className="flex justify-between items-center mb-4">
@@ -390,14 +392,14 @@ export const CellManagerTab: React.FC<SettingsTabProps> = ({ isActive }) => {
     );
 };
 
-export const PersistenceTab: React.FC<SettingsTabProps> = ({ isActive }) => {
+export const PersistenceTab: React.FC<SettingsTabProps> = ({ isActive: _ }) => {
     const { t } = useTranslation();
     const [isExporting, setIsExporting] = useState(false);
     const [isImporting, setIsImporting] = useState(false);
     const [lastExport, setLastExport] = useState<string | null>(null);
     const [lastImport, setLastImport] = useState<string | null>(null);
 
-    if (!isActive) return null;
+
 
     const handleExportToFile = async () => {
         try {
@@ -618,14 +620,14 @@ export const PersistenceTab: React.FC<SettingsTabProps> = ({ isActive }) => {
     );
 };
 
-export const SecurityTab: React.FC<SettingsTabProps> = ({ isActive }) => {
+export const SecurityTab: React.FC<SettingsTabProps> = ({ isActive: _ }) => {
     const { t } = useTranslation();
     const security = useLauncherStore(state => state.security);
     const setSecuritySettings = useLauncherStore(state => state.setSecuritySettings);
     const resetSecuritySettings = useLauncherStore(state => state.resetSecuritySettings);
     const [newPath, setNewPath] = useState('');
 
-    if (!isActive) return null;
+
 
     const handleAddPath = () => {
         if (newPath.trim() && !security.trustedPaths.includes(newPath.trim())) {
@@ -726,14 +728,14 @@ export const SecurityTab: React.FC<SettingsTabProps> = ({ isActive }) => {
     );
 };
 
-export const AdvancedTab: React.FC<SettingsTabProps> = ({ isActive }) => {
+export const AdvancedTab: React.FC<SettingsTabProps> = ({ isActive: _ }) => {
     const { t } = useTranslation();
     const advanced = useLauncherStore(state => state.advanced);
     const setAdvancedSettings = useLauncherStore(state => state.setAdvancedSettings);
     const resetAdvancedSettings = useLauncherStore(state => state.resetAdvancedSettings);
     const iconCacheIndex = useLauncherStore(state => state.iconCacheIndex);
 
-    if (!isActive) return null;
+
 
     const handleClearIconCache = () => {
         if (confirm(t('advanced.clearIconCacheConfirm'))) {
@@ -854,13 +856,81 @@ export const AdvancedTab: React.FC<SettingsTabProps> = ({ isActive }) => {
     );
 };
 
-export const HelpTab: React.FC<SettingsTabProps> = ({ isActive }) => {
+export const HelpTab: React.FC<SettingsTabProps> = ({ isActive: _ }) => {
     const { t } = useTranslation();
-    if (!isActive) return null;
+    const [version, setVersion] = useState('');
+    const [appName, setAppName] = useState('');
 
-    const handleOpenLink = (url: string) => {
-        const { open } = require('@tauri-apps/plugin-opener');
-        open(url).catch((err: any) => console.error('Failed to open URL:', err));
+    useEffect(() => {
+        import('@tauri-apps/api/app').then(async (app) => {
+            try {
+                setVersion(await app.getVersion());
+                setAppName(await app.getName());
+            } catch (e) {
+                console.error('Failed to get app info', e);
+                setVersion('Unknown');
+                setAppName('Hexa Launcher');
+            }
+        });
+    }, []);
+
+
+
+    const addToast = useLauncherStore((state) => state.addToast);
+
+    const handleOpenLink = async (url: string) => {
+        let errors: string[] = [];
+
+        // 1. Try standard import access
+        try {
+            const openFn = (opener as any).open || (opener as any).default?.open;
+            if (openFn) {
+                await openFn(url);
+                return;
+            }
+            errors.push('Imported opener function not found');
+        } catch (err: any) {
+            console.error('Import attempt failed:', err);
+            errors.push(`Import error: ${err?.message || err}`);
+        }
+
+        // 2. Fallback: Check global Tauri scope (v2 compatibility)
+        try {
+            const globalTauri = (window as any).__TAURI__;
+            if (globalTauri?.opener?.open) {
+                await globalTauri.opener.open(url);
+                return;
+            }
+        } catch (fallbackErr: any) {
+            console.error('Global fallback failed:', fallbackErr);
+            errors.push(`Global fallback error: ${fallbackErr?.message || fallbackErr}`);
+        }
+
+        // 3. Plugin Invoke Fallback
+        try {
+            const { invoke } = await import('@tauri-apps/api/core');
+            // Try 'plugin:opener|open'
+            await invoke('plugin:opener|open', { path: url });
+            return;
+        } catch (invokeErr: any) {
+            console.error('Invoke fallback failed:', invokeErr);
+            errors.push(`Plugin invoke error: ${invokeErr?.message || invokeErr}`);
+        }
+
+        // 4. Ultimate Fallback: Custom 'launch_app' command
+        try {
+            const { invoke } = await import('@tauri-apps/api/core');
+            // 'launch_app' handles explorer spawn on Windows
+            await invoke('launch_app', { path: url, args: null, workingDir: null });
+            return;
+        } catch (customErr: any) {
+            console.error('Custom launch_app fallback failed:', customErr);
+            errors.push(`Custom launch_app error: ${customErr?.message || customErr}`);
+        }
+
+        const msg = `Failed to open URL via all methods:\n${errors.join('\n')}`;
+        addToast('Failed to open link', 'error');
+        alert(`${msg}\n\nURL: ${url}`);
     };
 
     return (
@@ -873,11 +943,11 @@ export const HelpTab: React.FC<SettingsTabProps> = ({ isActive }) => {
                 <div className="bg-gray-700 rounded-lg p-4 space-y-2">
                     <div className="flex justify-between">
                         <span className="text-sm text-gray-400">{t('help.application')}:</span>
-                        <span className="text-sm text-white font-mono">Hexa Launcher v1.0.0</span>
+                        <span className="text-sm text-white font-mono">{appName || 'Hexa Launcher'} v{version || '...'}</span>
                     </div>
                     <div className="flex justify-between">
                         <span className="text-sm text-gray-400">{t('help.build')}:</span>
-                        <span className="text-sm text-white font-mono">2024.11.30</span>
+                        <span className="text-sm text-white font-mono">2025.12.06</span>
                     </div>
                     <div className="flex justify-between">
                         <span className="text-sm text-gray-400">{t('help.platform')}:</span>
@@ -891,7 +961,7 @@ export const HelpTab: React.FC<SettingsTabProps> = ({ isActive }) => {
                 <h3 className="text-lg font-semibold text-gray-300">{t('help.documentation')}</h3>
                 <div className="space-y-2">
                     <button
-                        onClick={() => handleOpenLink('https://github.com/yourusername/hexa-launcher')}
+                        onClick={() => handleOpenLink('https://github.com/Catharacta/hexa-launcher')}
                         className="w-full text-left px-4 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg transition-all flex items-center justify-between group"
                     >
                         <div className="flex items-center gap-3">
@@ -909,7 +979,7 @@ export const HelpTab: React.FC<SettingsTabProps> = ({ isActive }) => {
                     </button>
 
                     <button
-                        onClick={() => handleOpenLink('https://github.com/yourusername/hexa-launcher/wiki')}
+                        onClick={() => handleOpenLink('https://github.com/Catharacta/hexa-launcher')}
                         className="w-full text-left px-4 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg transition-all flex items-center justify-between group"
                     >
                         <div className="flex items-center gap-3">
@@ -927,7 +997,7 @@ export const HelpTab: React.FC<SettingsTabProps> = ({ isActive }) => {
                     </button>
 
                     <button
-                        onClick={() => handleOpenLink('https://github.com/yourusername/hexa-launcher/issues')}
+                        onClick={() => handleOpenLink('https://github.com/Catharacta/hexa-launcher/issues')}
                         className="w-full text-left px-4 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg transition-all flex items-center justify-between group"
                     >
                         <div className="flex items-center gap-3">
