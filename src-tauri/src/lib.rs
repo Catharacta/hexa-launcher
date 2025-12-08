@@ -84,10 +84,21 @@ fn launch_app(
 }
 
 mod shortcut_utils;
+mod uwp_utils;
 
 #[tauri::command]
 fn resolve_shortcut(path: String) -> Result<shortcut_utils::ShortcutInfo, String> {
     shortcut_utils::resolve_lnk(&path)
+}
+
+#[tauri::command]
+fn get_uwp_apps() -> Result<Vec<uwp_utils::UwpApp>, String> {
+    uwp_utils::get_installed_uwp_apps()
+}
+
+#[tauri::command]
+fn launch_uwp_app(aumid: String) -> Result<(), String> {
+    uwp_utils::launch_uwp(&aumid)
 }
 
 use base64::Engine;
@@ -343,6 +354,8 @@ pub fn run() {
             load_settings,
             launch_app,
             resolve_shortcut,
+            get_uwp_apps,
+            launch_uwp_app,
             get_file_icon,
             hide_window,
             update_global_shortcut,

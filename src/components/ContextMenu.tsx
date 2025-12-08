@@ -240,6 +240,16 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, cellId, onClose 
                                     {t('contextMenu.editShortcutFolder')}
                                 </button>
 
+                                <button onClick={(e) => {
+                                    e.stopPropagation();
+                                    useLauncherStore.getState().setUwpSelectorOpen(true, cellId);
+                                    onClose();
+                                }} className={itemClass}>
+                                    Select UWP App
+                                </button>
+
+                                <div className={`border-t ${isCyberpunk ? 'border-[#00f2ea]/30' : 'border-gray-600'} my-1`}></div>
+
                                 <button onClick={handleCreateGroup} className={itemClass}>
                                     {t('contextMenu.createGroup')}
                                 </button>

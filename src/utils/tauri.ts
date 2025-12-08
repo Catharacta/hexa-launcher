@@ -84,7 +84,7 @@ export async function launchAppWithSecurity(
     }
 }
 
-import { ResolvedShortcut } from '../types/models';
+import { ResolvedShortcut, UwpApp } from '../types/models';
 
 // ショートカット解決
 export const resolveShortcut = async (path: string): Promise<ResolvedShortcut> => {
@@ -95,6 +95,25 @@ export const resolveShortcut = async (path: string): Promise<ResolvedShortcut> =
         return { target: path, arguments: '', working_dir: '' }; // Fallback
     }
 };
+
+// UWP Apps
+export const getUwpApps = async (): Promise<UwpApp[]> => {
+    try {
+        return await invoke<UwpApp[]>('get_uwp_apps');
+    } catch (error) {
+        console.error('Failed to get UWP apps:', error);
+        return [];
+    }
+}
+
+export const launchUwpApp = async (aumid: string): Promise<void> => {
+    try {
+        await invoke('launch_uwp_app', { aumid });
+    } catch (error) {
+        console.error('Failed to launch UWP app:', error);
+        throw error;
+    }
+}
 
 export const getFileIcon = async (path: string): Promise<string | null> => {
     try {

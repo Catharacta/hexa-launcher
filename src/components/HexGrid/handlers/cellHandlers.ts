@@ -1,7 +1,7 @@
 import { RefObject } from 'react';
 import { useLauncherStore } from '../../../store/launcherStore';
 import { Cell } from '../../../types/models';
-import { launchAppWithSecurity, hideWindow } from '../../../utils/tauri';
+import { launchAppWithSecurity, hideWindow, launchUwpApp } from '../../../utils/tauri';
 import { cubeToPixel, cubeAdd, cubeKey, CUBE_DIRECTIONS, detectEdgeIndex, HEX_SIZE } from '../../../utils/hexUtils';
 
 export const useCellHandlers = (
@@ -75,8 +75,12 @@ export const useCellHandlers = (
         } else {
             if (cell.type === 'app' && cell.target) {
                 launchAppWithSecurity(cell.target, cell.args, cell.workingDir).catch(console.error);
-            } else if (cell.type === 'shortcut' && cell.shortcut?.targetPath) {
-                launchAppWithSecurity(cell.shortcut.targetPath, cell.shortcut.arguments, cell.shortcut.workingDirectory).catch(console.error);
+            } else if (cell.type === 'shortcut' && cell.shortcut) {
+                if (cell.shortcut.kind === 'uwp' && cell.shortcut.aumid) {
+                    launchUwpApp(cell.shortcut.aumid).catch(console.error);
+                } else if (cell.shortcut.targetPath) {
+                    launchAppWithSecurity(cell.shortcut.targetPath, cell.shortcut.arguments, cell.shortcut.workingDirectory).catch(console.error);
+                }
             } else if (cell.type === 'launcher_setting') {
                 useLauncherStore.getState().setSettingsOpen(true);
             } else if (cell.type === 'group' && cell.groupId) {

@@ -18,6 +18,11 @@ export interface ResolvedShortcut {
     working_dir: string;
 }
 
+export interface UwpApp {
+    name: string;
+    aumid: string;
+}
+
 export type CellType = 'launcher_setting' | 'shortcut' | 'group' | 'unregistered' | 'close' | 'back' | 'tree' | 'group_back' | 'group_close' | 'group_tree' | 'app'; // 'app' kept for compatibility
 
 export interface Cell {

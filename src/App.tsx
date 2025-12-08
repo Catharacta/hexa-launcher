@@ -7,6 +7,7 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import { CustomCSSInjector } from './components/CustomCSSInjector';
 import { ToastContainer } from './components/ToastContainer';
 import { CellEditDialog } from './components/CellEditDialog';
+import { UwpSelectorModal } from './components/Uwp/UwpSelectorModal';
 import { loadSettings, hideWindow, startMouseEdgeMonitor, stopMouseEdgeMonitor } from './utils/tauri';
 import { useLauncherStore } from './store/launcherStore';
 import './i18n/config'; // Initialize i18n
@@ -108,14 +109,19 @@ function App() {
     <ErrorBoundary>
       <CustomCSSInjector />
       <div
-        className="w-full h-screen relative transition-opacity duration-300"
+        className="w-full h-screen relative transition-opacity duration-300 overflow-hidden"
         style={{ backgroundColor: 'transparent' }}
       >
         <HexGrid />
-        <SearchBar />
+
+        {/* Modals - Interactions Enabled */}
         <SettingsModal />
+        <UwpSelectorModal />
         <TreeModal />
         <CellEditDialog />
+
+        <SearchBar />
+
         <ToastContainer />
 
       </div>
