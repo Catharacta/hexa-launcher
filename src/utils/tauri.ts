@@ -115,13 +115,10 @@ export const launchUwpApp = async (aumid: string): Promise<void> => {
     }
 }
 
+import { iconCache } from './iconCache';
+
 export const getFileIcon = async (path: string): Promise<string | null> => {
-    try {
-        return await invoke('get_file_icon', { path });
-    } catch (error) {
-        console.warn('Failed to get file icon:', error);
-        return null;
-    }
+    return await iconCache.getIcon(path);
 };
 
 export const openDialog = async (options?: any): Promise<any> => {
