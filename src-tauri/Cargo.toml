@@ -26,6 +26,9 @@ base64 = "0.22"
 image = "0.24"
 tauri-plugin-dialog = "2"
 tauri-plugin-global-shortcut = "2"
+sha2 = "0.10.9"
+hex = "0.4.3"
+chrono = "0.4.42"
 [dependencies.windows]
 version = "0.58"
 features = [
