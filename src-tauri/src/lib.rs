@@ -83,30 +83,22 @@ fn launch_app(
     Ok(())
 }
 
+mod shortcut_utils;
+mod uwp_utils;
+
 #[tauri::command]
-fn resolve_shortcut(path: String) -> Result<String, String> {
-    // Use PowerShell to resolve the shortcut target
-    let output = std::process::Command::new("powershell")
-        .args(&[
-            "-NoProfile",
-            "-Command",
-            &format!(
-                "(New-Object -ComObject WScript.Shell).CreateShortcut('{}').TargetPath",
-                path
-            ),
-        ])
-        .output()
-        .map_err(|e| e.to_string())?;
+fn resolve_shortcut(path: String) -> Result<shortcut_utils::ShortcutInfo, String> {
+    shortcut_utils::resolve_lnk(&path)
+}
 
-    if !output.status.success() {
-        return Err(String::from_utf8_lossy(&output.stderr).to_string());
-    }
+#[tauri::command]
+fn get_uwp_apps() -> Result<Vec<uwp_utils::UwpApp>, String> {
+    uwp_utils::get_installed_uwp_apps()
+}
 
-    let target = String::from_utf8_lossy(&output.stdout).trim().to_string();
-    if target.is_empty() {
-        return Err("Could not resolve shortcut target".to_string());
-    }
-    Ok(target)
+#[tauri::command]
+fn launch_uwp_app(aumid: String) -> Result<(), String> {
+    uwp_utils::launch_uwp(&aumid)
 }
 
 use base64::Engine;
@@ -362,6 +354,8 @@ pub fn run() {
             load_settings,
             launch_app,
             resolve_shortcut,
+            get_uwp_apps,
+            launch_uwp_app,
             get_file_icon,
             hide_window,
             update_global_shortcut,

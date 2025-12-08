@@ -232,15 +232,27 @@ export const useFileDropHandler = (svgRef: RefObject<SVGSVGElement | null>) => {
                     }
 
                     console.log('Updating cell:', targetCell.id);
+
+                    // Resolve shortcut if it is .lnk
+                    let resolvedInfo = { target: filePath, arguments: '', working_dir: '' };
+                    if (filePath.toLowerCase().endsWith('.lnk')) {
+                        const { resolveShortcut } = await import('../../../utils/tauri');
+                        resolvedInfo = await resolveShortcut(filePath);
+                    }
+
                     state.updateCell(targetCell.id, {
                         type: 'shortcut',
                         title: fileName,
                         icon: icon || undefined,
                         shortcut: {
                             kind: 'file',
-                            targetPath: filePath,
+                            targetPath: resolvedInfo.target,
+                            arguments: resolvedInfo.arguments,
+                            workingDirectory: resolvedInfo.working_dir
                         },
-                        target: filePath
+                        target: resolvedInfo.target,
+                        args: resolvedInfo.arguments,
+                        workingDir: resolvedInfo.working_dir
                     });
                     addToast(`Shortcut created: ${fileName}`, 'success');
                 }

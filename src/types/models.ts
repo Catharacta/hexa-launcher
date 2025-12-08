@@ -1,6 +1,5 @@
 import { Cube } from './hex';
 
-export type CellType = 'launcher_setting' | 'shortcut' | 'group' | 'unregistered' | 'close' | 'back' | 'tree' | 'group_back' | 'group_close' | 'group_tree' | 'app'; // 'app' kept for compatibility
 
 export interface ShortcutInfo {
     kind: "file" | "lnk" | "uwp" | "uri";
@@ -12,6 +11,19 @@ export interface ShortcutInfo {
     runAsAdmin?: boolean;
     warningLevel?: "none" | "warn";
 }
+
+export interface ResolvedShortcut {
+    target: string;
+    arguments: string;
+    working_dir: string;
+}
+
+export interface UwpApp {
+    name: string;
+    aumid: string;
+}
+
+export type CellType = 'launcher_setting' | 'shortcut' | 'group' | 'unregistered' | 'close' | 'back' | 'tree' | 'group_back' | 'group_close' | 'group_tree' | 'app'; // 'app' kept for compatibility
 
 export interface Cell {
     id: string;

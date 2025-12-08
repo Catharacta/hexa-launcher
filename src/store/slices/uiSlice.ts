@@ -14,6 +14,9 @@ export interface UiSlice {
     setSettingsOpen: (isOpen: boolean) => void;
     setTreeModalOpen: (isOpen: boolean) => void;
     setCellEditDialogOpen: (isOpen: boolean, cellId?: string) => void;
+    uwpSelectorOpen: boolean;
+    targetCellIdForUwp: string | null;
+    setUwpSelectorOpen: (isOpen: boolean, cellId?: string) => void;
     addToast: (message: string, type?: Toast['type'], duration?: number) => void;
     removeToast: (id: string) => void;
 }
@@ -29,6 +32,12 @@ export const createUiSlice = (set: any, _get: any): UiSlice => ({
     setCellEditDialogOpen: (isOpen, cellId) => set({
         cellEditDialogOpen: isOpen,
         editingCellId: isOpen ? cellId || null : null
+    }),
+    uwpSelectorOpen: false,
+    targetCellIdForUwp: null,
+    setUwpSelectorOpen: (isOpen, cellId) => set({
+        uwpSelectorOpen: isOpen,
+        targetCellIdForUwp: isOpen ? cellId || null : null
     }),
     addToast: (message, type = 'info', duration = 3000) => {
         const id = Math.random().toString(36).substring(2, 9);
