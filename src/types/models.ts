@@ -31,6 +31,7 @@ export interface Cell {
     cube: Cube;
     title: string;
     icon?: string;
+    customIcon?: string; // User selected custom icon path
     themeColor?: string; // Optional override for this cell
 
     // For ShortcutCell

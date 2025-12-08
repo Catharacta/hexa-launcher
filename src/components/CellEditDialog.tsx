@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLauncherStore } from '../store/launcherStore';
 import { useTranslation } from 'react-i18next';
+import { convertFileSrc } from '@tauri-apps/api/core';
 
 export const CellEditDialog: React.FC = () => {
     const { t } = useTranslation();
@@ -14,6 +15,7 @@ export const CellEditDialog: React.FC = () => {
     const [name, setName] = useState('');
     const [arguments_, setArguments] = useState('');
     const [workingDirectory, setWorkingDirectory] = useState('');
+    const [customIcon, setCustomIcon] = useState<string | null>(null);
 
     const cell = editingCellId ? cells[editingCellId] : null;
 
@@ -22,6 +24,7 @@ export const CellEditDialog: React.FC = () => {
             setName(cell.title || '');
             setArguments(cell.shortcut?.arguments || cell.args || '');
             setWorkingDirectory(cell.shortcut?.workingDirectory || cell.workingDir || '');
+            setCustomIcon(cell.customIcon || null);
         }
     }, [cell]);
 
@@ -41,7 +44,8 @@ export const CellEditDialog: React.FC = () => {
                     ...cell.shortcut,
                     arguments: arguments_.trim() || undefined,
                     workingDirectory: workingDirectory.trim() || undefined,
-                }
+                },
+                customIcon: customIcon || undefined,
             });
         } else {
             // Legacy format
@@ -49,6 +53,7 @@ export const CellEditDialog: React.FC = () => {
                 title: name,
                 args: arguments_.trim() || undefined,
                 workingDir: workingDirectory.trim() || undefined,
+                customIcon: customIcon || undefined,
             });
         }
 
@@ -76,11 +81,34 @@ export const CellEditDialog: React.FC = () => {
         }
     };
 
+    const handleBrowseIcon = async () => {
+        try {
+            const { open } = await import('@tauri-apps/plugin-dialog');
+            const selected = await open({
+                multiple: false,
+                filters: [{
+                    name: 'Image',
+                    extensions: ['png', 'jpg', 'jpeg', 'svg', 'webp', 'ico']
+                }]
+            });
+            if (selected) {
+                setCustomIcon(selected as string);
+            }
+        } catch (error) {
+            console.error('Failed to open file dialog:', error);
+            addToast(t('toast.error.failedToOpenFileDialog', 'Failed to open file dialog'), 'error');
+        }
+    };
+
+    const handleRemoveIcon = () => {
+        setCustomIcon(null);
+    };
+
     const targetPath = cell.shortcut?.targetPath || cell.target || '';
 
     return (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-gray-800 rounded-lg shadow-xl w-[500px] max-w-[90vw] p-6">
+            <div className="bg-gray-800 rounded-lg shadow-xl w-[500px] max-w-[90vw] p-6 max-h-[90vh] overflow-y-auto">
                 {/* Header */}
                 <div className="flex items-center justify-between mb-4">
                     <h2 className="text-xl font-bold text-white">{t('cellEditDialog.title')}</h2>
@@ -120,6 +148,48 @@ export const CellEditDialog: React.FC = () => {
                             <p className="text-xs text-gray-500 mt-1">{t('cellEditDialog.readOnly')}</p>
                         </div>
                     )}
+
+                    {/* Custom Icon */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">
+                            {t('cellEditDialog.icon', 'Icon')}
+                        </label>
+                        <div className="flex items-center gap-4">
+                            <div className="w-16 h-16 bg-gray-700 rounded-lg flex items-center justify-center overflow-hidden border border-gray-600 shrink-0">
+                                {customIcon ? (
+                                    <img
+                                        src={convertFileSrc(customIcon)}
+                                        alt="Preview"
+                                        className="w-full h-full object-contain"
+                                    />
+                                ) : cell.icon ? (
+                                    <img
+                                        src={cell.icon}
+                                        alt="Current"
+                                        className="w-full h-full object-contain opacity-50"
+                                    />
+                                ) : (
+                                    <span className="text-gray-500 text-xs text-center px-1">No Icon</span>
+                                )}
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <button
+                                    onClick={handleBrowseIcon}
+                                    className="px-3 py-1 bg-gray-700 text-white text-sm rounded border border-gray-600 hover:bg-gray-600 transition-colors"
+                                >
+                                    {t('cellEditDialog.changeIcon', 'Change Icon')}
+                                </button>
+                                {customIcon && (
+                                    <button
+                                        onClick={handleRemoveIcon}
+                                        className="px-3 py-1 bg-red-900/50 text-red-200 text-sm rounded border border-red-900 hover:bg-red-900 transition-colors"
+                                    >
+                                        {t('cellEditDialog.resetIcon', 'Reset Icon')}
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                    </div>
 
                     {/* Arguments */}
                     <div>
