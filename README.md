@@ -201,7 +201,7 @@ MIT License - 詳細は[LICENSE](LICENSE)ファイルを参照
 
 ## クレジット
 
-- 開発: [Your Name]
+- 開発: [Catharacta](https://github.com/Catharacta)
 - アイコン: [Lucide React](https://lucide.dev/)
 - フレームワーク: [Tauri](https://tauri.app/)
 

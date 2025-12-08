@@ -134,7 +134,24 @@ export const HexagonComponent: React.FC<HexagonProps> = ({
                         ) : (
 
                             iconUrl ? (
-                                <img src={iconUrl} alt={cell.title} className="w-8 h-8 object-contain" />
+                                appearance.enableIconSilhouette ? (
+                                    <div
+                                        className={clsx("w-8 h-8", isCyberpunk ? "bg-[#00f2ea]" : "")}
+                                        style={{
+                                            maskImage: `url("${iconUrl}")`,
+                                            WebkitMaskImage: `url("${iconUrl}")`,
+                                            maskSize: 'contain',
+                                            WebkitMaskSize: 'contain',
+                                            maskRepeat: 'no-repeat',
+                                            WebkitMaskRepeat: 'no-repeat',
+                                            maskPosition: 'center',
+                                            WebkitMaskPosition: 'center',
+                                            backgroundColor: isCyberpunk ? '#00f2ea' : (theme.color || 'currentColor')
+                                        }}
+                                    />
+                                ) : (
+                                    <img src={iconUrl} alt={cell.title} className="w-8 h-8 object-contain" />
+                                )
                             ) : (
                                 <Plus className={clsx("w-8 h-8", isCyberpunk ? "text-[#00f2ea]" : theme.text)} />
                             )
