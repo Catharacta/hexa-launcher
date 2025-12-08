@@ -5,6 +5,7 @@ import { THEMES } from '../utils/theme';
 import { clsx } from 'clsx';
 import { useLauncherStore } from '../store/launcherStore';
 import { getFileIcon } from '../utils/tauri';
+import { convertFileSrc } from '@tauri-apps/api/core';
 
 export interface HexagonProps {
     cell: Cell;
@@ -60,7 +61,10 @@ export const HexagonComponent: React.FC<HexagonProps> = ({
         let isMounted = true;
         const targetPath = cell.shortcut?.targetPath || cell.target;
 
-        if (!cell.icon && targetPath && cell.type !== 'launcher_setting') {
+        if (cell.customIcon) {
+            const url = convertFileSrc(cell.customIcon);
+            setIconUrl(url);
+        } else if (!cell.icon && targetPath && cell.type !== 'launcher_setting') {
             getFileIcon(targetPath).then(icon => {
                 if (isMounted && icon) {
                     setIconUrl(icon);
@@ -70,7 +74,7 @@ export const HexagonComponent: React.FC<HexagonProps> = ({
             setIconUrl(cell.icon || null);
         }
         return () => { isMounted = false; };
-    }, [cell.icon, cell.target, cell.shortcut?.targetPath, cell.type]);
+    }, [cell.customIcon, cell.icon, cell.target, cell.shortcut?.targetPath, cell.type]);
 
     const effectiveColorName = isCyberpunk ? 'cyan' : (cell.themeColor || themeColor || 'cyan');
     const theme = THEMES[effectiveColorName] || THEMES['cyan'];
