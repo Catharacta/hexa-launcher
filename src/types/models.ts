@@ -61,6 +61,7 @@ export interface AppearanceSettings {
     style: 'default' | 'cyberpunk';
     searchScope: 'current' | 'global'; // Search within current group or all groups
     searchMode: 'partial' | 'fuzzy' | 'regex'; // Search algorithm
+    enableIconSilhouette?: boolean; // Monochrome silhouette mode
 }
 
 export interface KeyBindings {

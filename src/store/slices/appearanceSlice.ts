@@ -12,6 +12,7 @@ const DEFAULT_APPEARANCE: AppearanceSettings = {
     style: 'default',
     searchScope: 'global',
     searchMode: 'fuzzy',
+    enableIconSilhouette: false,
 };
 
 export const createAppearanceSlice = (set: any, _get: any): AppearanceSlice => ({

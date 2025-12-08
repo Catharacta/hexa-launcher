@@ -237,6 +237,20 @@ export const AppearanceTab: React.FC<SettingsTabProps> = ({ isActive: _ }) => {
                 />
             </div>
 
+            {/* Silhouette Mode */}
+            <div className="flex items-center justify-between">
+                <div>
+                    <label className="block text-sm font-medium text-white">{t('appearance.silhouetteMode', 'Silhouette Icons')}</label>
+                    <p className="text-xs text-gray-400">{t('appearance.silhouetteModeDesc', 'Render icons as monochrome silhouettes matching the theme color')}</p>
+                </div>
+                <input
+                    type="checkbox"
+                    checked={appearance.enableIconSilhouette || false}
+                    onChange={(e) => setAppearance({ enableIconSilhouette: e.target.checked })}
+                    className="w-4 h-4 rounded bg-gray-700 border-gray-600 text-cyan-500 focus:ring-cyan-500"
+                />
+            </div>
+
             {/* Theme Color Setting (Only visible in Default mode) */}
             {appearance.style !== 'cyberpunk' && (
                 <div>
