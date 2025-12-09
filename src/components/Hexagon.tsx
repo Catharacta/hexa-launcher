@@ -194,8 +194,8 @@ export const HexagonComponent: React.FC<HexagonProps> = ({
             onContextMenu={onContextMenu}
             onMouseDown={onMouseDown}
             className={clsx(
-                "transition-all duration-200 cursor-pointer group",
-                isDragging && "opacity-50 scale-95",
+                "cursor-pointer group",
+                isDragging && "opacity-50",
                 isGhost && "opacity-30 pointer-events-none",
                 // Add will-change for performance
                 "will-change-transform"
@@ -204,15 +204,21 @@ export const HexagonComponent: React.FC<HexagonProps> = ({
                 filter: isDragging ? 'grayscale(100%)' : 'none'
             }}
         >
-            {/* Glitch layers for cyberpunk theme */}
-            {isCyberpunk && isSelected && (
-                <>
-                    {renderContent('cyberpunk-glitch-layer-1')}
-                    {renderContent('cyberpunk-glitch-layer-2')}
-                </>
-            )}
+            <g className={clsx(
+                "transition-transform duration-200 ease-out",
+                !isGhost && !isDragging && (isSelected ? "scale-110" : "hover:scale-110"),
+                !isGhost && !isDragging && "active:scale-95"
+            )}>
+                {/* Glitch layers for cyberpunk theme */}
+                {isCyberpunk && isSelected && (
+                    <>
+                        {renderContent('cyberpunk-glitch-layer-1')}
+                        {renderContent('cyberpunk-glitch-layer-2')}
+                    </>
+                )}
 
-            {renderContent()}
+                {renderContent()}
+            </g>
         </g>
     );
 };

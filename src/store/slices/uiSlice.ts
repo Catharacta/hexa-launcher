@@ -17,6 +17,8 @@ export interface UiSlice {
     uwpSelectorOpen: boolean;
     targetCellIdForUwp: string | null;
     setUwpSelectorOpen: (isOpen: boolean, cellId?: string) => void;
+    isExiting: boolean;
+    setIsExiting: (isExiting: boolean) => void;
     addToast: (message: string, type?: Toast['type'], duration?: number) => void;
     removeToast: (id: string) => void;
 }
@@ -39,6 +41,8 @@ export const createUiSlice = (set: any, _get: any): UiSlice => ({
         uwpSelectorOpen: isOpen,
         targetCellIdForUwp: isOpen ? cellId || null : null
     }),
+    isExiting: false,
+    setIsExiting: (isExiting) => set({ isExiting }),
     addToast: (message, type = 'info', duration = 3000) => {
         const id = Math.random().toString(36).substring(2, 9);
         set((state: any) => ({

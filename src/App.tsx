@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { HexGrid } from './components/HexGrid';
 import { SearchBar } from './components/SearchBar';
 import { SettingsModal } from './components/Settings/SettingsModal';
@@ -8,7 +8,7 @@ import { CustomCSSInjector } from './components/CustomCSSInjector';
 import { ToastContainer } from './components/ToastContainer';
 import { CellEditDialog } from './components/CellEditDialog';
 import { UwpSelectorModal } from './components/Uwp/UwpSelectorModal';
-import { loadSettings, hideWindow, startMouseEdgeMonitor, stopMouseEdgeMonitor } from './utils/tauri';
+import { loadSettings, startMouseEdgeMonitor, stopMouseEdgeMonitor } from './utils/tauri';
 import { useLauncherStore } from './store/launcherStore';
 import './i18n/config'; // Initialize i18n
 import i18n from './i18n/config';
@@ -50,9 +50,26 @@ function App() {
   }, []);
 
   // Hide on Blur（設定フラグが true の時のみ）
-  useEffect(() => {
-    if (!hideOnBlur) return;
+  const isExiting = useLauncherStore(state => state.isExiting);
+  const setIsExiting = useLauncherStore(state => state.setIsExiting);
+  const [animationClass, setAnimationClass] = useState('animate-window-show');
 
+  // Handle Exit Animation sequence
+  useEffect(() => {
+    if (isExiting) {
+      setAnimationClass('animate-window-hide');
+      const timer = setTimeout(async () => {
+        const { getCurrentWindow } = await import('@tauri-apps/api/window');
+        await getCurrentWindow().hide();
+        setIsExiting(false);
+        // Note: We don't reset animationClass here so it stays hidden until next focus
+      }, 200); // 200ms matches CSS animation
+      return () => clearTimeout(timer);
+    }
+  }, [isExiting, setIsExiting]);
+
+  // Handle Focus/Blur events
+  useEffect(() => {
     let unlisten: (() => void) | undefined;
 
     const setupListener = async () => {
@@ -60,8 +77,16 @@ function App() {
       const appWindow = getCurrentWindow();
 
       unlisten = await appWindow.onFocusChanged(({ payload: focused }) => {
-        if (!focused) {
-          hideWindow().catch(console.error);
+        if (focused) {
+          // Window gained focus -> Show Animation
+          // Reset existing state just in case
+          setIsExiting(false);
+          setAnimationClass('animate-window-show');
+        } else {
+          // Window lost focus -> Hide if enabled
+          if (hideOnBlur) {
+            setIsExiting(true);
+          }
         }
       });
     };
@@ -71,7 +96,7 @@ function App() {
     return () => {
       if (unlisten) unlisten();
     };
-  }, [hideOnBlur]);
+  }, [hideOnBlur, setIsExiting]);
 
   // Show on Mouse Edge
   useEffect(() => {
@@ -109,7 +134,7 @@ function App() {
     <ErrorBoundary>
       <CustomCSSInjector />
       <div
-        className="w-full h-screen relative transition-opacity duration-300 overflow-hidden"
+        className={`w-full h-screen relative overflow-hidden ${animationClass}`}
         style={{ backgroundColor: 'transparent' }}
       >
         <HexGrid />
