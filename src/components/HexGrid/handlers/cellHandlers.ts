@@ -89,7 +89,7 @@ export const useCellHandlers = (
                 const currentGroup = activeGroupId ? groups[activeGroupId] : null;
                 setActiveGroup(currentGroup?.parentId || null);
             } else if (cell.type === 'group_close') {
-                hideWindow().catch(console.error);
+                useLauncherStore.getState().setIsExiting(true);
             } else if (cell.type === 'group_tree') {
                 useLauncherStore.getState().setTreeModalOpen(true);
             }
