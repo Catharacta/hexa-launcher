@@ -174,6 +174,20 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, cellId, onClose 
         onClose();
     };
 
+
+    const handleCreateWidget = (type: 'clock' | 'system') => {
+        updateCell(cellId, {
+            type: 'widget',
+            title: type === 'clock' ? 'Clock' : 'System',
+            widget: { type },
+            icon: undefined,
+            shortcut: undefined,
+            target: undefined,
+            groupId: undefined
+        });
+        onClose();
+    };
+
     const isCyberpunk = appearance.style === 'cyberpunk';
     const itemClass = `block w-full text-left px-4 py-2 text-sm ${isCyberpunk ? 'hover:bg-[#00f2ea]/20' : 'hover:bg-gray-700'}`;
     const deleteClass = `block w-full text-left px-4 py-2 text-sm ${isCyberpunk ? 'hover:bg-[#00f2ea]/20 text-red-400' : 'hover:bg-gray-700 text-red-400'}`;
@@ -206,6 +220,13 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, cellId, onClose 
                                 Back
                             </button>
                         )}
+                        <div className={`border-t ${isCyberpunk ? 'border-[#00f2ea]/30' : 'border-gray-600'} my-1`}></div>
+                        <button onClick={() => handleCreateWidget('clock')} className={itemClass}>
+                            {t('contextMenu.clockWidget')}
+                        </button>
+                        <button onClick={() => handleCreateWidget('system')} className={itemClass}>
+                            {t('contextMenu.systemWidget')}
+                        </button>
                     </>
                 ) : (
                     <>

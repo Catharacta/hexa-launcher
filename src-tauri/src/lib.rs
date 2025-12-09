@@ -10,6 +10,7 @@ mod mouse_edge;
 mod security;
 mod shortcut_utils;
 mod startup;
+mod system_stats;
 mod uwp_utils;
 mod window_behavior;
 
@@ -130,6 +131,20 @@ fn stop_mouse_edge_monitor(app_handle: tauri::AppHandle) -> Result<(), String> {
 }
 
 #[tauri::command]
+fn start_system_monitor(app_handle: tauri::AppHandle) -> Result<(), String> {
+    let monitor = app_handle.state::<system_stats::SystemMonitor>();
+    monitor.start(app_handle.clone());
+    Ok(())
+}
+
+#[tauri::command]
+fn stop_system_monitor(app_handle: tauri::AppHandle) -> Result<(), String> {
+    let monitor = app_handle.state::<system_stats::SystemMonitor>();
+    monitor.stop();
+    Ok(())
+}
+
+#[tauri::command]
 fn hide_window(window: tauri::Window) -> Result<(), String> {
     window.hide().map_err(|e| e.to_string())
 }
@@ -221,10 +236,14 @@ pub fn run() {
             security::check_requires_admin,
             start_mouse_edge_monitor,
             stop_mouse_edge_monitor,
+            start_system_monitor,
+            stop_system_monitor,
         ])
         .setup(|app| {
             // Initialize mouse edge monitor
             app.manage(mouse_edge::MouseEdgeMonitor::new());
+             // Initialize system monitor
+            app.manage(system_stats::SystemMonitor::new());
 
             #[cfg(desktop)]
             {
