@@ -32,7 +32,9 @@
         "deleteGroup": "グループ削除",
         "back": "← 戻る",
         "tree": "ツリー",
-        "close": "閉じる"
+        "close": "閉じる",
+        "clockWidget": "時計ウィジェット",
+        "systemWidget": "システムモニター"
     },
     "cellEditDialog": {
         "title": "セル編集",

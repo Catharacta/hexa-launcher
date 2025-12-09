@@ -23,7 +23,12 @@ export interface UwpApp {
     aumid: string;
 }
 
-export type CellType = 'launcher_setting' | 'shortcut' | 'group' | 'unregistered' | 'close' | 'back' | 'tree' | 'group_back' | 'group_close' | 'group_tree' | 'app'; // 'app' kept for compatibility
+export interface WidgetConfig {
+    type: 'clock' | 'system';
+    settings?: Record<string, any>;
+}
+
+export type CellType = 'launcher_setting' | 'shortcut' | 'group' | 'unregistered' | 'close' | 'back' | 'tree' | 'group_back' | 'group_close' | 'group_tree' | 'app' | 'widget'; // 'app' kept for compatibility
 
 export interface Cell {
     id: string;
@@ -47,6 +52,9 @@ export interface Cell {
 
     // System specific (e.g. Close button, Back button)
     action?: string;
+
+    // For WidgetCell
+    widget?: WidgetConfig;
 }
 
 export interface Group {
