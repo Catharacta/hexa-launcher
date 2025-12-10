@@ -43,7 +43,7 @@ const DEFAULT_GENERAL_SETTINGS: GeneralSettings = {
 
 const DEFAULT_GRID_SETTINGS: GridSettings = {
     hexSize: 60,
-    gapSize: 0,
+    gapSize: 8,
     animationSpeed: 'normal',
     showLabels: 'hover',
     hoverEffect: true,
