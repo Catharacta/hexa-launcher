@@ -12,7 +12,7 @@ use windows::Win32::Storage::FileSystem::FILE_ATTRIBUTE_NORMAL;
 use windows::Win32::UI::Shell::{SHGetFileInfoW, SHFILEINFOW, SHGFI_ICON, SHGFI_LARGEICON};
 use windows::Win32::UI::WindowsAndMessaging::{DestroyIcon, GetIconInfo, HICON};
 
-// Ensure we clean up GDI objects
+// GDIオブジェクトの確実なクリーンアップを保証するためのラッパー構造体
 struct GdiObject<T: Copy>(T, fn(T));
 impl<T: Copy> Drop for GdiObject<T> {
     fn drop(&mut self) {
@@ -20,14 +20,25 @@ impl<T: Copy> Drop for GdiObject<T> {
     }
 }
 
+/// 指定されたパスのファイルのアイコンを取得し、Base64エンコードされたPNG画像として返します。
+///
+/// パフォーマンスを最適化するため、以下のキャッシュ戦略を採用しています：
+/// 1. パスのSHA256ハッシュを計算し、キャッシュキーとします。
+/// 2. ディスク上のキャッシュ（`AppData/cache/icons/`）を確認します。
+/// 3. キャッシュが存在すれば、それを読み込んで返します。
+/// 4. キャッシュがない場合、Windows APIを使用してアイコンを抽出・PNG変換し、ディスクに保存してから返します。
+///
+/// # 引数
+/// * `app_handle` - TauriのAppHandle（キャッシュディレクトリパス取得用）
+/// * `path` - アイコンを取得したいファイルのパス
 pub fn get_icon(app_handle: &tauri::AppHandle, path: String) -> Result<String, String> {
-    // 1. Calculate Cache Key (Hash of path)
+    // 1. キャッシュキーの計算 (パスのハッシュ値)
     let mut hasher = Sha256::new();
     hasher.update(path.as_bytes());
     let result = hasher.finalize();
     let hash = hex::encode(result);
 
-    // 2. Setup Cache Directory
+    // 2. キャッシュディレクトリのセットアップ
     let app_dir = app_handle
         .path()
         .app_data_dir()
@@ -40,9 +51,9 @@ pub fn get_icon(app_handle: &tauri::AppHandle, path: String) -> Result<String, S
 
     let cache_file = cache_dir.join(format!("{}.png", hash));
 
-    // 3. Check Cache
+    // 3. キャッシュの確認
     if cache_file.exists() {
-        // Read from cache
+        // キャッシュからの読み込み
         match fs::read(&cache_file) {
             Ok(data) => {
                 let base64_string = base64::engine::general_purpose::STANDARD.encode(&data);
@@ -50,23 +61,26 @@ pub fn get_icon(app_handle: &tauri::AppHandle, path: String) -> Result<String, S
             }
             Err(e) => {
                 println!("Failed to read cache: {}", e);
-                // Fallthrough to regenerate
+                // 読み込み失敗時は再生成へフォールスルー
             }
         }
     }
 
-    // 4. Extract Icon
+    // 4. アイコンの抽出 (Windows API使用)
     let png_data = extract_icon_png(&path)?;
 
-    // 5. Save to Cache (ignore write errors to avoid blocking UI)
+    // 5. キャッシュへの保存 (UIブロックを避けるため書き込みエラーは無視)
     let _ = fs::write(&cache_file, &png_data);
 
-    // 6. Return Base64
+    // 6. Base64文字列として返却
     let base64_string = base64::engine::general_purpose::STANDARD.encode(&png_data);
     Ok(format!("data:image/png;base64,{}", base64_string))
 }
 
 #[cfg(target_os = "windows")]
+/// Windows APIを使用してファイルからアイコンを抽出し、PNGデータに変換します。
+///
+/// `SHGetFileInfoW` でアイコンハンドルを取得し、`icon_to_png` で画像データに変換します。
 fn extract_icon_png(path: &str) -> Result<Vec<u8>, String> {
     unsafe {
         use std::ffi::OsStr;
@@ -106,6 +120,7 @@ fn extract_icon_png(path: &str) -> Result<Vec<u8>, String> {
 }
 
 #[cfg(not(target_os = "windows"))]
+/// Windows以外のOSではアイコン抽出は未サポートです。
 fn extract_icon_png(_path: &str) -> Result<Vec<u8>, String> {
     Err("Icon extraction is only supported on Windows".to_string())
 }

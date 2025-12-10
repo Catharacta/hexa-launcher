@@ -21,6 +21,10 @@ const ToastItem: React.FC<{ toast: Toast; onDismiss: (id: string) => void }> = (
     );
 };
 
+/**
+ * アプリケーション全体のトースト通知を表示するコンテナコンポーネント。
+ * ストア内のトースト状態を監視し、画面右下に通知を積み重ねて表示します。
+ */
 export const ToastContainer: React.FC = () => {
     const toasts = useLauncherStore(state => state.toasts);
     const removeToast = useLauncherStore(state => state.removeToast);

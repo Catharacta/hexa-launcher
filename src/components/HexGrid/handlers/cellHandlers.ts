@@ -4,6 +4,13 @@ import { Cell } from '../../../types/models';
 import { launchAppWithSecurity, hideWindow, launchUwpApp } from '../../../utils/tauri';
 import { cubeToPixel, cubeAdd, cubeKey, CUBE_DIRECTIONS, detectEdgeIndex, HEX_SIZE } from '../../../utils/hexUtils';
 
+/**
+ * セルに対するインタラクション（クリック、右クリック）を処理するカスタムフック。
+ *
+ * @param svgRef SVG要素への参照（座標計算用）
+ * @param isDraggingRef ドラッグ中かどうかの状態参照（クリックイベントの抑制用）
+ * @param setContextMenu コンテキストメニューの状態設定関数
+ */
 export const useCellHandlers = (
     svgRef: RefObject<SVGSVGElement | null>,
     isDraggingRef: React.MutableRefObject<boolean>,

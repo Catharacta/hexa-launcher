@@ -1,6 +1,10 @@
 import { useEffect } from 'react';
 import { useLauncherStore } from '../store/launcherStore';
 
+/**
+ * ユーザー定義のカスタムCSSをドキュメントのヘッドに注入するコンポーネント。
+ * 高度な設定でCSSが変更されると、即座にスタイルを反映させます。
+ */
 export const CustomCSSInjector: React.FC = () => {
     const customCSS = useLauncherStore(state => state.advanced.customCSS);
 

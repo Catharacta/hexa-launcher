@@ -9,11 +9,16 @@ interface SystemStats {
     memory_total: number;
 }
 
+/**
+ * システムリソース（CPU/メモリ使用率）をグラフ表示するウィジェット。
+ * バックエンドのTauriコマンド `start_system_monitor` を呼び出して監視を開始し、
+ * `system-stats` イベントをリッスンしてリアルタイムに値を更新します。
+ */
 export const SystemWidget: React.FC = () => {
     const [stats, setStats] = useState<SystemStats>({ cpu: 0, memory: 0, memory_used: 0, memory_total: 0 });
 
     useEffect(() => {
-        // Start monitoring
+        // 監視開始
         invoke('start_system_monitor').catch(console.error);
 
         const unlisten = listen<SystemStats>('system-stats', (event) => {
@@ -22,7 +27,8 @@ export const SystemWidget: React.FC = () => {
 
         return () => {
             unlisten.then(f => f());
-            // We don't stop monitor here to avoid stopping it for other widgets or if we implement global toggle
+            // 注意: 他のウィジェットでの利用も考慮し、アンマウント時に監視自体は停止していません。
+            // 必要に応じて `stop_system_monitor` を呼び出すロジックを追加可能です。
         };
     }, []);
 

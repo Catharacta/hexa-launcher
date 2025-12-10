@@ -2,6 +2,11 @@ import React, { useEffect } from 'react';
 import { useLauncherStore } from '../store/launcherStore';
 import { Group } from '../types/models';
 
+/**
+ * グループ構造をツリー形式で表示し、ナビゲーションを提供するモーダルコンポーネント。
+ * グループの階層構造を視覚化し、クリックでそのグループへ移動できます。
+ * また、グループの削除機能も提供します。
+ */
 export const TreeModal: React.FC = () => {
     const {
         treeModalOpen,

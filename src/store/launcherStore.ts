@@ -8,6 +8,10 @@ import { createSelectionSlice, SelectionSlice } from './slices/selectionSlice';
 import { createUiSlice, UiSlice } from './slices/uiSlice';
 import { createSearchSlice, SearchSlice } from './slices/searchSlice';
 
+/**
+ * アプリケーション全体のステートを管理する型定義。
+ * 各機能ごとのスライス（Slice）を統合しています。
+ */
 export type LauncherState = CellsSlice &
     GroupsSlice &
     SettingsSlice &
@@ -17,6 +21,13 @@ export type LauncherState = CellsSlice &
     UiSlice &
     SearchSlice;
 
+/**
+ * Zustandを使用したグローバルストア。
+ * 
+ * 機能ごとに分割されたスライス（Cells, Groups, Settings...）を合成し、
+ * 単一のフック `useLauncherStore` として提供します。
+ * コンポーネントからは `const { cells, addCell } = useLauncherStore()` のようにして使用します。
+ */
 export const useLauncherStore = create<LauncherState>((set, get) => ({
     ...createCellsSlice(set, get),
     ...createGroupsSlice(set, get),

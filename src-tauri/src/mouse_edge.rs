@@ -6,6 +6,7 @@ use tauri::{AppHandle, Manager};
 #[cfg(target_os = "windows")]
 use windows::Win32::UI::WindowsAndMessaging::GetCursorPos;
 
+/// マウスが画面端に移動したことを検知するモニター構造体。
 pub struct MouseEdgeMonitor {
     running: Arc<Mutex<bool>>,
 }
@@ -17,10 +18,15 @@ impl MouseEdgeMonitor {
         }
     }
 
+    /// 監視を開始します。
+    ///
+    /// 新しいスレッドでマウス位置を0.1秒ごとにポーリングし、
+    /// 画面の上端または左端にカーソルがある場合にウィンドウを表示します。
+    /// マルチモニターに対応しており、カーソルがあるモニターにウィンドウを移動させます。
     pub fn start(&self, app_handle: AppHandle) {
         let running = Arc::clone(&self.running);
 
-        // Prevent multiple threads
+        // 二重起動防止
         if *running.lock().unwrap() {
             return;
         }
@@ -36,22 +42,22 @@ impl MouseEdgeMonitor {
                             let mouse_x = point.x;
                             let mouse_y = point.y;
 
-                            // Check all monitors
+                            // 全てのモニターをチェック
                             if let Ok(monitors) = app_handle.available_monitors() {
                                 for monitor in monitors {
                                     let m_pos = monitor.position(); // PhysicalPosition
                                     let m_size = monitor.size(); // PhysicalSize
 
-                                    // Check if cursor is within this monitor's X range
-                                    // We add a buffer for edge detection
+                                    // カーソルがこのモニター内にあるか確認
+                                    // エッジ検知のために少しバッファを持たせるロジックもここに記述
                                     let x_in_monitor = mouse_x >= m_pos.x
                                         && mouse_x < m_pos.x + m_size.width as i32;
                                     let y_in_monitor = mouse_y >= m_pos.y
                                         && mouse_y < m_pos.y + m_size.height as i32;
 
                                     if x_in_monitor && y_in_monitor {
-                                        // Check for Top Edge OR Left Edge of THIS monitor
-                                        let is_top_edge = (mouse_y - m_pos.y).abs() <= 2; // pixel threshold
+                                        // このモニターの上端、または左端にあるか？
+                                        let is_top_edge = (mouse_y - m_pos.y).abs() <= 2; // 2px閾値
                                         let is_left_edge = (mouse_x - m_pos.x).abs() <= 2;
 
                                         if is_top_edge || is_left_edge {
@@ -63,7 +69,7 @@ impl MouseEdgeMonitor {
                                                         "Edge trigger on monitor at {:?}",
                                                         m_pos
                                                     );
-                                                    // Move window to this monitor
+                                                    // ウィンドウをカーソルのあるモニターへ移動
                                                     let _ = window.unmaximize();
                                                     let _ = window.set_size(tauri::Size::Physical(
                                                         tauri::PhysicalSize {
@@ -78,12 +84,13 @@ impl MouseEdgeMonitor {
                                                     let _ = window.show();
                                                     let _ = window.maximize();
                                                     let _ = window.set_focus();
+                                                    // フォーカスを強制するためのワークアラウンド
                                                     let _ = window.set_always_on_top(true);
                                                     let _ = window.set_always_on_top(false);
                                                 }
                                             }
                                         }
-                                        break; // Found the monitor cursor is on
+                                        break; // モニターが見つかったらループ終了
                                     }
                                 }
                             }

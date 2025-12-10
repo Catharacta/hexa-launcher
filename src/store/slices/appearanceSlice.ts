@@ -2,9 +2,15 @@ import { AppearanceSettings } from '../../types/models';
 
 export interface AppearanceSlice {
     appearance: AppearanceSettings;
+    /** 外観設定を更新し、設定ファイルに保存します */
     setAppearance: (settings: Partial<AppearanceSettings>) => void;
+    /** 外観設定をデフォルトに戻します */
     resetAppearance: () => void;
 }
+
+/**
+ * アプリケーションの外観（テーマ、透過度、スタイル）を管理するスライス。
+ */
 
 const DEFAULT_APPEARANCE: AppearanceSettings = {
     opacity: 0.9,

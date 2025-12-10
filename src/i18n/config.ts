@@ -3,6 +3,10 @@ import { initReactI18next } from 'react-i18next';
 import en from './locales/en.json';
 import ja from './locales/ja.json';
 
+/**
+ * i18nextの初期化設定。
+ * 日英の翻訳リソースを読み込み、アプリケーションの国際化を有効にします。
+ */
 i18n
     .use(initReactI18next)
     .init({

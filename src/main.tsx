@@ -3,6 +3,11 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import "./index.css";
 
+/**
+ * アプリケーションのエントリーポイント。
+ * ReactのルートコンポーネントをDOMにマウントします。
+ * StrictModeが有効になっており、開発時の潜在的な問題を検知します。
+ */
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <App />

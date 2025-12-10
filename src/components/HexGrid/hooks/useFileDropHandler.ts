@@ -3,6 +3,15 @@ import { useLauncherStore } from '../../../store/launcherStore';
 import { cubeToPixel, HEX_SIZE } from '../../../utils/hexUtils';
 import { getFileIcon } from '../../../utils/tauri';
 
+/**
+ * 外部からのファイルドロップ処理を行うカスタムフック。
+ *
+ * HTML5のDrag & Drop APIと、Tauriのファイルドロップイベントの両方に対応します。
+ * ドロップされたファイルを受け取り、最も近い空きセル（または既存のアプリセル）に対して
+ * ショートカットの作成や更新を行います。
+ *
+ * @param svgRef ドロップ位置の座標計算に使用するSVGの参照
+ */
 export const useFileDropHandler = (svgRef: RefObject<SVGSVGElement | null>) => {
     const [hoveredCellId, setHoveredCellId] = useState<string | null>(null);
 

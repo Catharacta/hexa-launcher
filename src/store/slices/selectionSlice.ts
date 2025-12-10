@@ -1,3 +1,8 @@
+/**
+ * セル選択状態を管理するスライス。
+ *
+ * 単一選択、複数選択（Ctrl/Shift）、選択解除などの操作を提供します。
+ */
 export interface SelectionSlice {
     selectedCellIds: string[];
     selectCell: (id: string, multi: boolean) => void;

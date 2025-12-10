@@ -10,6 +10,11 @@ interface ContextMenuProps {
     onClose: () => void;
 }
 
+/**
+ * 六角形セル上の右クリックで表示されるコンテキストメニュー。
+ * セルの編集、削除、グループ操作、ウィジェット作成などのアクションを提供します。
+ * 画面端での表示位置調整（スマートポジショニング）機能を含みます。
+ */
 export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, cellId, onClose }) => {
     const { t } = useTranslation();
     const menuRef = useRef<HTMLDivElement>(null);

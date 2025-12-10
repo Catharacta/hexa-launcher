@@ -2,11 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { useLauncherStore } from '../../store/launcherStore';
 import { clsx } from 'clsx';
 
+/**
+ * 六角形セル内に表示するアナログ時計ウィジェット。
+ * 現在時刻をリアルタイムに表示し、Cyberpunkテーマに対応したデザインを提供します。
+ */
 export const ClockWidget: React.FC = () => {
     const [time, setTime] = useState(new Date());
     const appearance = useLauncherStore(state => state.appearance);
     const isCyberpunk = appearance.style === 'cyberpunk';
 
+    /**
+     * 1秒ごとに時刻を更新します。
+     */
     useEffect(() => {
         const timer = setInterval(() => setTime(new Date()), 1000);
         return () => clearInterval(timer);
@@ -21,7 +28,7 @@ export const ClockWidget: React.FC = () => {
     const hourDeg = ((hours + minutes / 60) / 12) * 360;
 
     const themeColor = isCyberpunk ? '#00f2ea' : 'white';
-    const secondaryColor = isCyberpunk ? '#ff003c' : '#ff4444'; // Red for second hand usually
+    const secondaryColor = isCyberpunk ? '#ff003c' : '#ff4444'; // 秒針の色
 
     return (
         <div className="w-full h-full flex items-center justify-center p-2">

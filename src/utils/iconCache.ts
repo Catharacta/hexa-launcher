@@ -8,11 +8,15 @@ const cache = new LRUCache<string, string>({
     ttl: 1000 * 60 * 60,
 });
 
+/**
+ * フロントエンド側のアイコンキャッシュ管理クラス。
+ * LRUキャッシュを使用してバックエンド（Tauri）への不要な呼び出しを削減します。
+ */
 class IconCache {
     /**
-     * Get icon from cache or fetch from backend
-     * @param path File path
-     * @returns Base64 encoded PNG or null
+     * キャッシュからアイコンを取得、無ければバックエンドから取得してキャッシュします。
+     * @param path ファイルパス
+     * @returns Base64エンコードされたPNG画像文字列、またはnull
      */
     async getIcon(path: string): Promise<string | null> {
         // 1. Check Memory Cache

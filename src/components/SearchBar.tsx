@@ -3,6 +3,11 @@ import { useLauncherStore } from '../store/launcherStore';
 import { search, SearchableCell } from '../utils/searchUtils';
 import { clsx } from 'clsx';
 
+/**
+ * アプリケーション内検索およびWeb検索機能を提供するコンポーネント。
+ * Ctrl+F（または設定されたショートカット）で起動し、アプリ名やグループ名の検索を行えます。
+ * 検索履歴の表示や選択もサポートしています。
+ */
 export const SearchBar: React.FC = () => {
     const {
         cells,
