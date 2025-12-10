@@ -18,8 +18,10 @@
         "language": "Language",
         "windowBehavior": "Window Behavior",
         "alwaysOnTop": "Always on Top",
-        "hideOnBlur": "Hide on Blur",
-        "showOnMouseEdge": "Show on Mouse Edge"
+        "hideOnBlur": "Hide when Focus Lost",
+        "showOnMouseEdge": "Show on Screen Edge",
+        "selectCenterOnBoot": "Select Center Cell on Boot",
+        "selectCenterOnBootDesc": "Automatically select the center settings cell when launcher starts"
     },
     "contextMenu": {
         "editDetails": "Edit Details",
