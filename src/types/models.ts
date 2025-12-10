@@ -136,6 +136,15 @@ export interface AppearanceSettings {
     searchMode: 'partial' | 'fuzzy' | 'regex';
     /** アイコンのシルエットモード有効化 (単色化) */
     enableIconSilhouette?: boolean;
+    /**
+     * 視覚効果 (VFX) を有効にするかどうか。
+     * CRTエフェクトやパーティクル背景などが含まれます。
+     */
+    enableVFX?: boolean;
+    /**
+     * VFXの強度 (0.0 - 1.0)。
+     */
+    vfxIntensity?: number;
 }
 
 /**

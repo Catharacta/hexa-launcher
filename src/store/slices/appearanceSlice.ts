@@ -19,6 +19,8 @@ const DEFAULT_APPEARANCE: AppearanceSettings = {
     searchScope: 'global',
     searchMode: 'fuzzy',
     enableIconSilhouette: false,
+    enableVFX: true,
+    vfxIntensity: 0.5,
 };
 
 export const createAppearanceSlice = (set: any, _get: any): AppearanceSlice => ({

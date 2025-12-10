@@ -105,9 +105,9 @@
 
 /* Glitch Effect on Hover (Full Cell) */
 
-/* Hide main content on hover */
+/* Hide main content on hover - DISABLED to keep visibility */
 .group:hover .cyberpunk-content-main {
-    opacity: 0;
+    /* opacity: 0; */
 }
 
 /* Show and animate glitch layers on hover */
