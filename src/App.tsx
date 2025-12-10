@@ -1,3 +1,4 @@
+import { ScreenEffects } from './components/Effects/ScreenEffects';
 import { useEffect, useState } from 'react';
 import { HexGrid } from './components/HexGrid';
 import { SearchBar } from './components/SearchBar';
@@ -162,6 +163,7 @@ function App() {
         className={`w-full h-screen relative overflow-hidden ${animationClass}`}
         style={{ backgroundColor: 'transparent' }}
       >
+        <ScreenEffects />
         <HexGrid />
 
         {/* 各種モーダル - インタラクション有効 */}

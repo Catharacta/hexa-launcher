@@ -74,6 +74,27 @@ export const AppearanceSettings: React.FC = () => {
                     onChange={(checked) => setAppearance({ enableIconSilhouette: checked })}
                 />
 
+                <SettingsSection title={t('appearance.vfx', 'Visual Effects (VFX)')}>
+                    <SettingsToggle
+                        label={t('appearance.enableVFX', 'Enable Visual Effects')}
+                        description={t('appearance.enableVFXDesc', 'Enable CRT overlay, chromatic aberration, and particle backgrounds (Cyberpunk style only)')}
+                        checked={appearance.enableVFX !== false}
+                        onChange={(checked) => setAppearance({ enableVFX: checked })}
+                    />
+
+                    {appearance.enableVFX !== false && (
+                        <SettingsSlider
+                            label={t('appearance.vfxIntensity', 'VFX Intensity')}
+                            value={Math.round((appearance.vfxIntensity ?? 0.5) * 100)}
+                            min={0}
+                            max={100}
+                            step={10}
+                            unit="%"
+                            onChange={(val) => setAppearance({ vfxIntensity: val / 100 })}
+                        />
+                    )}
+                </SettingsSection>
+
                 {/* Theme Color (Default Style Only) */}
                 {appearance.style !== 'cyberpunk' && (
                     <div className="pt-2">

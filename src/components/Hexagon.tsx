@@ -113,20 +113,35 @@ export const HexagonComponent: React.FC<HexagonProps> = ({
             <polygon
                 points={pointsStr}
                 className={clsx(
+                    layerClass,
                     "stroke-2 transition-all duration-200",
-                    isCyberpunk ? "fill-[#0d0d0d] cyberpunk-cell" : "fill-gray-800",
-                    (hoverEffect && !isCyberpunk) && "hover:fill-gray-700 hover:stroke-[3px] group-hover:filter",
-                    isCyberpunk ? "stroke-[#00f2ea]" : theme.stroke,
-                    layerClass === 'cyberpunk-glitch-layer-1' && "fill-purple-900 stroke-purple-500",
-                    layerClass === 'cyberpunk-glitch-layer-2' && "fill-cyan-900 stroke-cyan-500",
+
+                    // Cyberpunk Styling
+                    isCyberpunk && [
+                        "cyberpunk-cell",
+                        // Main Layer colors
+                        !layerClass.includes('glitch') && "fill-[#0d0d0d] stroke-[#00f2ea]",
+                        // Glitch Layer colors (Explicitly override base colors by exclusion)
+                        layerClass.includes('cyberpunk-glitch-layer-1') && "fill-purple-900 stroke-purple-500",
+                        layerClass.includes('cyberpunk-glitch-layer-2') && "fill-cyan-900 stroke-cyan-500",
+                    ],
+
+                    // Standard Theme Styling
+                    !isCyberpunk && [
+                        "fill-gray-800",
+                        theme.stroke,
+                        hoverEffect && "hover:fill-gray-700 hover:stroke-[3px] group-hover:filter",
+                        isSelected && "fill-gray-700 stroke-[3px]"
+                    ],
+
+                    // Common overrides
                     isDragTarget && "stroke-[4px] stroke-white filter drop-shadow(0 0 8px rgba(255,255,255,0.8))",
-                    isSelected && !isCyberpunk && "fill-gray-700 stroke-[3px]",
-                    isSelected && isCyberpunk && "stroke-[#00f2ea]",
+                    (isSelected && isCyberpunk) && "stroke-[#00f2ea]", // Maintain selection stroke for main layer
                     isSearchMatch && "stroke-[4px] stroke-yellow-400 filter drop-shadow(0 0 10px rgba(250,204,21,0.8))"
                 )}
                 style={{
                     opacity: isSearchActive && !isSearchMatch ? 0.3 : 1,
-                    ...(isSelected && !isCyberpunk ? {
+                    ...((isSelected && !isCyberpunk) ? {
                         stroke: theme.color,
                         filter: `drop-shadow(0 0 8px ${theme.color}80)`
                     } : {})
@@ -134,7 +149,7 @@ export const HexagonComponent: React.FC<HexagonProps> = ({
             />
 
             {/* Content (Icon/Text) */}
-            <foreignObject x={-size / 2} y={-size / 2} width={size} height={size} className="pointer-events-none">
+            <foreignObject x={-size / 2} y={-size / 2} width={size} height={size} className={clsx("pointer-events-none", layerClass)}>
                 {cell.type === 'widget' && cell.widget?.type === 'clock' ? (
                     <ClockWidget />
                 ) : cell.type === 'widget' && cell.widget?.type === 'system' ? (
@@ -243,15 +258,16 @@ export const HexagonComponent: React.FC<HexagonProps> = ({
                 !isGhost && !isDragging && (isSelected ? "scale-110" : "hover:scale-110"),
                 !isGhost && !isDragging && "active:scale-95"
             )}>
-                {/* Glitch layers for cyberpunk theme */}
-                {isCyberpunk && isSelected && (
+                {/* Main Content Layer (Always visible, behind effects) */}
+                {renderContent('cyberpunk-content-main')}
+
+                {/* Glitch layers for cyberpunk theme (Overlay on top) */}
+                {isCyberpunk && (
                     <>
-                        {renderContent('cyberpunk-glitch-layer-1')}
-                        {renderContent('cyberpunk-glitch-layer-2')}
+                        {renderContent('cyberpunk-glitch-layer-1 !opacity-0 group-hover:!opacity-100')}
+                        {renderContent('cyberpunk-glitch-layer-2 !opacity-0 group-hover:!opacity-100')}
                     </>
                 )}
-
-                {renderContent()}
             </g>
         </g>
     );

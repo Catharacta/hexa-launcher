@@ -62,7 +62,11 @@
             "cyberpunk": "Cyberpunk"
         },
         "opacity": "Background Opacity",
-        "themeColor": "Theme Color"
+        "themeColor": "Theme Color",
+        "vfx": "Visual Effects (VFX)",
+        "enableVFX": "Enable VFX",
+        "enableVFXDesc": "Enable CRT overlay, chromatic aberration, and particle backgrounds (Cyberpunk style only)",
+        "vfxIntensity": "VFX Intensity"
     },
     "cellManager": {
         "hexSize": "Hex Size",
