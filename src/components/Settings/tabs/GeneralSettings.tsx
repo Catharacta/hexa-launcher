@@ -65,6 +65,12 @@ export const GeneralSettings: React.FC = () => {
                     onChange={handleStartupToggle}
                     disabled={isCheckingStartup}
                 />
+                <SettingsToggle
+                    label={t('general.selectCenterOnBoot')}
+                    description={t('general.selectCenterOnBootDesc')}
+                    checked={general.selectCenterOnBoot ?? true}
+                    onChange={(checked) => setGeneralSettings({ selectCenterOnBoot: checked })}
+                />
 
                 <SettingsSelect
                     label={t('general.language')}

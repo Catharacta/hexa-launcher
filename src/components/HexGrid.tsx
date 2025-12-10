@@ -133,8 +133,8 @@ export const HexGrid: React.FC = () => {
                                 title: '',
                             }}
                             size={currentHexSize}
-                            x={cubeToPixel(hoveredPlaceCube, currentHexSize).x}
-                            y={cubeToPixel(hoveredPlaceCube, currentHexSize).y}
+                            x={cubeToPixel(hoveredPlaceCube, currentHexSize + (grid.gapSize || 0)).x}
+                            y={cubeToPixel(hoveredPlaceCube, currentHexSize + (grid.gapSize || 0)).y}
                             isGhost
                         />
                     </g>
@@ -142,7 +142,10 @@ export const HexGrid: React.FC = () => {
 
                 <g key={activeGroupId || 'root'} className={animationClass}>
                     {cells.map(cell => {
-                        const { x, y } = cubeToPixel(cell.cube, currentHexSize);
+                        // Use hexSize + gapSize for layout positioning to create gaps
+                        const layoutSize = currentHexSize + (grid.gapSize || 0);
+                        const { x, y } = cubeToPixel(cell.cube, layoutSize);
+
                         const isBeingDragged = cell.id === draggedCellId;
                         const isSwapTarget = cell.id === hoveredTargetCellId;
                         const isSelected = selectedCellIds.includes(cell.id);

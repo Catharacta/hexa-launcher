@@ -34,6 +34,7 @@ const SCHEMA_VERSION = 1;
 const DEFAULT_GENERAL_SETTINGS: GeneralSettings = {
     startOnBoot: false,
     language: 'en',
+    selectCenterOnBoot: true,
     windowBehavior: {
         alwaysOnTop: false,
         hideOnBlur: false,
@@ -43,7 +44,7 @@ const DEFAULT_GENERAL_SETTINGS: GeneralSettings = {
 
 const DEFAULT_GRID_SETTINGS: GridSettings = {
     hexSize: 60,
-    gapSize: 0,
+    gapSize: 8,
     animationSpeed: 'normal',
     showLabels: 'hover',
     hoverEffect: true,
@@ -110,6 +111,8 @@ export const createSettingsSlice = (set: any, get: any): SettingsSlice => ({
             } : get().keyBindings,
             searchHistory: settings.searchHistory || [],
             rootCellIds: finalRootCellIds,
+            // Apply initial selection based on settings (defaults to true if undefined)
+            selectedCellIds: (settings.general?.selectCenterOnBoot ?? true) ? ['root-center'] : [],
         });
     },
 

@@ -184,6 +184,8 @@ export interface GeneralSettings {
     startOnBoot: boolean;
     /** 言語設定 */
     language: 'en' | 'ja';
+    /** 起動時に中央のセルを選択するか */
+    selectCenterOnBoot?: boolean;
     /** ウィンドウの挙動設定 */
     windowBehavior: {
         alwaysOnTop: boolean;      // 常に最前面に表示

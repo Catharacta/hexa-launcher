@@ -19,7 +19,9 @@
         "windowBehavior": "ウィンドウ動作",
         "alwaysOnTop": "常に最前面",
         "hideOnBlur": "フォーカス喪失時に隠す",
-        "showOnMouseEdge": "マウスが画面端に来たら表示"
+        "showOnMouseEdge": "マウスが画面端に来たら表示",
+        "selectCenterOnBoot": "起動時に設定セルを選択",
+        "selectCenterOnBootDesc": "ランチャー起動時、自動的に中央の設定セルを選択状態にします"
     },
     "contextMenu": {
         "editDetails": "詳細編集",
