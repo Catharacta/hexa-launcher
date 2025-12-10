@@ -1,5 +1,8 @@
 import { Cell, Group } from '../types/models';
 
+/**
+ * 新規グループ作成時に必要なデフォルトセルセット（設定、戻る、閉じる、ツリー）を生成します。
+ */
 export const createDefaultGroupCells = () => {
     const settingsCellId = crypto.randomUUID();
     const backCellId = crypto.randomUUID();

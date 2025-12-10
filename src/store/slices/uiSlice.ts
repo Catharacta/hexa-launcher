@@ -5,11 +5,15 @@ export interface Toast {
     duration?: number;
 }
 
+/**
+ * UIの表示状態（モーダル、トースト通知、ダイアログなど）を管理するスライス。
+ */
 export interface UiSlice {
     isSettingsOpen: boolean;
     treeModalOpen: boolean;
     cellEditDialogOpen: boolean;
     editingCellId: string | null;
+    /** トースト通知のリスト */
     toasts: Toast[];
     setSettingsOpen: (isOpen: boolean) => void;
     setTreeModalOpen: (isOpen: boolean) => void;
@@ -19,6 +23,7 @@ export interface UiSlice {
     setUwpSelectorOpen: (isOpen: boolean, cellId?: string) => void;
     isExiting: boolean;
     setIsExiting: (isExiting: boolean) => void;
+    /** トースト通知を追加します */
     addToast: (message: string, type?: Toast['type'], duration?: number) => void;
     removeToast: (id: string) => void;
 }

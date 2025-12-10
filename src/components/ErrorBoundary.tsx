@@ -9,6 +9,10 @@ interface State {
     error: Error | null;
 }
 
+/**
+ * レンダリング中の予期しないエラーを捕捉し、クラッシュ画面を表示するエラー境界コンポーネント。
+ * Reactコンポーネントツリー内でのJavaScriptエラーをキャッチし、フォールバックUIを表示します。
+ */
 export class ErrorBoundary extends Component<Props, State> {
     public state: State = {
         hasError: false,

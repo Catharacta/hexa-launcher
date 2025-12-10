@@ -14,10 +14,18 @@ mod system_stats;
 mod uwp_utils;
 mod window_behavior;
 
+/// 設定をJSON形式で保存します。
+///
+/// 保存前に自動バックアップを試みます。
+/// 書き込みはアトミックに行われ（一時ファイル作成 → リネーム）、データの破損を防ぎます。
+///
+/// # 引数
+/// * `app_handle` - TauriのAppHandle
+/// * `settings` - JSON文字列として渡される設定データ
 #[tauri::command]
 fn save_settings(app_handle: tauri::AppHandle, settings: String) -> Result<(), String> {
-    // Attempt backup before saving new settings
-    // Log error but don't fail the save if backup fails
+    // 新しい設定を保存する前にバックアップを試行
+    // バックアップに失敗しても保存処理は継続し、エラーのみログ出力する
     if let Err(e) = backup_manager::create_backup(&app_handle) {
         println!("Backup failed: {}", e);
     }
@@ -30,13 +38,16 @@ fn save_settings(app_handle: tauri::AppHandle, settings: String) -> Result<(), S
         fs::create_dir_all(&app_dir).map_err(|e| e.to_string())?;
     }
     let path = app_dir.join("settings.json");
-    // Atomic write: write to temp, then rename
+    // Atomic write: 一時ファイルに書き込んでからリネームする
     let temp_path = app_dir.join("settings.json.tmp");
     fs::write(&temp_path, settings).map_err(|e| e.to_string())?;
     fs::rename(&temp_path, &path).map_err(|e| e.to_string())?;
     Ok(())
 }
 
+/// 設定ファイルをロードします。
+///
+/// ファイルが存在しない場合は、空のJSONオブジェクト（"{}"）を返します。
 #[tauri::command]
 fn load_settings(app_handle: tauri::AppHandle) -> Result<String, String> {
     let app_dir = app_handle
@@ -45,11 +56,15 @@ fn load_settings(app_handle: tauri::AppHandle) -> Result<String, String> {
         .map_err(|e| e.to_string())?;
     let path = app_dir.join("settings.json");
     if !path.exists() {
-        return Ok("{}".to_string()); // Return empty JSON object or default
+        return Ok("{}".to_string()); // デフォルト値として空オブジェクトを返す
     }
     fs::read_to_string(path).map_err(|e| e.to_string())
 }
 
+/// 指定されたパスのアプリケーションやファイルを開きます。
+///
+/// 実行ファイル(.exe, .bat, .cmd)の場合は、引数やカレントディレクトリを指定して起動を試みます。
+/// それ以外の場合（フォルダやショートカット）は、OSのデフォルト動作（explorerなど）を使用します。
 #[tauri::command]
 fn launch_app(
     _app_handle: tauri::AppHandle,
@@ -57,8 +72,8 @@ fn launch_app(
     args: Option<String>,
     working_dir: Option<String>,
 ) -> Result<(), String> {
-    // If it's an executable, try to spawn it directly to support args and working dir
-    // Simple heuristic: ends with .exe or .bat or .cmd
+    // 実行ファイルの場合は直接プロセス生成を試みる（引数や作業ディレクトリ対応のため）
+    // 簡易的な判定: 拡張子が .exe, .bat, .cmd
     let lower_path = path.to_lowercase();
     if lower_path.ends_with(".exe") || lower_path.ends_with(".bat") || lower_path.ends_with(".cmd")
     {
@@ -72,13 +87,13 @@ fn launch_app(
         match cmd.spawn() {
             Ok(_) => return Ok(()),
             Err(e) => {
-                // Fallback to open if spawn fails (e.g. permission issue or not actually executable)
+                // 実行に失敗した場合（権限不足や実体が実行ファイルでない場合など）は、openへフォールバック
                 println!("Spawn failed, falling back to open: {}", e);
             }
         }
     }
 
-    // Fallback to using the 'opener' plugin or shell open
+    // 'opener' プラグインの代わり、またはシェル経由でのオープン
     #[cfg(target_os = "windows")]
     {
         let mut cmd = std::process::Command::new("explorer");
@@ -88,34 +103,46 @@ fn launch_app(
 
     #[cfg(not(target_os = "windows"))]
     {
-        // Fallback for other OS (not primary target but good practice)
+        // 他OS用フォールバック（Windowsがメインターゲットだが念のため）
         let _ = std::process::Command::new("open").arg(path).spawn();
     }
 
     Ok(())
 }
 
+/// ショートカットファイル(.lnk)のリンク先を解決します。
+///
+/// # 引数
+/// * `path` - .lnkファイルのパス
 #[tauri::command]
 fn resolve_shortcut(path: String) -> Result<shortcut_utils::ShortcutInfo, String> {
     shortcut_utils::resolve_lnk(&path)
 }
 
+/// インストールされているUWP(Universal Windows Platform)アプリの一覧を取得します。
+///
+/// Powershellコマンドを使用して、AppxPackageマニフェストから情報を抽出します。
 #[tauri::command]
 fn get_uwp_apps() -> Result<Vec<uwp_utils::UwpApp>, String> {
     uwp_utils::get_installed_uwp_apps()
 }
 
+/// 指定されたAUMID (Application User Model ID) を使用してUWPアプリを起動します。
 #[tauri::command]
 fn launch_uwp_app(aumid: String) -> Result<(), String> {
     uwp_utils::launch_uwp(&aumid)
 }
 
+/// 指定されたファイルのアイコンを取得し、Base64エンコードされた画像データとして返します。
+///
+/// パフォーマンス向上のため、2層キャッシュ（メモリ + ディスク）を使用します。
 #[tauri::command]
 fn get_file_icon(app_handle: tauri::AppHandle, path: String) -> Result<String, String> {
-    // Use the new icon cache module
+    // 新しいアイコンキャッシュモジュールを使用
     icon_cache::get_icon(&app_handle, path)
 }
 
+/// マウスが画面端に移動した際の監視を開始します。
 #[tauri::command]
 fn start_mouse_edge_monitor(app_handle: tauri::AppHandle) -> Result<(), String> {
     let monitor = app_handle.state::<mouse_edge::MouseEdgeMonitor>();
@@ -123,6 +150,7 @@ fn start_mouse_edge_monitor(app_handle: tauri::AppHandle) -> Result<(), String> 
     Ok(())
 }
 
+/// マウスエッジ監視を停止します。
 #[tauri::command]
 fn stop_mouse_edge_monitor(app_handle: tauri::AppHandle) -> Result<(), String> {
     let monitor = app_handle.state::<mouse_edge::MouseEdgeMonitor>();
@@ -130,6 +158,7 @@ fn stop_mouse_edge_monitor(app_handle: tauri::AppHandle) -> Result<(), String> {
     Ok(())
 }
 
+/// システムリソース（CPU/メモリ）の監視を開始します。
 #[tauri::command]
 fn start_system_monitor(app_handle: tauri::AppHandle) -> Result<(), String> {
     let monitor = app_handle.state::<system_stats::SystemMonitor>();
@@ -137,6 +166,7 @@ fn start_system_monitor(app_handle: tauri::AppHandle) -> Result<(), String> {
     Ok(())
 }
 
+/// システムリソースの監視を停止します。
 #[tauri::command]
 fn stop_system_monitor(app_handle: tauri::AppHandle) -> Result<(), String> {
     let monitor = app_handle.state::<system_stats::SystemMonitor>();
@@ -144,11 +174,15 @@ fn stop_system_monitor(app_handle: tauri::AppHandle) -> Result<(), String> {
     Ok(())
 }
 
+/// ウィンドウを非表示にします。
 #[tauri::command]
 fn hide_window(window: tauri::Window) -> Result<(), String> {
     window.hide().map_err(|e| e.to_string())
 }
 
+/// グローバルショートカット（ランチャー呼び出し用）を更新します。
+///
+/// 既存のショートカットを登録解除し、新しいショートカットを登録します。
 #[tauri::command]
 fn update_global_shortcut(app_handle: tauri::AppHandle, shortcut: String) -> Result<(), String> {
     println!("Updating global shortcut to: {}", shortcut);
@@ -161,6 +195,10 @@ fn update_global_shortcut(app_handle: tauri::AppHandle, shortcut: String) -> Res
     Ok(())
 }
 
+/// ドラッグ＆ドロップされたファイルをアプリ内データとして保存します。
+///
+/// # 戻り値
+/// 保存されたファイルのパス
 #[tauri::command]
 async fn save_dropped_file(
     app_handle: tauri::AppHandle,

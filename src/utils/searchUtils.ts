@@ -8,8 +8,12 @@ export interface SearchableCell {
 }
 
 /**
- * Fuzzy search using Fuse.js
- * Tolerates typos and finds approximate matches
+ * Fuse.jsを使用したファジー検索を実行します。
+ * タイプミスを許容し、近似一致する項目を検索します。
+ *
+ * @param cells 検索対象のセルリスト
+ * @param query 検索クエリ
+ * @param options オプション（閾値など）
  */
 export function fuzzySearch(
     cells: SearchableCell[],

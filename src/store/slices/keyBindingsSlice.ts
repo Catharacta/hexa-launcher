@@ -1,6 +1,11 @@
 import { KeyBindings } from '../../types/models';
 import { updateGlobalShortcut } from '../../utils/tauri';
 
+/**
+ * キーボードショートカット設定を管理するスライス。
+ *
+ * 変更があった場合、Tauriバックエンドのグローバルショートカット設定も同期して更新します。
+ */
 export interface KeyBindingsSlice {
     keyBindings: KeyBindings;
     setKeyBindings: (bindings: Partial<KeyBindings>) => void;

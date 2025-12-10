@@ -10,11 +10,20 @@ use windows::Win32::UI::Shell::{IShellLinkW, ShellLink};
 
 #[derive(Serialize)]
 pub struct ShortcutInfo {
+    /// ショートカットのターゲットパス（実行ファイルなど）
     pub target: String,
+    /// 起動引数
     pub arguments: String,
+    /// 作業ディレクトリ
     pub working_dir: String,
 }
 
+/// Windowsのショートカット(.lnk)ファイルの情報を解決・取得します。
+///
+/// COMインターフェース(`IShellLinkW`)を使用して、リンク先、引数、作業ディレクトリを取得します。
+///
+/// # 引数
+/// * `path` - .lnkファイルのパス
 pub fn resolve_lnk(path: &str) -> Result<ShortcutInfo, String> {
     unsafe {
         // Initialize COM library

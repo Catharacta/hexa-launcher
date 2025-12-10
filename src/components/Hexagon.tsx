@@ -9,25 +9,51 @@ import { convertFileSrc } from '@tauri-apps/api/core';
 import { ClockWidget } from './Widgets/ClockWidget';
 import { SystemWidget } from './Widgets/SystemWidget';
 
+/**
+ * 六角形セルのプロパティ定義。
+ */
 export interface HexagonProps {
+    /** 表示するセルのデータモデル */
     cell: Cell;
+    /** 六角形のサイズ（中心から頂点までの距離） */
     size: number;
+    /** 描画位置 X座標 */
     x: number;
+    /** 描画位置 Y座標 */
     y: number;
+    /** クリック時のイベントハンドラ */
     onClick?: (e: React.MouseEvent) => void;
+    /** 右クリック時のイベントハンドラ */
     onContextMenu?: (e: React.MouseEvent) => void;
+    /** マウスダウン時のイベントハンドラ（ドラッグ開始用） */
     onMouseDown?: (e: React.MouseEvent) => void;
+    /** テーマカラー（Cyberpunkモード以外で使用） */
     themeColor?: string;
+    /** ドラッグ中かどうか（半透明表示に使用） */
     isDragging?: boolean;
+    /** ドラッグのターゲット（交換先）になっているか */
     isDragTarget?: boolean;
+    /** ドラッグ中のゴースト表示かどうか */
     isGhost?: boolean;
+    /** 選択状態かどうか（キーボード操作時など） */
     isSelected?: boolean;
+    /** 検索結果に一致しているか */
     isSearchMatch?: boolean;
+    /** 検索モードがアクティブかどうか（非一致セルの非強調表示に使用） */
     isSearchActive?: boolean;
+    /** ラベルの表示設定 ('always' | 'hover' | 'never') */
     showLabel?: 'always' | 'hover' | 'never';
+    /** ホバーエフェクトを有効にするか */
     hoverEffect?: boolean;
 }
 
+/**
+ * 六角形セル個体を描画するコンポーネント。
+ *
+ * SVGの `polygon` 要素を使用して六角形を描画し、その中にアイコンやテキストを配置します。
+ * Cyberpunkテーマや選択状態、ドラッグ状態など、各種状態に応じたスタイルを動的に適用します。
+ * `React.memo` でメモ化されており、プロパティに変更がない限り再レンダリングを抑制します。
+ */
 export const HexagonComponent: React.FC<HexagonProps> = ({
     cell,
     size,

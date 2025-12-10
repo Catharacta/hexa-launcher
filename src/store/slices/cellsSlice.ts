@@ -25,6 +25,12 @@ export const initialCells: Record<string, Cell> = {
 
 const initialRootCellIds = ['root-center', 'root-close', 'root-tree'];
 
+/**
+ * セル（アプリケーション、ショートカット、ウィジェット等）の管理を行うスライス。
+ *
+ * CRUD操作（作成、読み取り、更新、削除）および移動操作を提供します。
+ * 変更は自動的に `saveSettings` を通じて永続化されます。
+ */
 export interface CellsSlice {
     cells: Record<string, Cell>;
     rootCellIds: string[];

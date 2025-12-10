@@ -8,6 +8,17 @@ import { useFileDropHandler } from './HexGrid/hooks/useFileDropHandler';
 import { useDragAndDrop } from './HexGrid/hooks/useDragAndDrop';
 import { useCellHandlers } from './HexGrid/handlers/cellHandlers';
 
+/**
+ * 六角形グリッド（ハニカム構造）を描画し、セル管理を行うメインコンポーネント。
+ *
+ * 以下の責務を持ちます：
+ * - 状態管理（セル、グループ、アピアランス設定など）のストアからの取得
+ * - SVGを使用した六角形セルのレンダリング
+ * - ドラッグ＆ドロップ、コンテキストメニュー、キーボードショートカットなどのインタラクション制御
+ * - グループ間の遷移アニメーションの制御
+ *
+ * レンダリングにはSVGを使用し、各セルは `Hexagon` コンポーネントとして描画されます。
+ */
 export const HexGrid: React.FC = () => {
     const {
         cells: cellsMap,

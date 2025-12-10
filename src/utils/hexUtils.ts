@@ -3,6 +3,14 @@ export { CUBE_DIRECTIONS, cubeAdd, cubeKey } from '../types/hex';
 
 export const HEX_SIZE = 60; // Default hex size in pixels
 
+/**
+ * 六角形グリッド（キューブ座標系）からピクセル座標系への変換を行います。
+ * Pointy-topped（頂点が上）の六角形レイアウトを使用しています。
+ *
+ * @param cube キューブ座標 {x, y, z}
+ * @param size 六角形のサイズ（中心から頂点までの距離）
+ * @returns ピクセル座標 {x, y}
+ */
 export function cubeToPixel(cube: Cube, size: number = HEX_SIZE): Point {
     // Pointy-topped
     // x = size * sqrt(3) * (cube.x + cube.z / 2)

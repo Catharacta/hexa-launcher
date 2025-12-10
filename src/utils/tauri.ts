@@ -3,7 +3,12 @@ import { Settings } from '../types/models';
 import { useLauncherStore } from '../store/launcherStore';
 import i18n from '../i18n/config';
 
-// 保存
+/**
+ * 設定オブジェクトをバックエンドに保存します。
+ *
+ * @param settings 保存する設定オブジェクト
+ * @throws 保存に失敗した場合エラーをスローします
+ */
 export async function saveSettings(settings: Settings): Promise<void> {
     try {
         await invoke('save_settings', { settings: JSON.stringify(settings) });

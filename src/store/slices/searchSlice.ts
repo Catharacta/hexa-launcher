@@ -1,6 +1,11 @@
 import { saveSettings } from '../../utils/tauri';
 import { SCHEMA_VERSION } from './settingsSlice';
 
+/**
+ * 検索機能を管理するスライス。
+ *
+ * 検索クエリ、検索結果、および検索履歴を管理します。
+ */
 export interface SearchSlice {
     isSearchActive: boolean;
     searchQuery: string;

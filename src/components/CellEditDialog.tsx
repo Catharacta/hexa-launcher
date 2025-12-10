@@ -3,6 +3,10 @@ import { useLauncherStore } from '../store/launcherStore';
 import { useTranslation } from 'react-i18next';
 import { convertFileSrc } from '@tauri-apps/api/core';
 
+/**
+ * セル（アプリケーション、ショートカット）のプロパティを編集するダイアログコンポーネント。
+ * 名前、引数、作業ディレクトリ、カスタムアイコンの設定が可能です。
+ */
 export const CellEditDialog: React.FC = () => {
     const { t } = useTranslation();
     const cellEditDialogOpen = useLauncherStore(state => state.cellEditDialogOpen);

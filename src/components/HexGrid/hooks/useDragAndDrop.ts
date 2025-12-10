@@ -3,6 +3,16 @@ import { useLauncherStore } from '../../../store/launcherStore';
 import { pixelToCube, cubeToPixel, cubeKey, HEX_SIZE } from '../../../utils/hexUtils';
 import { Cell } from '../../../types/models';
 
+/**
+ * 六角形セルのドラッグ＆ドロップ機能を提供するカスタムフック。
+ *
+ * 以下の機能を提供します：
+ * - マウス操作によるドラッグ開始・終了の検出
+ * - ドラッグ中のゴースト（移動予定位置）の計算
+ * - 複数選択されたセルの同時移動
+ * - グループへのドロップ（移動）処理
+ * - 既にセルがある場所へのスワップまたは移動の判定
+ */
 export const useDragAndDrop = () => {
     const {
         moveCell,

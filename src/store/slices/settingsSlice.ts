@@ -2,6 +2,13 @@ import { Settings, Cell, Group, GeneralSettings, GridSettings, SecuritySettings,
 import { initialCells } from './cellsSlice';
 import { updateGlobalShortcut, saveSettings } from '../../utils/tauri';
 
+/**
+ * アプリケーション全体の統合設定を管理するスライス。
+ *
+ * 各カテゴリ（一般、グリッド、セキュリティ、高度な設定）ごとの設定更新アクションや
+ * 設定ファイルからのロード機能 (`loadFromSettings`) を提供します。
+ * また、状態変更時に `saveSettings` を呼び出して永続化も行います。
+ */
 export interface SettingsSlice {
     hotkeys: Record<string, string>;
     iconCacheIndex: Record<string, string>;
@@ -9,6 +16,7 @@ export interface SettingsSlice {
     grid: GridSettings;
     security: SecuritySettings;
     advanced: AdvancedSettings;
+    /** 設定オブジェクト全体をロードしてストアに適用します */
     loadFromSettings: (settings: Settings) => void;
     getCellsInActiveGroup: () => Cell[];
     setGeneralSettings: (settings: Partial<GeneralSettings>) => void;

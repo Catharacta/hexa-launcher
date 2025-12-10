@@ -7,6 +7,10 @@ export interface ThemeDefinition {
     textLight: string; // Tailwind class for lighter text color
 }
 
+/**
+ * アプリケーションで使用可能なカラーテーマ定義。
+ * Tailwind CSSのクラス名と直接対応しています。
+ */
 export const THEMES: Record<string, ThemeDefinition> = {
     cyan: {
         name: 'cyan',

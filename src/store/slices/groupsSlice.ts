@@ -4,9 +4,17 @@ import { SCHEMA_VERSION } from './settingsSlice';
 import { createDefaultGroupCells, deleteGroupRecursive } from '../../utils/groupUtils';
 import { findEmptyAdjacentCube, cubeKey } from '../../utils/hexUtils';
 
+/**
+ * グループ（フォルダ）機能を管理するスライス。
+ *
+ * グループの作成、削除、移動、およびグループ間のナビゲーションを担当します。
+ * グループはネスト構造を持つことができ、再帰的な操作もサポートします。
+ */
 export interface GroupsSlice {
     groups: Record<string, Group>;
+    /** 現在表示中のグループID（nullの場合はルート表示） */
     activeGroupId: string | null;
+    /** 新規グループ（フォルダ）を作成します */
     createGroupFolder: (name: string, locationCellId?: string) => void;
     renameGroup: (groupId: string, newName: string) => void;
     duplicateCell: (cellId: string) => void;

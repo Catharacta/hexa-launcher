@@ -6,6 +6,10 @@ import { UwpApp } from '../../types/models';
 import { IoClose, IoSearch } from 'react-icons/io5';
 import { DiWindows } from 'react-icons/di';
 
+/**
+ * UWP（Universal Windows Platform）アプリを選択するためのモーダルコンポーネント。
+ * インストールされているUWPアプリの一覧を取得・表示し、検索や選択が可能です。
+ */
 export const UwpSelectorModal: React.FC = () => {
     // const { t } = useTranslation(); // Unused for now
     const isOpen = useLauncherStore(state => state.uwpSelectorOpen);

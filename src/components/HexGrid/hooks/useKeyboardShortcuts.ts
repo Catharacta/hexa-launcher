@@ -3,6 +3,19 @@ import { useLauncherStore } from '../../../store/launcherStore';
 import { cubeAdd, cubeKey } from '../../../utils/hexUtils';
 import { Cell } from '../../../types/models';
 
+/**
+ * グローバルおよびグリッド固有のキーボードショートカットを管理するカスタムフック。
+ *
+ * 以下の機能を提供します：
+ * - セル削除 (Delete)
+ * - グループ作成 (Ctrl+G)
+ * - セル名変更 (F2 / Ctrl+R)
+ * - 検索バー起動 (Ctrl+F)
+ * - ショートカットファイル作成 (Ctrl+N)
+ * - ショートカットフォルダ作成 (Ctrl+Shift+N)
+ * - 六角形グリッド上のカーソル移動 (WASD / QEZX)
+ * - 方向指定による新規セル作成 (Shift + 移動キー)
+ */
 export const useKeyboardShortcuts = () => {
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
