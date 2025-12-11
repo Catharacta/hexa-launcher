@@ -224,7 +224,11 @@ Configurable in settings:
 #### Window Behavior
 - **Always on Top**: Always display above other windows
 - **Hide on Blur**: Automatically hide when clicking other apps
-- **Show on Mouse Edge**: Automatically show when mouse reaches screen edge
+#### Show on Mouse Edge
+- Automatically show when mouse reaches screen edge
+
+#### Select Center Cell on Boot
+- Automatically select the center settings cell when launcher starts (Default: On)
 
 ### Appearance Settings
 
