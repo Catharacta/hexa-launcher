@@ -122,6 +122,23 @@ Navigate the hexagonal grid using these keys:
    - Run as administrator
    - Theme color (cell-specific color)
 
+### Context Menu (Right-Click)
+
+Menu items vary depending on the cell type.
+
+#### Standard / Empty Cells
+- **Edit Details**: Opens the cell detail editor.
+- **Edit Shortcut (File)**: Opens file selection dialog to register a file.
+- **Edit Shortcut (Folder)**: Opens folder selection dialog to register a folder.
+- **Select UWP App**: Register a UWP application.
+- **Create Group Here**: Create a new group by entering a name.
+- **Create Special Cell**: Add special cells (Clock, System Monitor, etc.).
+- **Delete**: Remove the cell.
+
+#### Group Cells
+- **Rename Group**: Rename the group.
+- **Delete Group**: Delete the group cell.
+
 ### Deleting Cells
 
 1. Select a cell
@@ -136,6 +153,29 @@ Navigate the hexagonal grid using these keys:
 
 #### Swap
 - Drop a cell onto another cell to swap their positions
+
+---
+
+## Cell Types
+
+Hexa Launcher features the following types of cells:
+
+### App Cell
+- Standard shortcut to an application.
+- Launch by clicking or pressing Enter.
+
+### Group Cell
+- A container that holds other cells (like a folder).
+- Distinguished by a double-ring appearance.
+
+### System Cell
+Special function cells (cannot be deleted):
+- **Settings (Center)**: Opens the settings modal.
+- **Tree (Top Left)**: Shows the group hierarchy.
+- **Close (Top Right)**: Exits the application.
+- **Back**: Returns to the parent group (inside groups).
+- **Clock**: Displays the current time.
+- **System Monitor**: Displays system information (CPU/Memory usage).
 
 ---
 
@@ -370,7 +410,6 @@ If your issue persists:
 
 1. Search existing issues on [GitHub Issues](https://github.com/Catharacta/hexa-launcher/issues)
 2. Create a new issue to report
-3. Ask the community in [Discussions](https://github.com/Catharacta/hexa-launcher/discussions)
 
 ---
 

@@ -34,7 +34,9 @@
         "deleteGroup": "Delete Group",
         "back": "← Back",
         "tree": "Tree",
-        "close": "Close"
+        "close": "Close",
+        "clockWidget": "Clock Widget",
+        "systemWidget": "System Monitor"
     },
     "cellEditDialog": {
         "title": "Edit Cell",
