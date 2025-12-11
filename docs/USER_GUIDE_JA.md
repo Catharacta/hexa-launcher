@@ -119,6 +119,23 @@ Hexa Launcherは、六角形グリッドを使用した革新的なアプリケ�
    - 管理者権限で実行
    - テーマカラー（セル個別の色）
 
+### コンテキストメニュー（右クリック）
+
+セルを右クリックすると表示されるメニューの詳細です：
+
+- **Edit Details**: セルの詳細編集ダイアログを開きます。
+- **Edit Shortcut (File)**: ファイル選択ダイアログを開き、セルに登録するファイルを選択します。
+- **Edit Shortcut (Folder)**: フォルダ選択ダイアログを開き、セルに登録するフォルダを選択します。
+- **Select UWP App**: UWPアプリ一覧から選択して登録します。
+- **Create Group Here**: 名前を入力してその場にグループを作成します。
+- **Create Special Cell**: 以下の特殊セルを追加します。
+  - **Tree Cell**: ツリービュー
+  - **Close Cell**: 閉じるボタン
+  - **Back Cell**: 戻るボタン（グループ内のみ）
+  - **Clock Cell**: 時計
+  - **System Monitor Cell**: システム監視
+- **Delete**: セルを削除します。
+
 ### セルの削除
 
 1. セルを選択
@@ -133,6 +150,29 @@ Hexa Launcherは、六角形グリッドを使用した革新的なアプリケ�
 
 #### スワップ
 - セルを別のセルにドロップすると、位置が入れ替わります
+
+---
+
+## セルの種類
+
+Hexa Launcherには以下の種類のセルがあります：
+
+### アプリセル (App Cell)
+- 通常のアプリケーションへのショートカットです。
+- クリックまたはEnterキーで起動します。
+
+### グループセル (Group Cell)
+- フォルダのように他のセルを格納するコンテナです。
+- ダブルリングの見た目が特徴です。
+
+### システムセル (System Cell)
+特別な機能を持つセルです（削除不可）：
+- **Settings (中央)**: 設定画面を開きます。
+- **Tree (左上)**: 現在のグループ階層を表示します。
+- **Close (右上)**: ランチャーを終了します。
+- **Back**: グループ内に表示され、親グループに戻ります。
+- **Clock**: 現在時刻を表示します。
+- **System Monitor**: システム情報（CPU/メモリ使用率）を表示します。
 
 ---
 
@@ -366,7 +406,8 @@ Hexa Launcherは、六角形グリッドを使用した革新的なアプリケ�
 
 1. [GitHub Issues](https://github.com/Catharacta/hexa-launcher/issues)で既存の問題を検索
 2. 新しいissueを作成して報告
-3. [Discussions](https://github.com/Catharacta/hexa-launcher/discussions)でコミュニティに質問
+
+※GitHubアカウントが必要です。
 
 ---
 
