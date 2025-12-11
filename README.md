@@ -2,7 +2,7 @@
 
 **Keyboard-centric, Hexagonal Grid Application Launcher for Windows.**
 
-![Hexa Launcher](https://img.shields.io/badge/version-0.2.1-blue)
+![Hexa Launcher](https://img.shields.io/badge/version-0.2.2-blue)
 ![Platform](https://img.shields.io/badge/platform-Windows-lightgrey)
 ![License](https://img.shields.io/badge/license-MIT-green)
   

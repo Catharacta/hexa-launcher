@@ -57,8 +57,8 @@ impl MouseEdgeMonitor {
 
                                     if x_in_monitor && y_in_monitor {
                                         // このモニターの上端、または左端にあるか？
-                                        let is_top_edge = (mouse_y - m_pos.y).abs() <= 2; // 2px閾値
-                                        let is_left_edge = (mouse_x - m_pos.x).abs() <= 2;
+                                        let is_top_edge = (mouse_y - m_pos.y).abs() <= 5; // 5px閾値
+                                        let is_left_edge = (mouse_x - m_pos.x).abs() <= 5;
 
                                         if is_top_edge || is_left_edge {
                                             if let Some(window) =
