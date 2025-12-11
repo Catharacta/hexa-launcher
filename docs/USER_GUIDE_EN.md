@@ -124,20 +124,20 @@ Navigate the hexagonal grid using these keys:
 
 ### Context Menu (Right-Click)
 
-Details of the menu displayed when right-clicking a cell:
+Menu items vary depending on the cell type.
 
+#### Standard / Empty Cells
 - **Edit Details**: Opens the cell detail editor.
 - **Edit Shortcut (File)**: Opens file selection dialog to register a file.
 - **Edit Shortcut (Folder)**: Opens folder selection dialog to register a folder.
 - **Select UWP App**: Register a UWP application.
 - **Create Group Here**: Create a new group by entering a name.
-- **Create Special Cell**: Add the following special cells:
-  - **Tree Cell**: Tree view
-  - **Close Cell**: Close button
-  - **Back Cell**: Back button (Group only)
-  - **Clock Cell**: Clock widget
-  - **System Monitor Cell**: System monitor widget
+- **Create Special Cell**: Add special cells (Clock, System Monitor, etc.).
 - **Delete**: Remove the cell.
+
+#### Group Cells
+- **Rename Group**: Rename the group.
+- **Delete Group**: Delete the group cell.
 
 ### Deleting Cells
 
