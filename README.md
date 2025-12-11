@@ -1,14 +1,18 @@
 # Hexa Launcher
 
-六角形グリッドベースのアプリケーションランチャー
+**Keyboard-centric, Hexagonal Grid Application Launcher for Windows.**
 
-![Hexa Launcher](https://img.shields.io/badge/version-0.1.3-blue)
+![Hexa Launcher](https://img.shields.io/badge/version-0.2.0-blue)
 ![Platform](https://img.shields.io/badge/platform-Windows-lightgrey)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
+![Hexa Launcher Preview](docs/images/launcher_image.png)
+
+Hexa Launcher provides an efficient and visually unique way to organize and launch your applications using a hexagonal grid layout.
+
 ## 概要
 
-Hexa Launcherは、六角形（ヘックス）グリッドを使用した革新的なアプリケーションランチャーです。直感的なキーボード操作と美しいビジュアルで、アプリケーションの起動を効率化します。
+Hexa Launcherは、六角形（ヘックス）グリッドを使用したキーボード重視のアプリケーションランチャーです。直感的なキーボード操作と美しいビジュアルで、アプリケーションの起動を効率化します。
 
 ### 主な特徴
 
