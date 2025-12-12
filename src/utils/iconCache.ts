@@ -16,19 +16,23 @@ class IconCache {
     /**
      * キャッシュからアイコンを取得、無ければバックエンドから取得してキャッシュします。
      * @param path ファイルパス
+     * @param resolveShortcut ショートカット(.lnk)の実体アイコンを取得するかどうか
      * @returns Base64エンコードされたPNG画像文字列、またはnull
      */
-    async getIcon(path: string): Promise<string | null> {
+    async getIcon(path: string, resolveShortcut: boolean = false): Promise<string | null> {
+        // Cache key logic: append suffix if resolving shortcut
+        const cacheKey = resolveShortcut ? `${path}:resolved` : path;
+
         // 1. Check Memory Cache
-        if (cache.has(path)) {
-            return cache.get(path) || null;
+        if (cache.has(cacheKey)) {
+            return cache.get(cacheKey) || null;
         }
 
         // 2. Fetch from Backend
         try {
-            const icon = await invoke<string>('get_file_icon', { path });
+            const icon = await invoke<string>('get_file_icon', { path, resolveShortcut });
             if (icon) {
-                cache.set(path, icon);
+                cache.set(cacheKey, icon);
             }
             return icon;
         } catch (error) {

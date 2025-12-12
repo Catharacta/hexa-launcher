@@ -122,8 +122,35 @@ export const launchUwpApp = async (aumid: string): Promise<void> => {
 
 import { iconCache } from './iconCache';
 
-export const getFileIcon = async (path: string): Promise<string | null> => {
-    return await iconCache.getIcon(path);
+// getFileIcon は iconCache を使用するが、iconCache は現在 resolve_shortcut をサポートしていない。
+// そのため、iconCache の getIcon メソッドも更新する必要があるが、
+// ここではまずインターフェースを合わせ、キャッシュキーにフラグを含める修正が必要。
+// しかし、iconCache.ts は確認済みで非常にシンプルだった。
+// まずは直接 invoke を呼ぶ形に変更するか、iconCache を修正するか。
+// iconCache.ts を見ていないが、リストでは確認した。
+// iconCache.ts を修正するのが筋。
+
+// Wait, step 3594 grep showed `iconCache.ts` exists.
+// Let's modify `tauri.ts` to pass the flag.
+// If `iconCache` is used, I should update `iconCache` first.
+// But `tauri.ts` calls `iconCache.getIcon(path)`.
+// Passing a second argument might break it if not updated.
+// Let's update `tauri.ts` to bypass cache if resolving (to keep it simple for now) or update cache key.
+// "resolve_shortcut" changes the resulting icon, so cache key MUST include this state or the resolved path.
+// The backend `get_file_icon` handles the resolution.
+// So if I pass `resolve_shortcut=true`, the backend returns icon of TARGET.
+// If `resolve_shortcut=false`, backend returns icon of LNK.
+// The cache key in backend (if any) or frontend needs to account for this.
+// Backend `icon_cache.rs` uses path hash.
+// If I resolve path in `lib.rs`, `icon_cache.rs` receives target path, so hash is of target path.
+// That is correct.
+// If I don't resolve, it receives .lnk path, hash is of .lnk path.
+// So backend caching is safe.
+// Frontend `iconCache.ts` might have its own cache.
+// Let's modify `tauri.ts` to accept the argument and pass it to `iconCache`.
+
+export const getFileIcon = async (path: string, resolveShortcut: boolean = false): Promise<string | null> => {
+    return await iconCache.getIcon(path, resolveShortcut);
 };
 
 export const openDialog = async (options?: any): Promise<any> => {

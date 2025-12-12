@@ -70,7 +70,9 @@
         "vfx": "視覚効果 (VFX)",
         "enableVFX": "VFXを有効化",
         "enableVFXDesc": "CRTオーバーレイ、色収差、パーティクル背景を有効にします（Cyberpunkスタイルのみ）",
-        "vfxIntensity": "VFX強度"
+        "vfxIntensity": "VFX強度",
+        "showShortcutIcon": "ショートカットアイコンを表示",
+        "showShortcutIconDesc": "セルのアイコンにショートカットマーク（矢印）を表示します"
     },
     "cellManager": {
         "hexSize": "ヘックスサイズ",

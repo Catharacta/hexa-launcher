@@ -2,7 +2,7 @@ use base64::Engine; // Needed for .encode()
 use image::ImageOutputFormat;
 use sha2::{Digest, Sha256};
 use std::fs;
-use std::path::{Path, PathBuf};
+
 use tauri::Manager;
 use windows::Win32::Graphics::Gdi::{
     CreateCompatibleDC, DeleteDC, DeleteObject, GetDC, GetDIBits, GetObjectW, ReleaseDC,

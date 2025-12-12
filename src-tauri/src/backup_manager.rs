@@ -1,6 +1,6 @@
 use std::fs;
 use std::path::{Path, PathBuf};
-use std::time::SystemTime;
+
 use tauri::Manager;
 
 /// 現在の設定ファイル(`settings.json`)のバックアップを作成します。

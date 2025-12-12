@@ -50,6 +50,13 @@ When you first launch, you'll see three special cells in the center:
   - Press this key combination from any application to summon the launcher
   - Press again to hide it
 
+### Task Tray / Tray Icon
+- Hexa Launcher runs in the system tray (notification area) while open.
+- Right-click the icon to access the menu:
+    - **Show/Hide**: Toggles launcher visibility.
+    - **Settings**: Opens the settings window.
+    - **Quit**: Exits the application.
+
 ### Hex Navigation
 
 Navigate the hexagonal grid using these keys:
@@ -86,17 +93,11 @@ Navigate the hexagonal grid using these keys:
 - `Ctrl+Shift+N`: Create a folder shortcut
   - A dialog will open to select a folder
 
-#### Method 2: Drag & Drop
-
-1. Drag a file or folder from Explorer
-2. Drop it onto an empty cell in the launcher
-3. A shortcut will be created automatically
-
-#### Method 3: Directional Creation
-
-1. Select a cell
-2. Press `Shift + Navigation Key` (e.g., `Shift+W`)
-3. A shortcut creation dialog opens in the specified direction
+#### Creating Cells
+- **Drag & Drop**: Drop a file or folder onto an empty space on the grid to automatically create a new cell.
+- **Right-Click**: Right-click an existing cell and select "Create Special Cell" or "Create Group Here".
+- **Click Edge**: Click on an unconnected edge of a cell to create a new empty cell at that position.
+- **Shortcut**: Press `Ctrl` + Arrow Key (or configured navigation key) to create and move to a new cell in that direction.
 
 ### Editing Cells
 

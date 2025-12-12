@@ -145,6 +145,8 @@ export interface AppearanceSettings {
      * VFXの強度 (0.0 - 1.0)。
      */
     vfxIntensity?: number;
+    /** ショートカットアイコン（矢印）を表示するかどうか */
+    showShortcutIcon?: boolean;
 }
 
 /**
