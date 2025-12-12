@@ -139,15 +139,33 @@ fn launch_uwp_app(aumid: String) -> Result<(), String> {
 #[tauri::command]
 fn get_file_icon(
     app_handle: tauri::AppHandle,
-    mut path: String,
+    path: String,
     resolve_shortcut: bool,
 ) -> Result<String, String> {
     if resolve_shortcut && path.to_lowercase().ends_with(".lnk") {
         if let Ok(info) = shortcut_utils::resolve_lnk(&path) {
-            path = info.target;
+            // ショートカットがアイコンリソース情報を指している場合はそれを使用
+            if !info.icon_path.is_empty() {
+                // カスタムハッシュキーを作成してキャッシュを分離する
+                // 例: "path/to/icon.dll:0"
+                let resource_key = format!("{}:{}", info.icon_path, info.icon_index);
+
+                // キャッシュ・取得ロジック (icon_cache::get_icon相当だが、extractの代わりにresource extractを使う)
+                return icon_cache::get_icon_by_resource(
+                    &app_handle,
+                    &resource_key,
+                    &info.icon_path,
+                    info.icon_index,
+                );
+            } else {
+                // アイコン指定がない場合はターゲットパスを使用 (従来のロジック)
+                if !info.target.is_empty() {
+                    return icon_cache::get_icon(&app_handle, info.target);
+                }
+            }
         }
     }
-    // 新しいアイコンキャッシュモジュールを使用
+    // 通常のファイルパスまたは解決失敗時はそのまま
     icon_cache::get_icon(&app_handle, path)
 }
 

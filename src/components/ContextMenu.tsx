@@ -105,10 +105,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, cellId, onClose 
         try {
             const selected = await openDialog({
                 multiple: false,
-                filters: [{
-                    name: 'Applications',
-                    extensions: ['exe', 'lnk', 'url']
-                }]
+                // filters: undefined // Allow all files
             });
 
             if (selected && typeof selected === 'string') {
