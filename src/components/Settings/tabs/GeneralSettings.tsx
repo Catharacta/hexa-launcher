@@ -13,29 +13,35 @@ export const GeneralSettings: React.FC = () => {
     const setGeneralSettings = useLauncherStore(state => state.setGeneralSettings);
     const resetGeneralSettings = useLauncherStore(state => state.resetGeneralSettings);
 
-    const [startupEnabled, setStartupEnabled] = useState(false);
-    const [isCheckingStartup, setIsCheckingStartup] = useState(false);
+    // Optimistic UI: Initialize with stored value (or false if undefined)
+    const [startupEnabled, setStartupEnabled] = useState(general.startOnBoot ?? false);
 
+    // Check status in background, don't block UI
     useEffect(() => {
-        setIsCheckingStartup(true);
         getStartupStatus()
             .then((enabled: boolean) => {
-                setStartupEnabled(enabled);
+                // Only update if different from store/state to avoid unnecessary renders
                 if (enabled !== general.startOnBoot) {
+                    setStartupEnabled(enabled);
                     setGeneralSettings({ startOnBoot: enabled });
                 }
             })
-            .catch(console.error)
-            .finally(() => setIsCheckingStartup(false));
+            .catch(console.error);
     }, []);
 
     const handleStartupToggle = async (checked: boolean) => {
+        // Optimistic update
+        setStartupEnabled(checked);
+        setGeneralSettings({ startOnBoot: checked });
+
         try {
             await setStartup(checked);
-            setStartupEnabled(checked);
-            setGeneralSettings({ startOnBoot: checked });
         } catch (error) {
             console.error('Failed to toggle startup', error);
+            // Revert on failure
+            const reverted = !checked;
+            setStartupEnabled(reverted);
+            setGeneralSettings({ startOnBoot: reverted });
         }
     };
 
@@ -63,7 +69,6 @@ export const GeneralSettings: React.FC = () => {
                     description="Launch Hexa Launcher automatically when Windows starts"
                     checked={startupEnabled}
                     onChange={handleStartupToggle}
-                    disabled={isCheckingStartup}
                 />
                 <SettingsToggle
                     label={t('general.selectCenterOnBoot')}
