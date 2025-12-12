@@ -93,7 +93,9 @@ export const HexagonComponent: React.FC<HexagonProps> = ({
             const url = convertFileSrc(cell.customIcon);
             setIconUrl(url);
         } else if (!cell.icon && targetPath && cell.type !== 'launcher_setting') {
-            getFileIcon(targetPath).then(icon => {
+            // showShortcutIcon が false の場合、resolveShortcut: true を渡して実体のアイコン（矢印なし）を取得する
+            const resolveShortcut = appearance.showShortcutIcon === false;
+            getFileIcon(targetPath, resolveShortcut).then(icon => {
                 if (isMounted && icon) {
                     setIconUrl(icon);
                 }
@@ -102,7 +104,7 @@ export const HexagonComponent: React.FC<HexagonProps> = ({
             setIconUrl(cell.icon || null);
         }
         return () => { isMounted = false; };
-    }, [cell.customIcon, cell.icon, cell.target, cell.shortcut?.targetPath, cell.type]);
+    }, [cell.customIcon, cell.icon, cell.target, cell.shortcut?.targetPath, cell.type, appearance.showShortcutIcon]); // Add dependency
 
     const effectiveColorName = isCyberpunk ? 'cyan' : (cell.themeColor || themeColor || 'cyan');
     const theme = THEMES[effectiveColorName] || THEMES['cyan'];

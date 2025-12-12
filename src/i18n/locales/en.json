@@ -70,7 +70,9 @@
         "vfx": "Visual Effects (VFX)",
         "enableVFX": "Enable VFX",
         "enableVFXDesc": "Enable CRT overlay, chromatic aberration, and particle backgrounds (Cyberpunk style only)",
-        "vfxIntensity": "VFX Intensity"
+        "vfxIntensity": "VFX Intensity",
+        "showShortcutIcon": "Show Shortcut Icon",
+        "showShortcutIconDesc": "Show a shortcut overlay icon (arrow) on cells"
     },
     "cellManager": {
         "hexSize": "Hex Size",

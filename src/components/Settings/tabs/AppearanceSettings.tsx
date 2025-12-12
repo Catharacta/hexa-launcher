@@ -68,6 +68,13 @@ export const AppearanceSettings: React.FC = () => {
                 />
 
                 <SettingsToggle
+                    label={t('appearance.showShortcutIcon')}
+                    description={t('appearance.showShortcutIconDesc')}
+                    checked={appearance.showShortcutIcon ?? true}
+                    onChange={(checked) => setAppearance({ showShortcutIcon: checked })}
+                />
+
+                <SettingsToggle
                     label={t('appearance.silhouetteMode', 'Silhouette Icons')}
                     description={t('appearance.silhouetteModeDesc', 'Render icons as monochrome silhouettes matching the theme color')}
                     checked={appearance.enableIconSilhouette || false}

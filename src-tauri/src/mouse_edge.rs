@@ -57,26 +57,37 @@ impl MouseEdgeMonitor {
 
                                     if x_in_monitor && y_in_monitor {
                                         // このモニターの上端、または左端にあるか？
-                                        let is_top_edge = (mouse_y - m_pos.y).abs() <= 5; // 5px閾値
-                                        let is_left_edge = (mouse_x - m_pos.x).abs() <= 5;
+                                        let is_top_edge = (mouse_y - m_pos.y).abs() <= 20; // 20px閾値
+                                        let is_left_edge = (mouse_x - m_pos.x).abs() <= 20;
 
                                         if is_top_edge || is_left_edge {
                                             if let Some(window) =
                                                 app_handle.get_webview_window("main")
                                             {
-                                                if !window.is_visible().unwrap_or(false) {
+                                                let is_visible =
+                                                    window.is_visible().unwrap_or(false);
+                                                let is_focused =
+                                                    window.is_focused().unwrap_or(false);
+
+                                                // Log for debugging (user request)
+                                                // verify this appears in console if run from terminal
+                                                // println!("Edge check: {:?} is_vis:{} is_foc:{}", m_pos, is_visible, is_focused);
+
+                                                if !is_visible || !is_focused {
                                                     println!(
-                                                        "Edge trigger on monitor at {:?}",
-                                                        m_pos
+                                                        "Edge trigger on monitor at {:?} (vis:{}, foc:{})",
+                                                        m_pos, is_visible, is_focused
                                                     );
-                                                    // ウィンドウをカーソルのあるモニターへ移動
+
+                                                    // Ensure window is restored if minimized
+                                                    if window.is_minimized().unwrap_or(false) {
+                                                        let _ = window.unminimize();
+                                                    }
+
+                                                    // Move window to target monitor
+                                                    // We unmaximize first to allow moving, then maximize again
+                                                    // This is needed because maximized windows often can't be moved programmatically on Windows
                                                     let _ = window.unmaximize();
-                                                    let _ = window.set_size(tauri::Size::Physical(
-                                                        tauri::PhysicalSize {
-                                                            width: 800,
-                                                            height: 600,
-                                                        },
-                                                    ));
                                                     let _ = window.set_position(
                                                         tauri::Position::Physical(m_pos.clone()),
                                                     );
@@ -84,13 +95,16 @@ impl MouseEdgeMonitor {
                                                     let _ = window.show();
                                                     let _ = window.maximize();
                                                     let _ = window.set_focus();
-                                                    // フォーカスを強制するためのワークアラウンド
+                                                    // Force focus workaround
                                                     let _ = window.set_always_on_top(true);
                                                     let _ = window.set_always_on_top(false);
+
+                                                    // Simple debounce to prevent immediate re-trigger
+                                                    thread::sleep(Duration::from_millis(500));
                                                 }
                                             }
                                         }
-                                        break; // モニターが見つかったらループ終了
+                                        break; // Monitor found
                                     }
                                 }
                             }

@@ -137,7 +137,16 @@ fn launch_uwp_app(aumid: String) -> Result<(), String> {
 ///
 /// パフォーマンス向上のため、2層キャッシュ（メモリ + ディスク）を使用します。
 #[tauri::command]
-fn get_file_icon(app_handle: tauri::AppHandle, path: String) -> Result<String, String> {
+fn get_file_icon(
+    app_handle: tauri::AppHandle,
+    mut path: String,
+    resolve_shortcut: bool,
+) -> Result<String, String> {
+    if resolve_shortcut && path.to_lowercase().ends_with(".lnk") {
+        if let Ok(info) = shortcut_utils::resolve_lnk(&path) {
+            path = info.target;
+        }
+    }
     // 新しいアイコンキャッシュモジュールを使用
     icon_cache::get_icon(&app_handle, path)
 }

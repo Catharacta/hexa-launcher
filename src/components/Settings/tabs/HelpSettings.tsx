@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 // @ts-ignore
 import { getVersion } from '@tauri-apps/api/app';
 // @ts-ignore
-import { open } from '@tauri-apps/plugin-opener';
+import { openUrl } from '@tauri-apps/plugin-opener';
 import { SettingsSection } from '../shared/SettingsSection';
 import { useLauncherStore } from '../../../store/launcherStore';
 import { clsx } from 'clsx';
@@ -19,14 +19,14 @@ export const HelpSettings: React.FC = () => {
     }, []);
 
     const links = [
-        { label: 'Documentation', url: 'https://github.com/your-repo/hexa-launcher' },
-        { label: 'Report an Issue', url: 'https://github.com/your-repo/hexa-launcher/issues' },
-        { label: 'Release Notes', url: 'https://github.com/your-repo/hexa-launcher/releases' },
+        { label: 'Documentation', url: 'https://github.com/Catharacta/hexa-launcher' },
+        { label: 'Report an Issue', url: 'https://github.com/Catharacta/hexa-launcher/issues' },
+        { label: 'Release Notes', url: 'https://github.com/Catharacta/hexa-launcher/releases' },
     ];
 
     const openLink = async (url: string) => {
         try {
-            await open(url);
+            await openUrl(url);
         } catch (e) {
             console.error('Failed to open URL:', e);
         }

@@ -21,6 +21,7 @@ const DEFAULT_APPEARANCE: AppearanceSettings = {
     enableIconSilhouette: false,
     enableVFX: true,
     vfxIntensity: 0.5,
+    showShortcutIcon: true,
 };
 
 export const createAppearanceSlice = (set: any, _get: any): AppearanceSlice => ({

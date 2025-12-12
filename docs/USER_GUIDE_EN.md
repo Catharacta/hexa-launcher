@@ -50,6 +50,13 @@ When you first launch, you'll see three special cells in the center:
   - Press this key combination from any application to summon the launcher
   - Press again to hide it
 
+### Task Tray / Tray Icon
+- Hexa Launcher runs in the system tray (notification area) while open.
+- Right-click the icon to access the menu:
+    - **Show/Hide**: Toggles launcher visibility.
+    - **Settings**: Opens the settings window.
+    - **Quit**: Exits the application.
+
 ### Hex Navigation
 
 Navigate the hexagonal grid using these keys:
