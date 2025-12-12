@@ -92,16 +92,23 @@ export const HexagonComponent: React.FC<HexagonProps> = ({
         if (cell.customIcon) {
             const url = convertFileSrc(cell.customIcon);
             setIconUrl(url);
-        } else if (!cell.icon && targetPath && cell.type !== 'launcher_setting') {
-            // showShortcutIcon が false の場合、resolveShortcut: true を渡して実体のアイコン（矢印なし）を取得する
-            const resolveShortcut = appearance.showShortcutIcon === false;
-            getFileIcon(targetPath, resolveShortcut).then(icon => {
-                if (isMounted && icon) {
-                    setIconUrl(icon);
-                }
-            });
         } else {
-            setIconUrl(cell.icon || null);
+            const isShortcut = targetPath?.toLowerCase().endsWith('.lnk');
+            // settings.jsonに保存されたアイコン(cell.icon)があっても、「ショートカットアイコン非表示」設定時は
+            // 強制的にバックエンドから実体アイコンを取得しなおす
+            const forceFetch = isShortcut && appearance.showShortcutIcon === false;
+
+            if ((!cell.icon || forceFetch) && targetPath && cell.type !== 'launcher_setting') {
+                // showShortcutIcon が false の場合、resolveShortcut: true を渡して実体のアイコン（矢印なし）を取得する
+                const resolveShortcut = appearance.showShortcutIcon === false;
+                getFileIcon(targetPath, resolveShortcut).then(icon => {
+                    if (isMounted && icon) {
+                        setIconUrl(icon);
+                    }
+                });
+            } else {
+                setIconUrl(cell.icon || null);
+            }
         }
         return () => { isMounted = false; };
     }, [cell.customIcon, cell.icon, cell.target, cell.shortcut?.targetPath, cell.type, appearance.showShortcutIcon]); // Add dependency

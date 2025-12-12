@@ -16,6 +16,10 @@ pub struct ShortcutInfo {
     pub arguments: String,
     /// 作業ディレクトリ
     pub working_dir: String,
+    /// アイコンパス（リソースファイル）
+    pub icon_path: String,
+    /// アイコンインデックス
+    pub icon_index: i32,
 }
 
 /// Windowsのショートカット(.lnk)ファイルの情報を解決・取得します。
@@ -71,10 +75,20 @@ pub fn resolve_lnk(path: &str) -> Result<ShortcutInfo, String> {
                 .trim_matches(char::from(0))
                 .to_string();
 
+            // Get Icon Location
+            let mut icon_path_buffer = [0u16; 520];
+            let mut icon_index: i32 = 0;
+            let _ = shell_link.GetIconLocation(&mut icon_path_buffer, &mut icon_index);
+            let icon_path = String::from_utf16_lossy(&icon_path_buffer)
+                .trim_matches(char::from(0))
+                .to_string();
+
             Ok(ShortcutInfo {
                 target,
                 arguments,
                 working_dir,
+                icon_path,
+                icon_index,
             })
         })();
 

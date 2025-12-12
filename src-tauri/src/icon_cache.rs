@@ -218,3 +218,117 @@ unsafe fn icon_to_png(hicon: HICON) -> Result<Vec<u8>, String> {
 
     Ok(png_buffer)
 }
+
+/// 指定されたリソースキー（キャッシュ用）、ファイルパス、インデックスを使用してアイコンを取得します。
+/// キャッシュロジックは get_icon と同様です。
+pub fn get_icon_by_resource(
+    app_handle: &tauri::AppHandle,
+    cache_key: &str,
+    path: &str,
+    index: i32,
+) -> Result<String, String> {
+    // 1. キャッシュキーのハッシュ化
+    let mut hasher = Sha256::new();
+    hasher.update(cache_key.as_bytes());
+    let result = hasher.finalize();
+    let hash = hex::encode(result);
+
+    // 2. キャッシュディレクトリのセットアップ
+    let app_dir = app_handle
+        .path()
+        .app_data_dir()
+        .map_err(|e| e.to_string())?;
+
+    let cache_dir = app_dir.join("cache").join("icons");
+    if !cache_dir.exists() {
+        fs::create_dir_all(&cache_dir).map_err(|e| e.to_string())?;
+    }
+
+    let cache_file = cache_dir.join(format!("{}.png", hash));
+
+    // 3. キャッシュの確認
+    if cache_file.exists() {
+        match fs::read(&cache_file) {
+            Ok(data) => {
+                let base64_string = base64::engine::general_purpose::STANDARD.encode(&data);
+                return Ok(format!("data:image/png;base64,{}", base64_string));
+            }
+            Err(e) => {
+                println!("Failed to read cache: {}", e);
+            }
+        }
+    }
+
+    // 4. アイコンの抽出 (Resource Index指定)
+    let png_data = extract_icon_from_resource(path, index)?;
+
+    // 5. キャッシュへの保存
+    let _ = fs::write(&cache_file, &png_data);
+
+    // 6. Base64文字列として返却
+    let base64_string = base64::engine::general_purpose::STANDARD.encode(&png_data);
+    Ok(format!("data:image/png;base64,{}", base64_string))
+}
+
+#[cfg(target_os = "windows")]
+/// 指定されたリソースパスとインデックスからアイコンを抽出します。
+/// PrivateExtractIconsWを使用しています。
+pub fn extract_icon_from_resource(path: &str, index: i32) -> Result<Vec<u8>, String> {
+    unsafe {
+        use std::ffi::OsStr;
+        use std::os::windows::ffi::OsStrExt;
+        use windows::Win32::UI::WindowsAndMessaging::{DestroyIcon, PrivateExtractIconsW};
+
+        // Create a fixed-size buffer for MAX_PATH (260)
+        let mut path_buf = [0u16; 260]; // MAX_PATH
+        let wide_path: Vec<u16> = OsStr::new(path)
+            .encode_wide()
+            .take(259) // Ensure null terminator fits
+            .collect();
+
+        // Copy to buffer
+        for (i, &c) in wide_path.iter().enumerate() {
+            path_buf[i] = c;
+        }
+        path_buf[wide_path.len()] = 0; // Null terminator
+
+        let mut hicon_out = [HICON(std::ptr::null_mut())];
+        let mut id_out = [0u32];
+
+        // 256x256のアイコン取得を試みる
+        // Expects &[u16; 260] for filename according to previous error.
+
+        let extracted_count = PrivateExtractIconsW(
+            &path_buf,
+            index,
+            256,
+            256,
+            Some(&mut hicon_out),
+            Some(id_out.as_mut_ptr()),
+            1,
+        );
+
+        if extracted_count == 0 || hicon_out[0].is_invalid() {
+            return Err(format!(
+                "Failed to extract icon from {} at index {}",
+                path, index
+            ));
+        }
+
+        let hicon = hicon_out[0];
+
+        // Convert to PNG
+        let png_data = icon_to_png(hicon).map_err(|e| {
+            let _ = DestroyIcon(hicon);
+            e
+        })?;
+
+        let _ = DestroyIcon(hicon);
+        Ok(png_data)
+    }
+}
+
+#[cfg(not(target_os = "windows"))]
+pub fn extract_icon_from_resource(_path: &str, _index: i32) -> Result<Vec<u8>, String> {
+    Err("Icon extraction is only supported on Windows".to_string())
+}
