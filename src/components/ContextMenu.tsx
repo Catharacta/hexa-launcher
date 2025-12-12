@@ -35,9 +35,18 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, cellId, onClose 
                 onClose();
             }
         };
+
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                onClose();
+            }
+        };
+
         document.addEventListener('mousedown', handleClickOutside);
+        document.addEventListener('keydown', handleKeyDown);
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener('keydown', handleKeyDown);
         };
     }, [onClose]);
 
