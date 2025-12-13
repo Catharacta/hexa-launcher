@@ -44,24 +44,29 @@ jobs:
         with:
           node-version: 'lts/*'
           cache: 'npm'
-          cache-dependency-path: package-lock.json
-
+          cache-dependency-path: hexa-launcher/package-lock.json
+        
       - name: Install frontend dependencies
+        working-directory: ./hexa-launcher
         run: npm ci --prefer-offline --no-audit --no-fund
-
-      - name: Verify tauri CLI installed
+        shell: bash
+        
+      - name: Debug: show tauri presence
+        working-directory: ./hexa-launcher
+        shell: bash
         run: |
-          npm ls @tauri/cli || true
+          node -v
+          npm -v
+          echo "cwd: $(pwd)"
+          ls -la package.json || true
+          npm ls @tauri/cli --depth=0 || true
           ls -la node_modules/.bin || true
-
-      # 2) Use the determined tag in your action (example with tauri-action)
+        
       - name: Build the app (Tauri)
         uses: tauri-apps/tauri-action@v0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+          projectPath: ./hexa-launcher
           tagName: ${{ env.RELEASE_TAG }}
           releaseName: "Hexa Launcher ${{ env.RELEASE_TAG }}"
-          releaseBody: 'See the assets to download this version and install.'
-          releaseDraft: ${{ inputs.draft == 'true' }}
-          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
