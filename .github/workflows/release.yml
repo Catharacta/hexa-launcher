@@ -48,9 +48,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          projectPath: './src-tauri'
           tagName: ${{ env.RELEASE_TAG }}
           releaseName: 'Hexa Launcher ${{ env.RELEASE_TAG }}'
           releaseBody: 'See the assets to download this version and install.'
           branding: false
           args: '--verbose'
+
+      - name: List bundle files (Debug)
+        run: |
+          echo "Listing release bundle directory:"
+          ls -R src-tauri/target/release/bundle || echo "Bundle dir not found"
+        shell: bash
