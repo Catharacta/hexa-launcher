@@ -1,6 +1,7 @@
 import { Settings, Cell, Group, GeneralSettings, GridSettings, SecuritySettings, AdvancedSettings } from '../../types/models';
 import { initialCells } from './cellsSlice';
 import { updateGlobalShortcut, saveSettings } from '../../utils/tauri';
+import { debounce } from '../../utils/debounce';
 
 /**
  * アプリケーション全体の統合設定を管理するスライス。
@@ -62,6 +63,30 @@ const DEFAULT_ADVANCED_SETTINGS: AdvancedSettings = {
     showPerformanceMetrics: false,
     customCSS: '',
     disableAnimations: false,
+};
+
+// Debounced saver instance
+// 1 second delay to batch rapid changes (e.g. sliders)
+const debouncedSave = debounce((state: any) => {
+    saveSettings({
+        schemaVersion: SCHEMA_VERSION,
+        cells: Object.values(state.cells),
+        groups: Object.values(state.groups),
+        activeGroupId: state.activeGroupId,
+        appearance: state.appearance,
+        general: state.general,
+        grid: state.grid,
+        security: state.security,
+        advanced: state.advanced,
+        hotkeys: state.hotkeys,
+        iconCacheIndex: state.iconCacheIndex,
+        keyBindings: state.keyBindings,
+    }).catch(console.error);
+}, 1000);
+
+// Helper to trigger save from setters
+const triggerSave = (get: any) => {
+    debouncedSave(get());
 };
 
 export const createSettingsSlice = (set: any, get: any): SettingsSlice => ({
@@ -129,167 +154,61 @@ export const createSettingsSlice = (set: any, get: any): SettingsSlice => ({
     setGeneralSettings: (settings) => {
         set((state: any) => {
             const newGeneral = { ...state.general, ...settings };
-            const newState = { general: newGeneral };
-            saveSettings({
-                schemaVersion: SCHEMA_VERSION,
-                cells: Object.values(state.cells),
-                groups: Object.values(state.groups),
-                activeGroupId: state.activeGroupId,
-                appearance: state.appearance,
-                general: newGeneral,
-                grid: state.grid,
-                hotkeys: state.hotkeys,
-                iconCacheIndex: state.iconCacheIndex,
-                keyBindings: state.keyBindings,
-            }).catch(console.error);
-            return newState;
+            return { general: newGeneral };
         });
+        triggerSave(get);
     },
 
     setGridSettings: (settings) => {
         set((state: any) => {
             const newGrid = { ...state.grid, ...settings };
-            const newState = { grid: newGrid };
-            saveSettings({
-                schemaVersion: SCHEMA_VERSION,
-                cells: Object.values(state.cells),
-                groups: Object.values(state.groups),
-                activeGroupId: state.activeGroupId,
-                appearance: state.appearance,
-                general: state.general,
-                grid: newGrid,
-                hotkeys: state.hotkeys,
-                iconCacheIndex: state.iconCacheIndex,
-                keyBindings: state.keyBindings,
-            }).catch(console.error);
-            return newState;
+            return { grid: newGrid };
         });
+        triggerSave(get);
     },
 
     resetGeneralSettings: () => {
-        set((state: any) => {
-            const newState = { general: DEFAULT_GENERAL_SETTINGS };
-            saveSettings({
-                schemaVersion: SCHEMA_VERSION,
-                cells: Object.values(state.cells),
-                groups: Object.values(state.groups),
-                activeGroupId: state.activeGroupId,
-                appearance: state.appearance,
-                general: DEFAULT_GENERAL_SETTINGS,
-                grid: state.grid,
-                hotkeys: state.hotkeys,
-                iconCacheIndex: state.iconCacheIndex,
-                keyBindings: state.keyBindings,
-            }).catch(console.error);
-            return newState;
+        set(() => {
+            return { general: DEFAULT_GENERAL_SETTINGS };
         });
+        triggerSave(get);
     },
 
     resetGridSettings: () => {
-        set((state: any) => {
-            const newState = { grid: DEFAULT_GRID_SETTINGS };
-            saveSettings({
-                schemaVersion: SCHEMA_VERSION,
-                cells: Object.values(state.cells),
-                groups: Object.values(state.groups),
-                activeGroupId: state.activeGroupId,
-                appearance: state.appearance,
-                general: state.general,
-                grid: DEFAULT_GRID_SETTINGS,
-                security: state.security,
-                advanced: state.advanced,
-                hotkeys: state.hotkeys,
-                iconCacheIndex: state.iconCacheIndex,
-                keyBindings: state.keyBindings,
-            }).catch(console.error);
-            return newState;
+        set(() => {
+            return { grid: DEFAULT_GRID_SETTINGS };
         });
+        triggerSave(get);
     },
 
     setSecuritySettings: (settings) => {
         set((state: any) => {
             const newSecurity = { ...state.security, ...settings };
-            const newState = { security: newSecurity };
-            saveSettings({
-                schemaVersion: SCHEMA_VERSION,
-                cells: Object.values(state.cells),
-                groups: Object.values(state.groups),
-                activeGroupId: state.activeGroupId,
-                appearance: state.appearance,
-                general: state.general,
-                grid: state.grid,
-                security: newSecurity,
-                advanced: state.advanced,
-                hotkeys: state.hotkeys,
-                iconCacheIndex: state.iconCacheIndex,
-                keyBindings: state.keyBindings,
-            }).catch(console.error);
-            return newState;
+            return { security: newSecurity };
         });
+        triggerSave(get);
     },
 
     resetSecuritySettings: () => {
-        set((state: any) => {
-            const newState = { security: DEFAULT_SECURITY_SETTINGS };
-            saveSettings({
-                schemaVersion: SCHEMA_VERSION,
-                cells: Object.values(state.cells),
-                groups: Object.values(state.groups),
-                activeGroupId: state.activeGroupId,
-                appearance: state.appearance,
-                general: state.general,
-                grid: state.grid,
-                security: DEFAULT_SECURITY_SETTINGS,
-                advanced: state.advanced,
-                hotkeys: state.hotkeys,
-                iconCacheIndex: state.iconCacheIndex,
-                keyBindings: state.keyBindings,
-            }).catch(console.error);
-            return newState;
+        set(() => {
+            return { security: DEFAULT_SECURITY_SETTINGS };
         });
+        triggerSave(get);
     },
 
     setAdvancedSettings: (settings) => {
         set((state: any) => {
             const newAdvanced = { ...state.advanced, ...settings };
-            const newState = { advanced: newAdvanced };
-            saveSettings({
-                schemaVersion: SCHEMA_VERSION,
-                cells: Object.values(state.cells),
-                groups: Object.values(state.groups),
-                activeGroupId: state.activeGroupId,
-                appearance: state.appearance,
-                general: state.general,
-                grid: state.grid,
-                security: state.security,
-                advanced: newAdvanced,
-                hotkeys: state.hotkeys,
-                iconCacheIndex: state.iconCacheIndex,
-                keyBindings: state.keyBindings,
-            }).catch(console.error);
-            return newState;
+            return { advanced: newAdvanced };
         });
+        triggerSave(get);
     },
 
     resetAdvancedSettings: () => {
-        set((state: any) => {
-            const newState = { advanced: DEFAULT_ADVANCED_SETTINGS };
-            saveSettings({
-                schemaVersion: SCHEMA_VERSION,
-                cells: Object.values(state.cells),
-                groups: Object.values(state.groups),
-                activeGroupId: state.activeGroupId,
-                appearance: state.appearance,
-                general: state.general,
-                grid: state.grid,
-                security: state.security,
-                advanced: DEFAULT_ADVANCED_SETTINGS,
-                hotkeys: state.hotkeys,
-                iconCacheIndex: state.iconCacheIndex,
-                keyBindings: state.keyBindings,
-            }).catch(console.error);
-            return newState;
+        set(() => {
+            return { advanced: DEFAULT_ADVANCED_SETTINGS };
         });
+        triggerSave(get);
     },
 });
 
