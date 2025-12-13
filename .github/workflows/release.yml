@@ -44,15 +44,13 @@ jobs:
         with:
           node-version: 'lts/*'
           cache: 'npm'
-          cache-dependency-path: hexa-launcher/package-lock.json
+          cache-dependency-path: package-lock.json
         
       - name: Install frontend dependencies
-        working-directory: ./hexa-launcher
         run: npm ci --prefer-offline --no-audit --no-fund
         shell: bash
         
       - name: Debug: show tauri presence
-        working-directory: ./hexa-launcher
         shell: bash
         run: |
           node -v
@@ -65,7 +63,7 @@ jobs:
       - name: Build the app (Tauri)
         uses: tauri-apps/tauri-action@v0
         with:
-          projectPath: ./hexa-launcher
+          projectPath: ./
           tagName: ${{ env.RELEASE_TAG }}
           releaseName: "Hexa Launcher ${{ env.RELEASE_TAG }}"
         env:
