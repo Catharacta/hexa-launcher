@@ -1,49 +1,70 @@
 name: Release
+
 on:
   push:
     tags:
       - 'v*'
   workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to use when running manually (e.g. v0.0.0-test)'
+        required: false
+        default: 'vTEST'
+      draft:
+        description: 'Create release as draft?'
+        required: false
+        default: 'true'
 
 jobs:
   release:
+    runs-on: windows-latest
     permissions:
       contents: write
-    strategy:
-      fail-fast: false
-      matrix:
-        platform: [windows-latest]
-    runs-on: ${{ matrix.platform }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Node.js
+      # 1) Decide which tag to use: prefer push tag, otherwise use inputs.tag
+      - name: Determine release tag
+        run: |
+          echo "RELEASE_TAG=${{ github.event_name == 'push' && github.ref_name || inputs.tag }}" >> $GITHUB_ENV
+          echo "Running event: ${{ github.event_name }}"
+          echo "Selected RELEASE_TAG=${{ github.event_name == 'push' && github.ref_name || inputs.tag }}"
+      
+      # Example: show it in logs (helpful when debugging)
+      - name: Show selected tag
+        run: |
+          echo "RELEASE_TAG is $RELEASE_TAG"
+        env:
+          RELEASE_TAG: ${{ env.RELEASE_TAG }}
+      
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
-
-      - name: Install Rust stable
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
-
-      - name: Rust cache
-        uses: swatinem/rust-cache@v2
-        with:
-          workspaces: './src-tauri -> target'
-
-      - name: Install frontend dependencies
-        run: npm install
-
-      - name: Build the app
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+        
+      - name: 'Install frontend dependencies'
+        run: npm ci --prefer-offline --no-audit --no-fund
+        shell: bash
+        
+      - name: 'Debug: show tauri presence'
+        shell: bash
+        run: |
+          node -v
+          npm -v
+          echo "cwd: $(pwd)"
+          ls -la package.json || true
+          npm ls @tauri/cli --depth=0 || true
+          ls -la node_modules/.bin || true
+        
+      - name: Build the app (Tauri)
         uses: tauri-apps/tauri-action@v0
+        with:
+          projectPath: ./
+          tagName: ${{ env.RELEASE_TAG }}
+          releaseName: "Hexa Launcher ${{ env.RELEASE_TAG }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tagName: ${{ github.ref_name }}
-          releaseName: 'Hexa Launcher ${{ github.ref_name }}'
-          releaseBody: 'See the assets to download this version and install.'
-          releaseDraft: false
-          prerelease: false
