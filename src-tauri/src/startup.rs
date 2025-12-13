@@ -1,61 +1,39 @@
-use std::process::Command;
+use std::path::PathBuf;
 use tauri::AppHandle;
 
+#[cfg(target_os = "windows")]
+use winreg::{enums::*, RegKey};
+
 #[tauri::command]
-pub fn set_startup(_app_handle: AppHandle, enable: bool) -> Result<(), String> {
+pub async fn set_startup(_app_handle: AppHandle, enable: bool) -> Result<(), String> {
     #[cfg(target_os = "windows")]
     {
+        // Get exe path on the main thread (Process context)
         let exe_path =
             std::env::current_exe().map_err(|e| format!("Failed to get exe path: {}", e))?;
 
-        let app_name = "HexaLauncher";
-        let reg_key = r"Software\Microsoft\Windows\CurrentVersion\Run";
+        // Spawn blocking task for registry operations
+        tauri::async_runtime::spawn_blocking(move || {
+            let hkcu = RegKey::predef(HKEY_CURRENT_USER);
+            let path = r"Software\Microsoft\Windows\CurrentVersion\Run";
+            let (key, _disp) = hkcu
+                .create_subkey(path)
+                .map_err(|e| format!("Failed to open registry key: {}", e))?;
 
-        if enable {
-            // レジストリに追加
-            let output = Command::new("reg")
-                .args(&[
-                    "add",
-                    &format!("HKCU\\{}", reg_key),
-                    "/v",
-                    app_name,
-                    "/t",
-                    "REG_SZ",
-                    "/d",
-                    &format!("\"{}\"", exe_path.display()),
-                    "/f",
-                ])
-                .output()
-                .map_err(|e| format!("Failed to execute reg command: {}", e))?;
+            let app_name = "HexaLauncher";
 
-            if !output.status.success() {
-                let stderr = String::from_utf8_lossy(&output.stderr);
-                return Err(format!("Failed to add startup entry: {}", stderr));
-            }
-
-            println!("Added startup entry for {}", app_name);
-        } else {
-            // レジストリから削除
-            let output = Command::new("reg")
-                .args(&[
-                    "delete",
-                    &format!("HKCU\\{}", reg_key),
-                    "/v",
-                    app_name,
-                    "/f",
-                ])
-                .output()
-                .map_err(|e| format!("Failed to execute reg command: {}", e))?;
-
-            if !output.status.success() {
-                // エントリが存在しない場合もエラーになるが、これは許容
-                println!("Startup entry may not exist or already removed");
+            if enable {
+                key.set_value(app_name, &exe_path.to_string_lossy().as_ref())
+                    .map_err(|e| format!("Failed to set registry value: {}", e))?;
+                println!("Added startup entry via winreg");
             } else {
-                println!("Removed startup entry for {}", app_name);
+                let _ = key.delete_value(app_name); // Ignore error if not exists
+                println!("Removed startup entry via winreg");
             }
-        }
-
-        Ok(())
+            Ok(())
+        })
+        .await
+        .map_err(|e| format!("Task join error: {}", e))?
     }
 
     #[cfg(not(target_os = "windows"))]
@@ -65,19 +43,27 @@ pub fn set_startup(_app_handle: AppHandle, enable: bool) -> Result<(), String> {
 }
 
 #[tauri::command]
-pub fn get_startup_status() -> Result<bool, String> {
+pub async fn get_startup_status() -> Result<bool, String> {
     #[cfg(target_os = "windows")]
     {
-        let app_name = "HexaLauncher";
-        let reg_key = r"Software\Microsoft\Windows\CurrentVersion\Run";
+        // Spawn blocking task
+        tauri::async_runtime::spawn_blocking(move || {
+            let hkcu = RegKey::predef(HKEY_CURRENT_USER);
+            let path = r"Software\Microsoft\Windows\CurrentVersion\Run";
 
-        let output = Command::new("reg")
-            .args(&["query", &format!("HKCU\\{}", reg_key), "/v", app_name])
-            .output()
-            .map_err(|e| format!("Failed to execute reg command: {}", e))?;
+            // Try to open key, if fails, it likely doesn't exist (false)
+            let key = match hkcu.open_subkey(path) {
+                Ok(k) => k,
+                Err(_) => return Ok(false),
+            };
 
-        // レジストリエントリが存在すればtrueを返す
-        Ok(output.status.success())
+            let app_name = "HexaLauncher";
+            let val: Result<String, _> = key.get_value(app_name);
+
+            Ok(val.is_ok())
+        })
+        .await
+        .map_err(|e| format!("Task join error: {}", e))?
     }
 
     #[cfg(not(target_os = "windows"))]
