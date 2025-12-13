@@ -48,7 +48,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+          projectPath: './src-tauri'
           tagName: ${{ env.RELEASE_TAG }}
           releaseName: 'Hexa Launcher ${{ env.RELEASE_TAG }}'
           releaseBody: 'See the assets to download this version and install.'
           branding: false
+          args: '--verbose'
