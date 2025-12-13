@@ -39,6 +39,7 @@ jobs:
         env:
           RELEASE_TAG: ${{ env.RELEASE_TAG }}
       
+      
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -66,5 +67,24 @@ jobs:
           projectPath: ./
           tagName: ${{ env.RELEASE_TAG }}
           releaseName: "Hexa Launcher ${{ env.RELEASE_TAG }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: List bundle files (Debug)
+        run: |
+          echo "Listing release bundle directory:"
+          ls -R src-tauri/target/release/bundle || echo "Bundle dir not found"
+        shell: bash
+
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            src-tauri/target/release/bundle/msi/*.msi
+            src-tauri/target/release/bundle/nsis/*.exe
+          draft: true
+          name: "Hexa Launcher ${{ env.RELEASE_TAG }}"
+          body: "See the assets to download this version and install."
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
