@@ -95,6 +95,8 @@ Navigate the hexagonal grid using these keys:
 
 #### Creating Cells
 - **Drag & Drop**: Drop a file or folder onto an empty space on the grid to automatically create a new cell.
+  > [!TIP]
+  > Enabling "General Settings > Show on Mouse Edge" allows you to summon the launcher by simply dragging a file to the screen edge, making registration much smoother.
 - **Right-Click**: Right-click an existing cell and select "Create Special Cell" or "Create Group Here".
 - **Click Edge**: Click on an unconnected edge of a cell to create a new empty cell at that position.
 - **Shortcut**: Press `Ctrl` + Arrow Key (or configured navigation key) to create and move to a new cell in that direction.
@@ -287,6 +289,16 @@ Configurable in settings:
 #### Opacity
 - 0% (fully opaque) to 100% (fully transparent)
 
+#### Show Shortcut Icon
+- Toggle the arrow icon overlay for shortcuts (Default: On)
+
+#### Silhouette Mode
+- Render icons as monochrome silhouettes matching the theme color (Default: Off)
+
+#### Visual Effects (VFX)
+- **Enable VFX**: Enables CRT overlay, chromatic aberration, and particle backgrounds (Cyberpunk style only)
+- **Intensity**: Adjust the intensity of the effects
+
 ### Grid Settings
 
 #### Hex Size
@@ -296,6 +308,13 @@ Configurable in settings:
 - **Fast**: Quick animations
 - **Normal**: Standard speed
 - **Slow**: Slow animations
+
+#### Gap Size
+- Adjust the gap between hex cells (0-20px)
+
+#### Enable Animations
+- Toggle grid animations on/off
+- Disable this if you experience performance issues on low-end hardware
 
 #### Label Display
 - **Always**: Always visible
@@ -324,6 +343,27 @@ Customize all keyboard shortcuts:
 
 #### Trusted Paths
 - Apps in specified paths launch without confirmation
+
+### Data Management (Advanced)
+
+#### Export / Import Settings
+- **Export to File**: Save current settings as a JSON file
+- **Import from File**: Restore settings from a saved JSON file (Overwrites current settings)
+- **Copy/Paste**: Transfer settings text via clipboard
+
+### Advanced Settings
+
+#### Debug Mode
+- Enable developer debug logs
+
+#### Show Performance Metrics
+- Display FPS and memory usage statistics
+
+#### Disable Global Animations
+- Forcefully disable all animations for maximum performance
+
+#### Icon Cache
+- **Clear Cache**: Remove cached icons and force re-fetching. Useful if icons are incorrect or outdated
 
 ---
 
