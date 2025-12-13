@@ -46,11 +46,11 @@ jobs:
           cache: 'npm'
           cache-dependency-path: package-lock.json
         
-      - name: Install frontend dependencies
+      - name: 'Install frontend dependencies'
         run: npm ci --prefer-offline --no-audit --no-fund
         shell: bash
         
-      - name: Debug: show tauri presence
+      - name: 'Debug: show tauri presence'
         shell: bash
         run: |
           node -v
