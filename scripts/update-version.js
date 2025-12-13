@@ -45,6 +45,18 @@ if (tauriConf.version !== version) {
     console.log('Updated tauri.conf.json');
 }
 
+// Update Cargo.toml
+const cargoTomlPath = path.join(__dirname, '../src-tauri/Cargo.toml');
+if (fs.existsSync(cargoTomlPath)) {
+    let cargoContent = fs.readFileSync(cargoTomlPath, 'utf8');
+    const versionRegex = /^version\s*=\s*"[^"]+"/m;
+    if (versionRegex.test(cargoContent)) {
+        cargoContent = cargoContent.replace(versionRegex, `version = "${version}"`);
+        fs.writeFileSync(cargoTomlPath, cargoContent);
+        console.log('Updated Cargo.toml');
+    }
+}
+
 // Update documentation files
 filesToUpdate.forEach(file => {
     const filePath = path.join(__dirname, file);
