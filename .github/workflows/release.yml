@@ -38,6 +38,21 @@ jobs:
           echo "RELEASE_TAG is $RELEASE_TAG"
         env:
           RELEASE_TAG: ${{ env.RELEASE_TAG }}
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install frontend dependencies
+        run: npm ci --prefer-offline --no-audit --no-fund
+
+      - name: Verify tauri CLI installed
+        run: |
+          npm ls @tauri/cli || true
+          ls -la node_modules/.bin || true
 
       # 2) Use the determined tag in your action (example with tauri-action)
       - name: Build the app (Tauri)
